@@ -117,8 +117,9 @@ export default function WeeklyView() {
             <button
               type="submit"
               className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
+              style={{ padding: 0 }}
             >
-              <Plus className="w-4 h-4" stroke="#ffffff" />
+              <Plus className="w-4 h-4" color="white" stroke="white" />
             </button>
           </form>
 

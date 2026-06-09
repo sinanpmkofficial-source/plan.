@@ -130,8 +130,8 @@ export default function Navigation() {
         </div>
       </aside>
 
-      {/* MOBILE PILL MENU: Redesigned iOS bottom tab bar style */}
-      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[var(--nav-bg)] backdrop-blur-md border border-[var(--nav-border)] rounded-2xl px-4 py-3 items-center justify-around gap-1 shadow-[var(--nav-shadow)] w-[calc(100%-2rem)] max-w-[500px] select-none transition-all duration-300">
+      {/* MOBILE PILL MENU: Redesigned iOS bottom tab bar style (Icon only) */}
+      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[var(--nav-bg)] backdrop-blur-md border border-[var(--nav-border)] rounded-full px-3 py-2 items-center justify-around gap-1.5 shadow-[var(--nav-shadow)] w-[calc(100%-2rem)] max-w-[420px] select-none transition-all duration-300">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
@@ -139,14 +139,13 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => setView(item.id as PlannerView)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all relative cursor-pointer min-w-[56px] ${
+              className={`flex items-center justify-center p-3 rounded-full transition-all relative cursor-pointer w-12 h-12 shrink-0 ${
                 isActive
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950 shadow-xs scale-105'
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950 shadow-sm scale-105'
                   : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100/50'
               }`}
             >
               <Icon className="w-5.5 h-5.5 shrink-0" />
-              <span className="text-[10px] mt-1 font-extrabold tracking-tight">{item.mobileLabel}</span>
             </button>
           );
         })}
