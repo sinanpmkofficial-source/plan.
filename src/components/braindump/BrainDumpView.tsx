@@ -14,6 +14,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+import PageHeader from '../layout/PageHeader';
+
 export default function BrainDumpView() {
   const {
     brainDump,
@@ -53,14 +55,9 @@ export default function BrainDumpView() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)]">
-      {/* Introduction */}
-      <div className="space-y-1">
-        <h3 className="text-2xl font-black tracking-tight">Brain Dump Inbox</h3>
-        <p className="text-sm md:text-base text-neutral-500">
-          Clear your mind. Capture thoughts or reminders instantly, and convert them to plans later.
-        </p>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)] pb-10">
+      {/* Page Header (Unifies title, sync status, and score badge) */}
+      <PageHeader title="Brain Dump Inbox" />
 
       {/* Input Capture Box */}
       <form onSubmit={handleSubmit} className="relative">
@@ -76,7 +73,7 @@ export default function BrainDumpView() {
           type="submit"
           className="absolute right-3 top-3 w-10 h-10 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center hover:bg-neutral-800 dark:hover:bg-white active:scale-95 transition-all cursor-pointer border-none"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-5 h-5" stroke="#ffffff" />
         </button>
       </form>
 
@@ -122,7 +119,7 @@ export default function BrainDumpView() {
                       {/* Delete Action */}
                       <button
                         onClick={() => deleteBrainDumpItem(item.id)}
-                        className="p-1.5 hover:bg-[var(--kbd-bg)] hover:text-red-500 rounded-full text-neutral-400 transition-colors cursor-pointer self-start sm:self-center"
+                        className="p-1.5 hover:bg-neutral-100 hover:text-red-500 rounded-full text-neutral-400 transition-colors cursor-pointer self-start sm:self-center"
                         title="Delete thought"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -132,28 +129,28 @@ export default function BrainDumpView() {
                       <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-500 font-bold">
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'task', selectedDate)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-[var(--kbd-bg)] rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Clock className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Today</span>
                         </button>
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'weekly', selectedWeek)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-[var(--kbd-bg)] rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Week</span>
                         </button>
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'monthly', selectedMonth)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-[var(--kbd-bg)] rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Month</span>
                         </button>
                         <button
                           onClick={() => handleGoalConvertClick(item.id)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-[var(--kbd-bg)] rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Target className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Goal</span>
@@ -201,7 +198,7 @@ export default function BrainDumpView() {
                     </div>
                     <button
                       onClick={() => deleteBrainDumpItem(item.id)}
-                      className="p-1.5 hover:bg-[var(--kbd-bg)] rounded-full text-neutral-400 hover:text-red-550 transition-colors shrink-0 cursor-pointer"
+                      className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-red-550 transition-colors shrink-0 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

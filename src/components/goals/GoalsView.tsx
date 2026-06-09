@@ -69,7 +69,7 @@ export default function GoalsView() {
           onClick={() => setShowAddModal(true)}
           className="button-premium text-xs md:text-sm"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4" stroke="#ffffff" />
           <span>New Goal</span>
         </button>
       </div>
@@ -147,7 +147,7 @@ export default function GoalsView() {
                       </div>
                       <button
                         onClick={() => deleteGoal(goal.id)}
-                        className="p-1.5 hover:bg-[var(--kbd-bg)] hover:text-red-500 text-neutral-400 rounded-full transition-colors shrink-0 cursor-pointer"
+                        className="p-1.5 hover:bg-neutral-100 hover:text-red-500 text-neutral-400 rounded-full transition-colors shrink-0 cursor-pointer"
                         title="Delete Goal"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function GoalsView() {
                             <button
                               key={m.id}
                               onClick={() => toggleMilestone(goal.id, m.id)}
-                              className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--button-hover)] text-left transition-colors cursor-pointer group"
+                              className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-neutral-50 text-left transition-colors cursor-pointer group"
                             >
                               {m.completed ? (
                                 <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 dark:text-neutral-100 shrink-0 mt-0.5" />
@@ -228,7 +228,7 @@ export default function GoalsView() {
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 hover:bg-[var(--button-hover)] rounded-full text-neutral-400"
+                className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-450"
               >
                 <X className="w-4 h-4" />
               </button>

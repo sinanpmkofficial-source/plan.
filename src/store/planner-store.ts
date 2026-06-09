@@ -93,25 +93,15 @@ export function calculateDailyScore(plan: DailyPlan): number {
   const prayersCount = Object.values(prayers).filter(Boolean).length;
   const prayerScore = prayersCount * 10;
 
-  // 2. Main Daily Tasks (30%): Completion rate of daily tasks
-  let taskScore = 30;
-  if (plan.tasks && plan.tasks.length > 0) {
-    const completedTasks = plan.tasks.filter((t) => t.completed).length;
-    taskScore = Math.round((completedTasks / plan.tasks.length) * 30);
-  }
-
-  // 3. Bullet Journal Tasks (10%): Completion rate of bullet-journal action items
-  let bulletScore = 10;
+  // 2. Bullet Journal Tasks (50%): Completion rate of bullet-journal action items
+  let bulletScore = 50;
   const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
   if (bulletTasks.length > 0) {
     const completedBullets = bulletTasks.filter((t) => t.completed).length;
-    bulletScore = Math.round((completedBullets / bulletTasks.length) * 10);
+    bulletScore = Math.round((completedBullets / bulletTasks.length) * 50);
   }
 
-  // 4. Daily Reflection (10%): 10 points if reflection is written
-  const reflectionScore = plan.reflection && plan.reflection.trim().length > 0 ? 10 : 0;
-
-  return prayerScore + taskScore + bulletScore + reflectionScore;
+  return prayerScore + bulletScore;
 }
 
 // Debounce timer for background syncing
@@ -351,7 +341,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
           // targetValue is YYYY-MM-DD
           const dailyPlan = getOrCreateDailyPlanFn(state, targetValue);
           const itemText = state.brainDump.find((x) => x.id === id)?.text || '';
-          dailyPlan.tasks = [...dailyPlan.tasks, { id: crypto.randomUUID(), text: itemText, completed: false }];
+          dailyPlan.bulletNotes = [...dailyPlan.bulletNotes, { id: crypto.randomUUID(), type: 'task', text: itemText, completed: false }];
           dailyPlan.score = calculateDailyScore(dailyPlan);
           dailyPlan.updatedAt = new Date().toISOString();
           updatedState.dailyPlans = { ...state.dailyPlans, [targetValue]: dailyPlan };

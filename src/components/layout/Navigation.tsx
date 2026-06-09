@@ -76,12 +76,12 @@ export default function Navigation() {
   }, [setView]);
 
   const navItems = [
-    { id: 'daily', label: 'Today', icon: Clock, shortcut: 'g d' },
-    { id: 'braindump', label: 'Brain Dump', icon: Inbox, shortcut: 'g b' },
-    { id: 'goals', label: 'Goals System', icon: Target, shortcut: 'g g' },
-    { id: 'weekly', label: 'Weekly Plan', icon: Sparkles, shortcut: 'g w' },
-    { id: 'monthly', label: 'Monthly Plan', icon: Calendar, shortcut: 'g m' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, shortcut: 'g a' },
+    { id: 'daily', label: 'Today', mobileLabel: 'Today', icon: Clock, shortcut: 'g d' },
+    { id: 'braindump', label: 'Brain Dump', mobileLabel: 'Dump', icon: Inbox, shortcut: 'g b' },
+    { id: 'goals', label: 'Goals System', mobileLabel: 'Goals', icon: Target, shortcut: 'g g' },
+    { id: 'weekly', label: 'Weekly Plan', mobileLabel: 'Weekly', icon: Sparkles, shortcut: 'g w' },
+    { id: 'monthly', label: 'Monthly Plan', mobileLabel: 'Monthly', icon: Calendar, shortcut: 'g m' },
+    { id: 'analytics', label: 'Analytics', mobileLabel: 'Stats', icon: BarChart3, shortcut: 'g a' },
   ];
 
   return (
@@ -111,7 +111,7 @@ export default function Navigation() {
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-bold transition-all group cursor-pointer ${
                     isActive
                       ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950 shadow-xs'
-                      : 'text-neutral-500 hover:text-[var(--foreground)] dark:text-neutral-400 dark:hover:text-neutral-100 hover:bg-[var(--button-hover)]'
+                      : 'text-neutral-500 hover:text-[var(--foreground)] dark:text-neutral-400 dark:hover:text-neutral-100 hover:bg-neutral-100'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -119,7 +119,7 @@ export default function Navigation() {
                     <span>{item.label}</span>
                   </div>
                   <kbd className={`text-[9px] font-mono px-1.5 py-0.5 rounded transition-colors ${
-                    isActive ? 'bg-neutral-800 text-neutral-355 dark:bg-neutral-200 dark:text-neutral-600' : 'bg-[var(--kbd-bg)] text-neutral-455'
+                    isActive ? 'bg-neutral-800 text-neutral-300 dark:bg-neutral-200 dark:text-neutral-600' : 'bg-[var(--kbd-bg)] text-neutral-500'
                   }`}>
                     {item.shortcut}
                   </kbd>
@@ -130,8 +130,8 @@ export default function Navigation() {
         </div>
       </aside>
 
-      {/* MOBILE PILL MENU: Visible on screens below md */}
-      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[var(--nav-bg)] backdrop-blur-md border border-[var(--nav-border)] rounded-full px-2 py-1.5 items-center gap-1 shadow-[var(--nav-shadow)] max-w-[95vw] overflow-x-auto scrollbar-none select-none transition-all duration-300">
+      {/* MOBILE PILL MENU: Redesigned iOS bottom tab bar style */}
+      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[var(--nav-bg)] backdrop-blur-md border border-[var(--nav-border)] rounded-2xl px-4 py-3 items-center justify-around gap-1 shadow-[var(--nav-shadow)] w-[calc(100%-2rem)] max-w-[500px] select-none transition-all duration-300">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
@@ -139,14 +139,14 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => setView(item.id as PlannerView)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-extrabold transition-all relative cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all relative cursor-pointer min-w-[56px] ${
                 isActive
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950 shadow-xs'
-                  : 'text-neutral-500 hover:text-neutral-850 dark:text-neutral-400 hover:bg-[var(--button-hover)]'
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950 shadow-xs scale-105'
+                  : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100/50'
               }`}
             >
-              <Icon className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline">{item.label}</span>
+              <Icon className="w-5.5 h-5.5 shrink-0" />
+              <span className="text-[10px] mt-1 font-extrabold tracking-tight">{item.mobileLabel}</span>
             </button>
           );
         })}

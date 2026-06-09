@@ -36,6 +36,15 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-geist-mono);
+  
+  /* Scale up all default system text sizes globally for high legibility */
+  --font-size-xs: 0.875rem;      /* 14px */
+  --font-size-sm: 1rem;          /* 16px */
+  --font-size-base: 1.125rem;    /* 18px */
+  --font-size-lg: 1.25rem;       /* 20px */
+  --font-size-xl: 1.5rem;        /* 24px */
+  --font-size-2xl: 1.75rem;      /* 28px */
+  --font-size-3xl: 2.25rem;      /* 36px */
 }
 
 body {

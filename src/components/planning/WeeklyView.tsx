@@ -82,7 +82,7 @@ export default function WeeklyView() {
         <div className="flex items-center gap-1 bg-[var(--kbd-bg)] rounded-full p-1.5 shadow-none">
           <button
             onClick={handlePrevWeek}
-            className="p-1.5 hover:bg-[var(--button-hover)] rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -91,7 +91,7 @@ export default function WeeklyView() {
           </span>
           <button
             onClick={handleNextWeek}
-            className="p-1.5 hover:bg-[var(--button-hover)] rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -118,7 +118,7 @@ export default function WeeklyView() {
               type="submit"
               className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" stroke="#ffffff" />
             </button>
           </form>
 
@@ -131,7 +131,7 @@ export default function WeeklyView() {
               plan.tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-start justify-between gap-3 p-2 hover:bg-[var(--button-hover)] rounded-xl transition-colors group"
+                  className="flex items-start justify-between gap-3 p-2 hover:bg-neutral-50 rounded-xl transition-colors group"
                 >
                   <button
                     onClick={() => toggleWeeklyTask(selectedWeek, task.id)}
@@ -148,7 +148,7 @@ export default function WeeklyView() {
                   </button>
                   <button
                     onClick={() => deleteWeeklyTask(selectedWeek, task.id)}
-                    className="p-1.5 hover:bg-[var(--kbd-bg)] text-neutral-450 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
+                    className="p-1.5 hover:bg-neutral-100 text-neutral-450 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
