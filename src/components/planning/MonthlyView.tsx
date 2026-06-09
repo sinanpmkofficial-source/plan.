@@ -179,7 +179,7 @@ export default function MonthlyView() {
                     />
                     <button
                       onClick={() => deleteMonthlyTask(selectedMonth, note.id)}
-                      className="p-1 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
+                      className="w-7 h-7 flex items-center justify-center hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
