@@ -60,20 +60,21 @@ export default function BrainDumpView() {
       <PageHeader title="Brain Dump Inbox" />
 
       {/* Input Capture Box */}
-      <form onSubmit={handleSubmit} className="relative">
+      <form onSubmit={handleSubmit} className="flex gap-2 max-w-2xl mx-auto mb-10 select-none">
         <input
           id="quick-brain-dump-input"
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Capture a thought... (Press '/' to focus)"
-          className="w-full pl-5 pr-16 py-4 bg-[var(--card-bg)] border border-[var(--input-border)] rounded-full shadow-xs focus:outline-hidden focus:border-[var(--input-focus-border)] focus:ring-2 focus:ring-[var(--input-focus-ring)] transition-all font-bold text-sm md:text-base text-[var(--foreground)] placeholder-neutral-450"
+          className="w-full input-premium text-sm py-2 font-semibold"
         />
         <button
           type="submit"
-          className="absolute right-3 top-3 w-10 h-10 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 flex items-center justify-center hover:bg-neutral-800 dark:hover:bg-white active:scale-95 transition-all cursor-pointer border-none"
+          className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
+          style={{ padding: 0 }}
         >
-          <Plus className="w-5 h-5" stroke="#ffffff" />
+          <Plus className="w-4 h-4" color="white" stroke="white" />
         </button>
       </form>
 
