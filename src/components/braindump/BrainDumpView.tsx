@@ -55,7 +55,7 @@ export default function BrainDumpView() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)] pb-10">
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       {/* Page Header (Unifies title, sync status, and score badge) */}
       <PageHeader title="Brain Dump Inbox" />
 
@@ -95,7 +95,7 @@ export default function BrainDumpView() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center p-8 border border-dashed border-[var(--divider)] rounded-2xl bg-[var(--card-bg)]/20 text-neutral-400 min-h-[250px]"
+                  className="flex flex-col items-center justify-center p-8 border border-dashed border-divider rounded-2xl bg-card-bg/20 text-neutral-400 min-h-[250px]"
                 >
                   <Inbox className="w-8 h-8 stroke-1 mb-2 text-neutral-400" />
                   <p className="text-sm font-bold">Your brain dump is clear.</p>
@@ -116,7 +116,7 @@ export default function BrainDumpView() {
                       {item.text}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-[var(--divider)] pt-3.5 mt-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-divider pt-3.5 mt-1">
                       {/* Delete Action */}
                       <button
                         onClick={() => deleteBrainDumpItem(item.id)}
@@ -130,28 +130,28 @@ export default function BrainDumpView() {
                       <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-500 font-bold">
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'task', selectedDate)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Clock className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Today</span>
                         </button>
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'weekly', selectedWeek)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Week</span>
                         </button>
                         <button
                           onClick={() => convertBrainDumpItem(item.id, 'monthly', selectedMonth)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Month</span>
                         </button>
                         <button
                           onClick={() => handleGoalConvertClick(item.id)}
-                          className="flex items-center gap-1.5 py-1 px-3 border border-[var(--input-border)] hover:border-[var(--input-focus-border)] hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
+                          className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full transition-all cursor-pointer text-neutral-700 font-bold"
                         >
                           <Target className="w-3.5 h-3.5 text-neutral-400" />
                           <span>Goal</span>
@@ -177,7 +177,7 @@ export default function BrainDumpView() {
           <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
             <AnimatePresence initial={false}>
               {convertedItems.length === 0 ? (
-                <div className="p-6 border border-dashed border-[var(--divider)] rounded-2xl text-center text-neutral-405 text-sm font-semibold">
+                <div className="p-6 border border-dashed border-divider rounded-2xl text-center text-neutral-405 text-sm font-semibold">
                   Processed logs will appear here.
                 </div>
               ) : (
@@ -187,10 +187,10 @@ export default function BrainDumpView() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="p-3.5 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl flex items-start justify-between gap-3 text-neutral-550"
+                    className="p-3.5 bg-card-bg border border-card-border rounded-2xl flex items-start justify-between gap-3 text-neutral-550"
                   >
                     <div className="space-y-1 min-w-0">
-                      <p className="text-sm font-bold line-through text-neutral-400 dark:text-neutral-500 break-words leading-relaxed">
+                      <p className="text-sm font-bold line-through text-neutral-400 break-words leading-relaxed">
                         {item.text}
                       </p>
                       <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-extrabold block">
@@ -214,12 +214,12 @@ export default function BrainDumpView() {
       {/* Goal Title Form Dialog */}
       {showGoalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-[var(--card-bg)] border border-[var(--card-border)] p-6 rounded-2xl max-w-sm w-full shadow-[var(--nav-shadow)] animate-in zoom-in-95 duration-100">
+          <div className="bg-card-bg border border-card-border p-6 rounded-2xl max-w-sm w-full shadow-nav-shadow animate-in zoom-in-95 duration-100">
             <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2">
               <Target className="w-4 h-4" />
               <span>Convert to Goal</span>
             </h3>
-            <p className="text-xs md:text-sm text-neutral-500 dark:text-neutral-450 mb-4 leading-relaxed font-semibold">
+            <p className="text-xs md:text-sm text-neutral-500 mb-4 leading-relaxed font-semibold">
               Define the goal title for this brain dump item. You can customize details and milestones in the Goals dashboard.
             </p>
             <input

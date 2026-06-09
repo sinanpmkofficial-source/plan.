@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import AppLayout from "@/components/layout/AppLayout";
+
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
@@ -33,7 +35,9 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-neutral-50 text-neutral-900 font-sans flex flex-col">{children}</body>
+      <body className="min-h-full bg-neutral-50 text-neutral-900 font-sans flex flex-col">
+        <AppLayout>{children}</AppLayout>
+      </body>
     </html>
   );
 }

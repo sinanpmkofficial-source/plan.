@@ -56,14 +56,11 @@ export default function GoalsView() {
   const totalCompleted = goals.filter((g) => g.status === 'completed').length;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)]">
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground">
       {/* View Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h3 className="text-2xl font-black tracking-tight">Goals System</h3>
-          <p className="text-sm md:text-base text-neutral-500">
-            Define objectives, establish milestones, and review your progress daily.
-          </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
@@ -75,24 +72,16 @@ export default function GoalsView() {
       </div>
 
       {/* iOS Segmented Control Tab Filters */}
-      <div className="bg-[var(--kbd-bg)] p-1.5 rounded-full flex gap-1 inline-flex text-xs md:text-sm font-bold shadow-none select-none">
+      <div className="bg-kbd-bg p-1.5 rounded-full flex gap-1 inline-flex text-xs md:text-sm font-bold shadow-none select-none">
         <button
           onClick={() => setActiveTab('active')}
-          className={`py-1.5 px-4 rounded-full text-center transition-all cursor-pointer ${
-            activeTab === 'active'
-              ? 'bg-white text-neutral-955 dark:bg-neutral-800 dark:text-white shadow-xs'
-              : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400'
-          }`}
+          className={`py-1.5 px-4 rounded-full text-center transition-all cursor-pointer ${ activeTab === 'active' ? 'bg-white text-neutral-955 shadow-xs' : 'text-neutral-500 hover:text-neutral-700 ' }`}
         >
           Active ({totalActive})
         </button>
         <button
           onClick={() => setActiveTab('completed')}
-          className={`py-1.5 px-4 rounded-full text-center transition-all cursor-pointer ${
-            activeTab === 'completed'
-              ? 'bg-white text-neutral-955 dark:bg-neutral-800 dark:text-white shadow-xs'
-              : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400'
-          }`}
+          className={`py-1.5 px-4 rounded-full text-center transition-all cursor-pointer ${ activeTab === 'completed' ? 'bg-white text-neutral-955 shadow-xs' : 'text-neutral-500 hover:text-neutral-700 ' }`}
         >
           Completed ({totalCompleted})
         </button>
@@ -107,7 +96,7 @@ export default function GoalsView() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="col-span-full flex flex-col items-center justify-center p-12 border border-dashed border-[var(--divider)] rounded-2xl bg-[var(--card-bg)]/20 text-neutral-400 text-center min-h-[250px]"
+              className="col-span-full flex flex-col items-center justify-center p-12 border border-dashed border-divider rounded-2xl bg-card-bg/20 text-neutral-400 text-center min-h-[250px]"
             >
               <Target className="w-8 h-8 stroke-1 mb-2.5 text-neutral-450" />
               <p className="text-sm font-bold text-neutral-600">No {activeTab} goals found.</p>
@@ -159,11 +148,11 @@ export default function GoalsView() {
                       <div className="space-y-1.5">
                         <div className="flex justify-between items-center text-xs font-bold text-neutral-450">
                           <span className="uppercase tracking-wider">Milestones progress</span>
-                          <span className="text-[var(--foreground)]">{progressPct}%</span>
+                          <span className="text-foreground">{progressPct}%</span>
                         </div>
-                        <div className="h-2 w-full bg-[var(--kbd-bg)] rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-kbd-bg rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-neutral-900 dark:bg-white rounded-full transition-all duration-300"
+                            className="h-full bg-neutral-900 rounded-full transition-all duration-300"
                             style={{ width: `${progressPct}%` }}
                           />
                         </div>
@@ -184,14 +173,12 @@ export default function GoalsView() {
                               className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-neutral-50 text-left transition-colors cursor-pointer group"
                             >
                               {m.completed ? (
-                                <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 dark:text-neutral-100 shrink-0 mt-0.5" />
+                                <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 shrink-0 mt-0.5" />
                               ) : (
-                                <Circle className="w-4.5 h-4.5 text-neutral-305 dark:text-neutral-600 group-hover:text-neutral-550 shrink-0 mt-0.5" />
+                                <Circle className="w-4.5 h-4.5 text-neutral-305 group-hover:text-neutral-550 shrink-0 mt-0.5" />
                               )}
                               <span
-                                className={`text-sm leading-normal font-bold ${
-                                  m.completed ? 'text-neutral-400 dark:text-neutral-500 line-through font-medium' : ''
-                                }`}
+                                className={`text-sm leading-normal font-bold ${ m.completed ? 'text-neutral-400 line-through font-medium' : '' }`}
                               >
                                 {m.title}
                               </span>
@@ -206,9 +193,9 @@ export default function GoalsView() {
                     )}
                   </div>
 
-                  <div className="border-t border-[var(--divider)] pt-3.5 mt-4 flex items-center justify-between text-[10px] md:text-xs font-bold text-neutral-400 select-none">
+                  <div className="border-t border-divider pt-3.5 mt-4 flex items-center justify-between text-[10px] md:text-xs font-bold text-neutral-400 select-none">
                     <span className="uppercase tracking-wider">Created</span>
-                    <span className="text-neutral-600 dark:text-neutral-400">{new Date(goal.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
+                    <span className="text-neutral-600">{new Date(goal.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
                   </div>
                 </motion.div>
               );
@@ -220,7 +207,7 @@ export default function GoalsView() {
       {/* Add Goal Dialog Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-[var(--card-bg)] border border-[var(--card-border)] p-6 rounded-2xl max-w-md w-full shadow-[var(--nav-shadow)] animate-in zoom-in-95 duration-120 max-h-[90vh] overflow-y-auto text-[var(--foreground)]">
+          <div className="bg-card-bg border border-card-border p-6 rounded-2xl max-w-md w-full shadow-nav-shadow animate-in zoom-in-95 duration-120 max-h-[90vh] overflow-y-auto text-foreground">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-extrabold text-sm flex items-center gap-2">
                 <Target className="w-4 h-4" />
@@ -267,7 +254,7 @@ export default function GoalsView() {
                   <button
                     type="button"
                     onClick={handleAddMilestoneField}
-                    className="text-sm font-bold text-neutral-800 dark:text-neutral-200 hover:text-black flex items-center gap-1 cursor-pointer"
+                    className="text-sm font-bold text-neutral-800 hover:text-black flex items-center gap-1 cursor-pointer"
                   >
                     <PlusCircle className="w-3.5 h-3.5" />
                     <span>Add</span>
@@ -288,7 +275,7 @@ export default function GoalsView() {
                         <button
                           type="button"
                           onClick={() => handleRemoveMilestoneField(idx)}
-                          className="p-2 border border-[var(--input-border)] text-neutral-400 hover:text-red-550 hover:border-red-200 rounded-full cursor-pointer shrink-0"
+                          className="p-2 border border-input-border text-neutral-400 hover:text-red-550 hover:border-red-200 rounded-full cursor-pointer shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

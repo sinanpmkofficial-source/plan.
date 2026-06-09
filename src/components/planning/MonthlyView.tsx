@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
+import PageHeader from '../layout/PageHeader';
 import {
   Calendar,
   ChevronLeft,
@@ -56,43 +57,47 @@ export default function MonthlyView() {
     return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
   };
 
-  return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)]">
-      {/* Month Navigation Header */}
-      <div className="flex items-center justify-between border-b border-[var(--divider)] pb-5">
-        <div className="space-y-1">
-          <span className="text-xs text-neutral-400 dark:text-neutral-500 uppercase tracking-wider font-extrabold">Monthly Planning</span>
-          <h3 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-neutral-800" />
-            <span>{formatMonthDisplay(selectedMonth)}</span>
-          </h3>
-        </div>
+  const completedMonthly = (plan.tasks || []).filter((t) => t.completed).length;
+  const monthlyTotal = (plan.tasks || []).length;
+  const progress = monthlyTotal > 0 ? Math.round((completedMonthly / monthlyTotal) * 100) : 0;
 
-        <div className="flex items-center gap-1 bg-[var(--kbd-bg)] rounded-full p-1.5 shadow-none">
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
+      {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
+      <PageHeader title={formatMonthDisplay(selectedMonth)}>
+        <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevMonth}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
+            title="Previous Month"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs md:text-sm font-extrabold px-3 text-neutral-800 dark:text-neutral-200 text-center select-none">
-            {selectedMonth}
-          </span>
+          <input
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setMonth(e.target.value)}
+            className="text-xs font-extrabold px-2 py-0.5 bg-transparent border-0 outline-none text-center cursor-pointer w-[95px]"
+            style={{ color: '#111111', colorScheme: 'light' }}
+          />
           <button
             onClick={handleNextMonth}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
+            title="Next Month"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
-      </div>
+      </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left Column: Monthly Objectives */}
         <div className="card-premium p-6 space-y-5">
-          <div className="space-y-1">
+          <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Monthly Objectives</h4>
-            <p className="text-xs md:text-sm text-neutral-500">Break down your long-term goals into monthly tasks.</p>
+            <span className="text-xs font-bold text-black select-none">
+              {progress}% completed
+            </span>
           </div>
 
           <form onSubmit={handleAddTask} className="flex gap-2">
@@ -114,7 +119,7 @@ export default function MonthlyView() {
 
           <div className="space-y-1 max-h-[300px] overflow-y-auto pr-1">
             {plan.tasks.length === 0 ? (
-              <div className="py-10 text-center text-neutral-455 dark:text-neutral-500 text-sm border border-dashed border-[var(--divider)] rounded-2xl">
+              <div className="py-10 text-center text-neutral-455 text-sm border border-dashed border-divider rounded-2xl">
                 No monthly objectives defined.
               </div>
             ) : (
@@ -125,14 +130,14 @@ export default function MonthlyView() {
                 >
                   <button
                     onClick={() => toggleMonthlyTask(selectedMonth, task.id)}
-                    className="flex items-start gap-2.5 text-left text-sm font-bold text-neutral-700 dark:text-neutral-300 w-full cursor-pointer select-none"
+                    className="flex items-start gap-2.5 text-left text-sm font-bold text-neutral-700 w-full cursor-pointer select-none"
                   >
                     {task.completed ? (
-                      <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 dark:text-neutral-100 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 shrink-0 mt-0.5" />
                     ) : (
-                      <Circle className="w-4.5 h-4.5 text-neutral-300 dark:text-neutral-600 group-hover:text-neutral-550 shrink-0 mt-0.5" />
+                      <Circle className="w-4.5 h-4.5 text-neutral-300 group-hover:text-neutral-550 shrink-0 mt-0.5" />
                     )}
-                    <span className={task.completed ? 'text-neutral-400 dark:text-neutral-505 line-through font-medium' : ''}>
+                    <span className={task.completed ? 'text-neutral-400  line-through font-medium' : ''}>
                       {task.text}
                     </span>
                   </button>
@@ -160,7 +165,6 @@ export default function MonthlyView() {
               <FileText className="w-4 h-4 text-neutral-550" />
               <span>Monthly Reflection</span>
             </h4>
-            <p className="text-xs md:text-sm text-neutral-500">Record achievements, challenges, and core improvements.</p>
           </div>
 
           <textarea

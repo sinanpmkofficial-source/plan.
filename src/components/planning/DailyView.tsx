@@ -59,14 +59,18 @@ export default function DailyView() {
     });
   };
 
+  const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
+  const completedBullets = bulletTasks.filter((t) => t.completed).length;
+  const progress = bulletTasks.length > 0 ? Math.round((completedBullets / bulletTasks.length) * 100) : 0;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-[var(--foreground)] pb-10">
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
       <PageHeader title={formatDayDisplay(selectedDate)}>
-        <div className="flex items-center gap-1 bg-[var(--kbd-bg)] rounded-full p-1 shadow-none">
+        <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevDay}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-450 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
             title="Previous Day"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -80,7 +84,7 @@ export default function DailyView() {
           />
           <button
             onClick={handleNextDay}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 dark:text-neutral-450 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
             title="Next Day"
           >
             <ChevronRight className="w-4 h-4" />
@@ -91,25 +95,21 @@ export default function DailyView() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left Column: Bullet Journal Daily Log */}
         <div className="card-premium p-6 space-y-5">
-          <div className="space-y-1">
+          <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Daily Log</h4>
-            <p className="text-xs md:text-sm text-neutral-500">
-              Log entries: task <span className="font-bold">•</span>, note <span className="font-bold">—</span>, or event <span className="font-bold">○</span>.
-            </p>
+            <span className="text-xs font-bold text-black select-none">
+              {progress}% completed
+            </span>
           </div>
 
           {/* Segmented Control Selector */}
-          <div className="bg-[var(--kbd-bg)] p-1 rounded-full flex gap-1 text-xs font-bold select-none">
+          <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
             {(['task', 'note', 'event'] as const).map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setBulletType(type)}
-                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${
-                  bulletType === type
-                    ? 'bg-white text-neutral-950 dark:bg-neutral-800 dark:text-white shadow-xs'
-                    : 'text-neutral-500 hover:text-neutral-700'
-                }`}
+                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-white text-neutral-950 shadow-xs' : 'text-neutral-500 hover:text-neutral-700' }`}
               >
                 {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
               </button>
@@ -141,7 +141,7 @@ export default function DailyView() {
 
           <div className="space-y-1.5 max-h-[350px] overflow-y-auto pr-1">
             {plan.bulletNotes.length === 0 ? (
-              <div className="py-12 text-center text-neutral-450 text-sm border border-dashed border-[var(--divider)] rounded-2xl font-bold">
+              <div className="py-12 text-center text-neutral-450 text-sm border border-dashed border-divider rounded-2xl font-bold">
                 Daily Log is empty. Add a task or note above!
               </div>
             ) : (
@@ -172,11 +172,7 @@ export default function DailyView() {
                     )}
 
                     <span
-                      className={`text-sm break-words leading-relaxed font-bold ${
-                        note.type === 'task' && note.completed
-                          ? 'text-neutral-400 line-through font-medium'
-                          : 'text-neutral-850'
-                      }`}
+                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
                     >
                       {note.text}
                     </span>
@@ -184,7 +180,7 @@ export default function DailyView() {
 
                   <button
                     onClick={() => deleteBulletNote(selectedDate, note.id)}
-                    className="p-1 hover:bg-neutral-100 text-neutral-450 hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100 shrink-0 cursor-pointer"
+                    className="p-1 hover:bg-neutral-100 text-neutral-450 hover:text-red-500 rounded-full transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 shrink-0 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

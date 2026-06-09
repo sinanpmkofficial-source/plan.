@@ -84,6 +84,11 @@ interface PlannerState {
   toggleMonthlyTask: (monthId: string, taskId: string) => void;
   deleteMonthlyTask: (monthId: string, taskId: string) => void;
   updateMonthlyReflection: (monthId: string, reflection: string) => void;
+
+  // Toast Notifications
+  toast: { message: string; type: 'success' | 'delete' } | null;
+  showToast: (message: string, type?: 'success' | 'delete') => void;
+  hideToast: () => void;
 }
 
 // Helper: Calculate Daily Performance Score (0 - 100)
@@ -106,6 +111,18 @@ export function calculateDailyScore(plan: DailyPlan): number {
 
 // Debounce timer for background syncing
 let syncTimeout: NodeJS.Timeout | null = null;
+
+function getWeekIdFromDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
+function getMonthIdFromDate(dateStr: string): string {
+  return dateStr.slice(0, 7);
+}
 
 export const usePlannerStore = create<PlannerState>((set, get) => {
   // Helper: Mark entity as dirty and schedule sync
@@ -179,6 +196,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     syncStatus: 'saved',
     syncErrorMsg: null,
     isLoading: true,
+    toast: null,
 
     dirtyBrainDump: new Set(),
     dirtyGoals: new Set(),
@@ -299,6 +317,18 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     setWeek: (week) => set({ selectedWeek: week }),
     setMonth: (month) => set({ selectedMonth: month }),
 
+    // Toast Actions
+    showToast: (message, type = 'success') => {
+      set({ toast: { message, type } });
+      setTimeout(() => {
+        const currentToast = get().toast;
+        if (currentToast && currentToast.message === message) {
+          get().hideToast();
+        }
+      }, 3000);
+    },
+    hideToast: () => set({ toast: null }),
+
     // Brain Dump Actions
     addBrainDumpItem: (text) => {
       const newItem: BrainDumpItem = {
@@ -314,10 +344,12 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteBrainDumpItem: (id) => {
+      const text = get().brainDump.find((item) => item.id === id)?.text || 'Thought';
       set((state) => ({
         brainDump: state.brainDump.filter((item) => item.id !== id),
       }));
       markDirty('brainDump', id);
+      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     convertBrainDumpItem: (id, type, targetValue) => {
@@ -407,10 +439,12 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteGoal: (id) => {
+      const title = get().goals.find((g) => g.id === id)?.title || 'Goal';
       set((state) => ({
         goals: state.goals.filter((g) => g.id !== id),
       }));
       markDirty('goals', id);
+      get().showToast(`"${title.slice(0, 20)}${title.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     toggleMilestone: (goalId, milestoneId) => {
@@ -462,6 +496,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteDailyTask: (date, taskId) => {
+      const plan = get().dailyPlans[date];
+      const task = plan?.tasks?.find((t) => t.id === taskId);
+      const text = task?.text || 'Daily task';
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
         plan.tasks = plan.tasks.filter((t) => t.id !== taskId);
@@ -470,6 +507,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
       });
       markDirty('dailyPlans', date);
+      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     addBulletNote: (date, type, text) => {
@@ -484,7 +522,28 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         plan.bulletNotes = [...plan.bulletNotes, newNote];
         plan.score = calculateDailyScore(plan);
         plan.updatedAt = new Date().toISOString();
-        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
+
+        const updatedState: any = {
+          dailyPlans: { ...state.dailyPlans, [date]: plan }
+        };
+
+        // Propagate to Weekly Plan
+        const weekId = getWeekIdFromDate(date);
+        const weeklyPlan = getOrCreateWeeklyPlanFn(state, weekId);
+        weeklyPlan.tasks = [...weeklyPlan.tasks, { id: crypto.randomUUID(), text, completed: false }];
+        weeklyPlan.updatedAt = new Date().toISOString();
+        updatedState.weeklyPlans = { ...state.weeklyPlans, [weekId]: weeklyPlan };
+        setTimeout(() => markDirty('weeklyPlans', weekId), 0);
+
+        // Propagate to Monthly Plan
+        const monthId = getMonthIdFromDate(date);
+        const monthlyPlan = getOrCreateMonthlyPlanFn(state, monthId);
+        monthlyPlan.tasks = [...monthlyPlan.tasks, { id: crypto.randomUUID(), text, completed: false }];
+        monthlyPlan.updatedAt = new Date().toISOString();
+        updatedState.monthlyPlans = { ...state.monthlyPlans, [monthId]: monthlyPlan };
+        setTimeout(() => markDirty('monthlyPlans', monthId), 0);
+
+        return updatedState;
       });
       markDirty('dailyPlans', date);
     },
@@ -503,6 +562,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteBulletNote: (date, noteId) => {
+      const plan = get().dailyPlans[date];
+      const note = plan?.bulletNotes?.find((n) => n.id === noteId);
+      const text = note?.text || 'Daily note';
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
         plan.bulletNotes = plan.bulletNotes.filter((n) => n.id !== noteId);
@@ -511,6 +573,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
       });
       markDirty('dailyPlans', date);
+      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     updateDailyReflection: (date, reflection) => {
@@ -564,6 +627,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteWeeklyTask: (weekId, taskId) => {
+      const plan = get().weeklyPlans[weekId];
+      const task = plan?.tasks?.find((t) => t.id === taskId);
+      const text = task?.text || 'Weekly task';
       set((state) => {
         const plan = getOrCreateWeeklyPlanFn(state, weekId);
         plan.tasks = plan.tasks.filter((t) => t.id !== taskId);
@@ -571,6 +637,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
       });
       markDirty('weeklyPlans', weekId);
+      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     updateWeeklyReflection: (weekId, reflection) => {
@@ -609,6 +676,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     deleteMonthlyTask: (monthId, taskId) => {
+      const plan = get().monthlyPlans[monthId];
+      const task = plan?.tasks?.find((t) => t.id === taskId);
+      const text = task?.text || 'Monthly objective';
       set((state) => {
         const plan = getOrCreateMonthlyPlanFn(state, monthId);
         plan.tasks = plan.tasks.filter((t) => t.id !== taskId);
@@ -616,6 +686,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
       });
       markDirty('monthlyPlans', monthId);
+      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
     updateMonthlyReflection: (monthId, reflection) => {

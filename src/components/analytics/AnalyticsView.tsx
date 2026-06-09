@@ -70,18 +70,12 @@ export default function AnalyticsView() {
           isReal: true,
         });
       } else {
-        // Mock data to keep the analytics beautiful on initial startup
-        const mockScores = [65, 70, 85, 50, 90, 75, 80];
-        const mockPrayers = [3, 4, 5, 2, 5, 4, 4];
-        const mockTasksDone = [1, 2, 3, 0, 4, 2, 3];
-        const mockTasksTotal = [2, 3, 3, 2, 4, 3, 4];
-        
         data.push({
           date: label,
-          score: mockScores[i % 7],
-          prayers: mockPrayers[i % 7],
-          tasksCompleted: mockTasksDone[i % 7],
-          tasksTotal: mockTasksTotal[i % 7],
+          score: 0,
+          prayers: 0,
+          tasksCompleted: 0,
+          tasksTotal: 0,
           isReal: false,
         });
       }
@@ -111,16 +105,16 @@ export default function AnalyticsView() {
       }
     }
 
-    // Fallback to mock percentages if no real logs exist
+    // Fallback to zero if no real logs exist
     const useReal = realDaysCount > 0;
     const denom = useReal ? realDaysCount : 1;
 
     return [
-      { name: 'Fajr', rate: useReal ? Math.round((counts.fajr / denom) * 100) : 75 },
-      { name: 'Dhuhr', rate: useReal ? Math.round((counts.dhuhr / denom) * 100) : 85 },
-      { name: 'Asr', rate: useReal ? Math.round((counts.asr / denom) * 100) : 70 },
-      { name: 'Maghrib', rate: useReal ? Math.round((counts.maghrib / denom) * 100) : 90 },
-      { name: 'Isha', rate: useReal ? Math.round((counts.isha / denom) * 100) : 95 },
+      { name: 'Fajr', rate: useReal ? Math.round((counts.fajr / denom) * 100) : 0 },
+      { name: 'Dhuhr', rate: useReal ? Math.round((counts.dhuhr / denom) * 100) : 0 },
+      { name: 'Asr', rate: useReal ? Math.round((counts.asr / denom) * 100) : 0 },
+      { name: 'Maghrib', rate: useReal ? Math.round((counts.maghrib / denom) * 100) : 0 },
+      { name: 'Isha', rate: useReal ? Math.round((counts.isha / denom) * 100) : 0 },
     ];
   };
 
@@ -174,7 +168,6 @@ export default function AnalyticsView() {
         <div className="card-premium p-6 bg-white space-y-4">
           <div>
             <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Performance Trend</h4>
-            <p className="text-xs text-neutral-500">Your daily score over the last 7 days.</p>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -204,7 +197,6 @@ export default function AnalyticsView() {
         <div className="card-premium p-6 bg-white space-y-4">
           <div>
             <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Prayer Consistency</h4>
-            <p className="text-xs text-neutral-500">Completion percentages over the last 14 days.</p>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -233,14 +225,14 @@ export default function AnalyticsView() {
           Your daily performance score is dynamically computed out of 100 points based on two core categories:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-          <div className="p-4 bg-neutral-50 rounded-xl border border-[var(--divider)] space-y-1">
+          <div className="p-4 bg-neutral-50 rounded-xl border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Spiritual Tracker (50%)</span>
             <p className="text-sm font-bold text-neutral-800">5-Time Prayers Consistency</p>
             <p className="text-xs text-neutral-500 leading-relaxed font-semibold">
               Earn 10 points for each prayer logged (Fajr, Dhuhr, Asr, Maghrib, Isha) up to a maximum of 50 points.
             </p>
           </div>
-          <div className="p-4 bg-neutral-50 rounded-xl border border-[var(--divider)] space-y-1">
+          <div className="p-4 bg-neutral-50 rounded-xl border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Today's Tasks (50%)</span>
             <p className="text-sm font-bold text-neutral-800">Bullet Journal Task Completion</p>
             <p className="text-xs text-neutral-500 leading-relaxed font-semibold">

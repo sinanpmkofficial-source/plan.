@@ -34,6 +34,21 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-button-hover: var(--button-hover);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-focus-ring: var(--input-focus-ring);
+  --color-input-focus-border: var(--input-focus-border);
+  --color-kbd-bg: var(--kbd-bg);
+  --color-kbd-border: var(--kbd-border);
+  --color-kbd-text: var(--kbd-text);
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-border: var(--nav-border);
+  --color-divider: var(--divider);
+  --shadow-nav-shadow: var(--nav-shadow);
+  
   --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-geist-mono);
   

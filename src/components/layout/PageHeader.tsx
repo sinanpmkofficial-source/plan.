@@ -33,7 +33,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--divider)] pb-5 mb-8">
+    <div className="sticky top-0 bg-background/95 backdrop-blur-xs z-30 pt-2 pb-5 mb-8 border-b border-divider flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
         <div className="space-y-0.5">
           <h3 className="text-2xl font-black tracking-tight">{title}</h3>
@@ -41,17 +41,19 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
         {children}
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto select-none">
+      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3.5 w-full sm:w-auto select-none">
+
+
         {/* Sync Status Badge */}
         {syncStatus === 'syncing' && (
-          <div className="flex items-center gap-1.5 text-xs text-neutral-450 font-bold">
+          <div className="flex items-center gap-1.5 text-xs text-neutral-455 font-bold">
             <Loader2 className="w-3 h-3 animate-spin" />
             <span>Saving...</span>
           </div>
         )}
         {syncStatus === 'saved' && (
-          <div className="flex items-center gap-1.5 text-xs text-neutral-450 font-bold">
-            <Check className="w-3.5 h-3.5 text-neutral-450" />
+          <div className="flex items-center gap-1.5 text-xs text-neutral-455 font-bold">
+            <Check className="w-3.5 h-3.5 text-neutral-455" />
             <span>Saved</span>
           </div>
         )}
@@ -75,7 +77,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
             onMouseEnter={() => setShowScoreInfo(true)}
             onMouseLeave={() => setShowScoreInfo(false)}
             onClick={() => setShowScoreInfo((prev) => !prev)}
-            className="flex items-center gap-1.5 py-1 px-3 rounded-full border border-[var(--input-border)] bg-[var(--kbd-bg)] hover:bg-neutral-100 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 py-1 px-3 rounded-full border border-input-border bg-kbd-bg hover:bg-neutral-100 transition-all cursor-pointer"
           >
             <Award className="w-3.5 h-3.5 text-neutral-900" />
             <span className="text-xs font-extrabold text-neutral-900">
@@ -85,8 +87,8 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
 
           {/* Breakdown popup */}
           {showScoreInfo && (
-            <div className="absolute right-0 mt-2.5 w-52 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl p-4 shadow-[var(--nav-shadow)] z-50 text-xs text-[var(--foreground)]">
-              <h4 className="font-bold mb-2 flex items-center gap-1 border-b border-[var(--divider)] pb-1.5">
+            <div className="absolute right-0 mt-2.5 w-52 bg-card-bg border border-card-border rounded-2xl p-4 shadow-nav-shadow z-50 text-xs text-foreground">
+              <h4 className="font-bold mb-2 flex items-center gap-1 border-b border-divider pb-1.5">
                 <Info className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Score Breakdown</span>
               </h4>
@@ -99,7 +101,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
                   <span>Daily Tasks</span>
                   <span>{taskScore}/50</span>
                 </div>
-                <div className="border-t border-[var(--divider)] pt-1.5 flex justify-between font-extrabold text-[var(--foreground)]">
+                <div className="border-t border-divider pt-1.5 flex justify-between font-extrabold text-foreground">
                   <span>Total Score</span>
                   <span>{score} / 100</span>
                 </div>

@@ -53,9 +53,9 @@ export default function SyncIndicator() {
   const reflectionScore = dailyPlan.reflection && dailyPlan.reflection.trim().length > 0 ? 10 : 0;
 
   return (
-    <header className="h-16 border-b border-[var(--divider)] bg-[var(--card-bg)] px-4 md:px-8 flex items-center justify-between shrink-0 sticky top-0 z-30 transition-colors duration-300">
+    <header className="h-16 border-b border-divider bg-card-bg px-4 md:px-8 flex items-center justify-between shrink-0 sticky top-0 z-30 transition-colors duration-300">
       <div>
-        <h2 className="font-semibold text-sm md:text-base text-[var(--foreground)] tracking-tight">
+        <h2 className="font-semibold text-sm md:text-base text-foreground tracking-tight">
           {viewTitles[currentView] || 'Planner'}
         </h2>
       </div>
@@ -82,7 +82,7 @@ export default function SyncIndicator() {
               </span>
               <button
                 onClick={retrySync}
-                className="p-1 hover:bg-[var(--button-hover)] rounded text-neutral-500 hover:text-[var(--foreground)] transition-colors cursor-pointer"
+                className="p-1 hover:bg-button-hover rounded text-neutral-500 hover:text-foreground transition-colors cursor-pointer"
                 title="Retry Sync"
               >
                 <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5" />
@@ -97,39 +97,39 @@ export default function SyncIndicator() {
             onMouseEnter={() => setShowScoreInfo(true)}
             onMouseLeave={() => setShowScoreInfo(false)}
             onClick={() => setShowScoreInfo((prev) => !prev)}
-            className="flex items-center gap-1.5 py-1 px-2.5 rounded-full border border-[var(--input-border)] bg-[var(--kbd-bg)] hover:bg-[var(--button-hover)] transition-all select-none cursor-pointer group"
+            className="flex items-center gap-1.5 py-1 px-2.5 rounded-full border border-input-border bg-kbd-bg hover:bg-button-hover transition-all select-none cursor-pointer group"
           >
-            <Award className="w-3.5 h-3.5 text-[var(--foreground)] transition-transform group-hover:scale-105" />
-            <span className="text-[10px] md:text-xs font-bold text-[var(--foreground)]">
+            <Award className="w-3.5 h-3.5 text-foreground transition-transform group-hover:scale-105" />
+            <span className="text-[10px] md:text-xs font-bold text-foreground">
               Score: {score}
             </span>
           </button>
 
           {/* Tooltip Breakdown */}
           {showScoreInfo && (
-            <div className="absolute right-0 mt-2.5 w-56 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-4 shadow-[var(--nav-shadow)] z-50 text-[11px] animate-in fade-in duration-100 text-[var(--foreground)]">
-              <h4 className="font-bold mb-2.5 flex items-center gap-1.5 border-b border-[var(--divider)] pb-1.5">
+            <div className="absolute right-0 mt-2.5 w-56 bg-card-bg border border-card-border rounded-xl p-4 shadow-nav-shadow z-50 text-[11px] animate-in fade-in duration-100 text-foreground">
+              <h4 className="font-bold mb-2.5 flex items-center gap-1.5 border-b border-divider pb-1.5">
                 <Info className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Score Breakdown</span>
               </h4>
-              <div className="space-y-2 text-neutral-500 dark:text-neutral-400">
+              <div className="space-y-2 text-neutral-500">
                 <div className="flex justify-between">
                   <span>Prayers ({prayersCount}/5)</span>
-                  <span className="font-bold text-[var(--foreground)]">{prayerScore}/50</span>
+                  <span className="font-bold text-foreground">{prayerScore}/50</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Focus Tasks</span>
-                  <span className="font-bold text-[var(--foreground)]">{taskScore}/30</span>
+                  <span className="font-bold text-foreground">{taskScore}/30</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Journal Action</span>
-                  <span className="font-bold text-[var(--foreground)]">{bulletScore}/10</span>
+                  <span className="font-bold text-foreground">{bulletScore}/10</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Reflection Daily</span>
-                  <span className="font-bold text-[var(--foreground)]">{reflectionScore}/10</span>
+                  <span className="font-bold text-foreground">{reflectionScore}/10</span>
                 </div>
-                <div className="border-t border-[var(--divider)] pt-2 flex justify-between font-bold text-[var(--foreground)]">
+                <div className="border-t border-divider pt-2 flex justify-between font-bold text-foreground">
                   <span>Daily Total</span>
                   <span>{score} / 100</span>
                 </div>
