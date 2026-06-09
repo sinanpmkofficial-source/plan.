@@ -67,9 +67,9 @@ export default function GoalsView() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="button-premium text-xs md:text-sm"
+          className="button-premium text-xs md:text-sm whitespace-nowrap shrink-0"
         >
-          <Plus className="w-4 h-4" stroke="#ffffff" />
+          <Plus className="w-4 h-4" color="white" stroke="white" />
           <span>New Goal</span>
         </button>
       </div>
