@@ -256,7 +256,7 @@ export default function GoalsView() {
                   onChange={(e) => setNewDesc(e.target.value)}
                   placeholder="Details, resources or key outcomes..."
                   rows={2}
-                  className="w-full input-premium text-sm font-semibold resize-none rounded-xl"
+                  className="w-full textarea-premium text-sm font-semibold resize-none"
                 />
               </div>
 

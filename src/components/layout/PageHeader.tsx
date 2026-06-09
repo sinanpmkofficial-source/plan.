@@ -34,14 +34,14 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--divider)] pb-5 mb-8">
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
         <div className="space-y-0.5">
           <h3 className="text-2xl font-black tracking-tight">{title}</h3>
         </div>
         {children}
       </div>
 
-      <div className="flex items-center gap-3 select-none">
+      <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto select-none">
         {/* Sync Status Badge */}
         {syncStatus === 'syncing' && (
           <div className="flex items-center gap-1.5 text-xs text-neutral-450 font-bold">

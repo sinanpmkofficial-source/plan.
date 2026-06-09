@@ -12,6 +12,7 @@ import {
   Circle,
   FileText,
 } from 'lucide-react';
+import AssignDateButton from './AssignDateButton';
 
 export default function WeeklyView() {
   const {
@@ -147,12 +148,18 @@ export default function WeeklyView() {
                       {task.text}
                     </span>
                   </button>
-                  <button
-                    onClick={() => deleteWeeklyTask(selectedWeek, task.id)}
-                    className="p-1.5 hover:bg-neutral-100 text-neutral-450 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  
+                  <div className="flex items-center gap-1 shrink-0">
+                    <AssignDateButton taskText={task.text} />
+
+                    <button
+                      onClick={() => deleteWeeklyTask(selectedWeek, task.id)}
+                      className="p-1.5 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
+                      title="Delete Task"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -174,7 +181,7 @@ export default function WeeklyView() {
             onChange={(e) => updateWeeklyReflection(selectedWeek, e.target.value)}
             placeholder="Review this week. What was achieved? What challenges occurred?"
             rows={10}
-            className="w-full input-premium text-sm font-semibold resize-none leading-relaxed p-3.5 rounded-2xl"
+            className="w-full textarea-premium text-sm font-semibold resize-none leading-relaxed"
           />
         </div>
       </div>

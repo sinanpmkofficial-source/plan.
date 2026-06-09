@@ -131,49 +131,7 @@ export default function AnalyticsView() {
   const averageScore = Math.round(trendData.reduce((acc, curr) => acc + curr.score, 0) / trendData.length);
   const averagePrayers = (trendData.reduce((acc, curr) => acc + curr.prayers, 0) / trendData.length).toFixed(1);
 
-  // Generate automated report insights
-  const generateInsights = () => {
-    const insights = [];
-    if (averageScore >= 80) {
-      insights.push({
-        type: 'success',
-        text: `Excellent planning performance: Your average score is ${averageScore}. You are maintaining an optimal balance.`,
-      });
-    } else if (averageScore >= 60) {
-      insights.push({
-        type: 'info',
-        text: `Steady pace: Your score average is ${averageScore}. Try completing 1 extra task or checking a reflection to break 80.`,
-      });
-    } else {
-      insights.push({
-        type: 'warning',
-        text: `Focus needed: Average score is ${averageScore}. Increase focus on Fajr prayer and check off inbox brain dump items.`,
-      });
-    }
 
-    // Find lowest prayer
-    const sortedPrayers = [...prayerData].sort((a, b) => a.rate - b.rate);
-    const lowest = sortedPrayers[0];
-    const highest = sortedPrayers[sortedPrayers.length - 1];
-
-    insights.push({
-      type: 'info',
-      text: `Spiritual Consistency: Outstanding habit on ${highest.name} (${highest.rate}%). Consider setting a reminder for ${lowest.name} (${lowest.rate}%).`,
-    });
-
-    // Goals progress
-    const activeGoals = goals.filter((g) => g.status === 'active');
-    if (activeGoals.length > 0) {
-      insights.push({
-        type: 'success',
-        text: `Goals tracking: You have ${activeGoals.length} active objectives in progress. Make sure milestones are reviewed daily.`,
-      });
-    }
-
-    return insights;
-  };
-
-  const insights = generateInsights();
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200">
@@ -265,66 +223,30 @@ export default function AnalyticsView() {
         </div>
       </div>
 
-      {/* Goals Progress Bars */}
-      <div className="card-premium p-6 bg-white space-y-4">
-        <div>
-          <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Objectives Status</h4>
-          <p className="text-xs text-neutral-500">Milestone completion rates across active goals.</p>
-        </div>
-        <div className="space-y-4">
-          {goals.filter((g) => g.status === 'active').length === 0 ? (
-            <div className="py-6 text-center text-xs text-neutral-400 font-medium">
-              No active goals in progress. Define them in the Goals tab.
-            </div>
-          ) : (
-            goals
-              .filter((g) => g.status === 'active')
-              .map((goal) => {
-                const total = goal.milestones.length;
-                const completed = goal.milestones.filter((m) => m.completed).length;
-                const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-                return (
-                  <div key={goal.id} className="space-y-2">
-                    <div className="flex justify-between text-xs font-semibold text-neutral-700">
-                      <span>{goal.title}</span>
-                      <span>{pct}% ({completed}/{total})</span>
-                    </div>
-                    <div className="h-2 w-full bg-neutral-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-neutral-900 rounded-full transition-all duration-300"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })
-          )}
-        </div>
-      </div>
-
-      {/* Dynamic Insights Report Card */}
+      {/* Score Calculation Guide */}
       <div className="card-premium p-6 bg-white space-y-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-neutral-800" />
-          <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Performance Report & Insights</h4>
+          <Award className="w-4.5 h-4.5 text-neutral-800" />
+          <h4 className="font-extrabold text-sm text-neutral-900 tracking-tight">Performance Score Calculation</h4>
         </div>
-        <div className="space-y-3">
-          {insights.map((insight, index) => (
-            <div
-              key={index}
-              className={`p-3.5 rounded-lg border text-xs font-medium leading-relaxed flex items-start gap-3 ${
-                insight.type === 'success'
-                  ? 'bg-neutral-55/40 border-neutral-150 text-neutral-900'
-                  : insight.type === 'warning'
-                  ? 'bg-red-50/20 border-red-100 text-red-700'
-                  : 'bg-neutral-50 border-neutral-200 text-neutral-700'
-              }`}
-            >
-              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-              <span>{insight.text}</span>
-            </div>
-          ))}
+        <p className="text-xs md:text-sm text-neutral-500 font-semibold leading-relaxed">
+          Your daily performance score is dynamically computed out of 100 points based on two core categories:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div className="p-4 bg-neutral-50 rounded-xl border border-[var(--divider)] space-y-1">
+            <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Spiritual Tracker (50%)</span>
+            <p className="text-sm font-bold text-neutral-800">5-Time Prayers Consistency</p>
+            <p className="text-xs text-neutral-500 leading-relaxed font-semibold">
+              Earn 10 points for each prayer logged (Fajr, Dhuhr, Asr, Maghrib, Isha) up to a maximum of 50 points.
+            </p>
+          </div>
+          <div className="p-4 bg-neutral-50 rounded-xl border border-[var(--divider)] space-y-1">
+            <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Today's Tasks (50%)</span>
+            <p className="text-sm font-bold text-neutral-800">Bullet Journal Task Completion</p>
+            <p className="text-xs text-neutral-500 leading-relaxed font-semibold">
+              Earn points based on the completion percentage of your logged tasks, up to a maximum of 50 points.
+            </p>
+          </div>
         </div>
       </div>
     </div>

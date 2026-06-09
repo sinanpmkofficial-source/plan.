@@ -12,6 +12,7 @@ import {
   Circle,
   FileText,
 } from 'lucide-react';
+import AssignDateButton from './AssignDateButton';
 
 export default function MonthlyView() {
   const {
@@ -135,12 +136,17 @@ export default function MonthlyView() {
                       {task.text}
                     </span>
                   </button>
-                  <button
-                    onClick={() => deleteMonthlyTask(selectedMonth, task.id)}
-                    className="p-1.5 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <AssignDateButton taskText={task.text} />
+
+                    <button
+                      onClick={() => deleteMonthlyTask(selectedMonth, task.id)}
+                      className="p-1.5 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
+                      title="Delete Task"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -162,7 +168,7 @@ export default function MonthlyView() {
             onChange={(e) => updateMonthlyReflection(selectedMonth, e.target.value)}
             placeholder="Write your reflection here... What worked? What needs adjustment?"
             rows={10}
-            className="w-full input-premium text-sm font-semibold resize-none leading-relaxed p-3.5 rounded-2xl"
+            className="w-full textarea-premium text-sm font-semibold resize-none leading-relaxed"
           />
         </div>
       </div>
