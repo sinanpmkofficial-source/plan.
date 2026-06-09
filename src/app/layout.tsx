@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Plan — Personal Operating System",
   description: "A minimalist personal planning system combining Brain Dump, Goals, Monthly/Weekly/Daily planning, 5-Time Prayer tracking, and Performance Analytics.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
