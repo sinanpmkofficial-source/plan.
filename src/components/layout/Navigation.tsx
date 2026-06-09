@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -16,74 +16,13 @@ export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Silent Keyboard Navigation Listeners (No UI modal)
-  useEffect(() => {
-    let keysPressed: Record<string, boolean> = {};
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) {
-        if (e.key === 'Escape') {
-          (e.target as HTMLElement).blur();
-        }
-        return;
-      }
-
-      keysPressed[e.key.toLowerCase()] = true;
-
-      if (e.key === '/') {
-        e.preventDefault();
-        router.push('/braindump');
-        setTimeout(() => {
-          const input = document.getElementById('quick-brain-dump-input');
-          if (input) input.focus();
-        }, 50);
-        return;
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      if (keysPressed['g']) {
-        if (key === 'd') {
-          e.preventDefault();
-          router.push('/');
-        } else if (key === 'b') {
-          e.preventDefault();
-          router.push('/braindump');
-        } else if (key === 'g') {
-          e.preventDefault();
-          router.push('/goals');
-        } else if (key === 'w') {
-          e.preventDefault();
-          router.push('/weekly');
-        } else if (key === 'm') {
-          e.preventDefault();
-          router.push('/monthly');
-        } else if (key === 'a') {
-          e.preventDefault();
-          router.push('/analytics');
-        }
-      }
-
-      delete keysPressed[key];
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [router]);
-
   const navItems = [
-    { id: 'daily', label: 'Today', mobileLabel: 'Today', icon: Clock, shortcut: 'g d', path: '/' },
-    { id: 'braindump', label: 'Brain Dump', mobileLabel: 'Dump', icon: Inbox, shortcut: 'g b', path: '/braindump' },
-    { id: 'goals', label: 'Goals System', mobileLabel: 'Goals', icon: Target, shortcut: 'g g', path: '/goals' },
-    { id: 'weekly', label: 'Weekly Plan', mobileLabel: 'Weekly', icon: CalendarDays, shortcut: 'g w', path: '/weekly' },
-    { id: 'monthly', label: 'Monthly Plan', mobileLabel: 'Monthly', icon: Calendar, shortcut: 'g m', path: '/monthly' },
-    { id: 'analytics', label: 'Analytics', mobileLabel: 'Stats', icon: BarChart3, shortcut: 'g a', path: '/analytics' },
+    { id: 'daily', label: 'Today', mobileLabel: 'Today', icon: Clock, path: '/' },
+    { id: 'braindump', label: 'Brain Dump', mobileLabel: 'Dump', icon: Inbox, path: '/braindump' },
+    { id: 'goals', label: 'Goals System', mobileLabel: 'Goals', icon: Target, path: '/goals' },
+    { id: 'weekly', label: 'Weekly Plan', mobileLabel: 'Weekly', icon: CalendarDays, path: '/weekly' },
+    { id: 'monthly', label: 'Monthly Plan', mobileLabel: 'Monthly', icon: Calendar, path: '/monthly' },
+    { id: 'analytics', label: 'Analytics', mobileLabel: 'Stats', icon: BarChart3, path: '/analytics' },
   ];
 
   return (
@@ -116,9 +55,6 @@ export default function Navigation() {
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{item.label}</span>
                   </div>
-                  <kbd className={`text-[9px] font-mono px-1.5 py-0.5 rounded transition-colors ${ isActive ? 'bg-neutral-800 text-neutral-300 ' : 'bg-kbd-bg text-neutral-500' }`}>
-                    {item.shortcut}
-                  </kbd>
                 </Link>
               );
             })}
