@@ -48,6 +48,7 @@ export interface DailyPlan {
 export interface WeeklyPlan {
   weekId: string; // YYYY-Www (e.g., 2026-W24)
   tasks: { id: string; text: string; completed: boolean }[];
+  bulletNotes: BulletNote[];
   reflection: string;
   updatedAt: string; // ISO string
 }
@@ -55,6 +56,7 @@ export interface WeeklyPlan {
 export interface MonthlyPlan {
   monthId: string; // YYYY-MM
   tasks: { id: string; text: string; completed: boolean }[];
+  bulletNotes: BulletNote[];
   reflection: string;
   updatedAt: string; // ISO string
 }

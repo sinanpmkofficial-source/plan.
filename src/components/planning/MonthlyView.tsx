@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import PageHeader from '../layout/PageHeader';
 import {
-  Calendar,
+  MapPin,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -27,6 +27,7 @@ export default function MonthlyView() {
   } = usePlannerStore();
 
   const [newTaskInput, setNewTaskInput] = useState('');
+  const [bulletType, setBulletType] = useState<'task' | 'note' | 'event'>('task');
 
   const plan = getOrCreateMonthlyPlan(selectedMonth);
 
@@ -47,13 +48,13 @@ export default function MonthlyView() {
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskInput.trim()) return;
-    addMonthlyTask(selectedMonth, newTaskInput.trim());
+    addMonthlyTask(selectedMonth, bulletType, newTaskInput.trim());
     setNewTaskInput('');
   };
 
-  const completedMonthly = (plan.tasks || []).filter((t) => t.completed).length;
-  const monthlyTotal = (plan.tasks || []).length;
-  const progress = monthlyTotal > 0 ? Math.round((completedMonthly / monthlyTotal) * 100) : 0;
+  const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
+  const completedMonthly = bulletTasks.filter((t) => t.completed).length;
+  const progress = bulletTasks.length > 0 ? Math.round((completedMonthly / bulletTasks.length) * 100) : 0;
 
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
@@ -85,13 +86,27 @@ export default function MonthlyView() {
       </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left Column: Monthly Objectives */}
+        {/* Left Column: Monthly Log */}
         <div className="card-premium p-6 space-y-5">
           <div className="flex items-center justify-between">
-            <h4 className="font-extrabold text-base tracking-tight">Monthly Objectives</h4>
+            <h4 className="font-extrabold text-base tracking-tight">Monthly Log</h4>
             <span className="text-xs font-bold text-black select-none">
               {progress}% completed
             </span>
+          </div>
+
+          {/* Segmented Control Selector */}
+          <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
+            {(['task', 'note', 'event'] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setBulletType(type)}
+                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-white text-neutral-955 shadow-xs' : 'text-neutral-500 hover:text-neutral-700' }`}
+              >
+                {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
+              </button>
+            ))}
           </div>
 
           <form onSubmit={handleAddTask} className="flex gap-2">
@@ -99,7 +114,13 @@ export default function MonthlyView() {
               type="text"
               value={newTaskInput}
               onChange={(e) => setNewTaskInput(e.target.value)}
-              placeholder="Add monthly objective..."
+              placeholder={
+                bulletType === 'task'
+                  ? 'Add monthly task...'
+                  : bulletType === 'note'
+                  ? 'Add monthly note...'
+                  : 'Add monthly event...'
+              }
               className="w-full input-premium text-sm py-2 font-semibold"
             />
             <button
@@ -111,37 +132,54 @@ export default function MonthlyView() {
             </button>
           </form>
 
-          <div className="space-y-1 max-h-[300px] overflow-y-auto pr-1">
-            {plan.tasks.length === 0 ? (
-              <div className="py-10 text-center text-neutral-455 text-sm border border-dashed border-divider rounded-2xl">
-                No monthly objectives defined.
+          <div className="space-y-1.5">
+            {(plan.bulletNotes || []).length === 0 ? (
+              <div className="py-12 text-center text-neutral-455 text-sm border border-dashed border-divider rounded-2xl font-bold">
+                Monthly Log is empty. Add a task or note above!
               </div>
             ) : (
-              plan.tasks.map((task) => (
+              (plan.bulletNotes || []).map((note) => (
                 <div
-                  key={task.id}
-                  className="flex items-start justify-between gap-3 p-2 hover:bg-neutral-50 rounded-xl transition-colors group"
+                  key={note.id}
+                  className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group"
                 >
-                  <button
-                    onClick={() => toggleMonthlyTask(selectedMonth, task.id)}
-                    className="flex items-start gap-2.5 text-left text-sm font-bold text-neutral-700 w-full cursor-pointer select-none"
-                  >
-                    {task.completed ? (
-                      <CheckCircle2 className="w-4.5 h-4.5 text-neutral-900 shrink-0 mt-0.5" />
-                    ) : (
-                      <Circle className="w-4.5 h-4.5 text-neutral-300 group-hover:text-neutral-550 shrink-0 mt-0.5" />
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {/* Checkbox or bullet icon type indicator */}
+                    {note.type === 'task' && (
+                      <button
+                        onClick={() => toggleMonthlyTask(selectedMonth, note.id)}
+                        className="shrink-0 focus:outline-hidden cursor-pointer"
+                      >
+                        {note.completed ? (
+                          <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
+                        ) : (
+                          <span className="w-4 h-4 border border-neutral-300 hover:border-neutral-500 rounded-full block" />
+                        )}
+                      </button>
                     )}
-                    <span className={task.completed ? 'text-neutral-400  line-through font-medium' : ''}>
-                      {task.text}
-                    </span>
-                  </button>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <AssignDateButton taskText={task.text} />
+                    {note.type === 'note' && (
+                      <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
+                    )}
+                    {note.type === 'event' && (
+                      <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
+                    )}
 
+                    <span
+                      onClick={note.type === 'task' ? () => toggleMonthlyTask(selectedMonth, note.id) : undefined}
+                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
+                    >
+                      {note.text}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                    <AssignDateButton
+                      taskText={note.text}
+                      onAssign={() => deleteMonthlyTask(selectedMonth, note.id)}
+                    />
                     <button
-                      onClick={() => deleteMonthlyTask(selectedMonth, task.id)}
-                      className="p-1.5 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
-                      title="Delete Task"
+                      onClick={() => deleteMonthlyTask(selectedMonth, note.id)}
+                      className="p-1 hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Plus,
   Trash2,
+  MapPin,
 } from 'lucide-react';
 
 export default function DailyView() {
@@ -126,7 +127,7 @@ export default function DailyView() {
             </button>
           </form>
 
-          <div className="space-y-1.5 max-h-[350px] overflow-y-auto pr-1">
+          <div className="space-y-1.5">
             {plan.bulletNotes.length === 0 ? (
               <div className="py-12 text-center text-neutral-450 text-sm border border-dashed border-divider rounded-2xl font-bold">
                 Daily Log is empty. Add a task or note above!
@@ -155,7 +156,7 @@ export default function DailyView() {
                       <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
                     )}
                     {note.type === 'event' && (
-                      <span className="text-neutral-850 select-none font-bold shrink-0">○</span>
+                      <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
                     )}
 
                     <span

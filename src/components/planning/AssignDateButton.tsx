@@ -6,16 +6,19 @@ import { usePlannerStore } from '@/store/planner-store';
 
 interface AssignDateButtonProps {
   taskText: string;
+  onAssign?: () => void;
 }
 
-export default function AssignDateButton({ taskText }: AssignDateButtonProps) {
-  const { addBulletNote } = usePlannerStore();
+export default function AssignDateButton({ taskText, onAssign }: AssignDateButtonProps) {
+  const { addBulletNote, showToast } = usePlannerStore();
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const dateVal = e.target.value;
     if (dateVal) {
       addBulletNote(dateVal, 'task', taskText);
-      alert(`Assigned to ${new Date(dateVal).toLocaleDateString(undefined, { dateStyle: 'medium' })}`);
+      const formattedDate = new Date(dateVal).toLocaleDateString(undefined, { dateStyle: 'medium' });
+      showToast(`Scheduled for ${formattedDate}`);
+      if (onAssign) onAssign();
       e.target.value = ''; // Reset the input date so it can be re-triggered
     }
   };

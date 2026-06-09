@@ -30,11 +30,6 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/apple-icon.png",
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Plan",
-  },
 };
 
 export default function RootLayout({

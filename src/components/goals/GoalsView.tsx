@@ -12,10 +12,11 @@ import {
   Circle,
   PlusCircle,
   X,
+  Pencil,
 } from 'lucide-react';
 
 export default function GoalsView() {
-  const { goals, addGoal, deleteGoal, toggleMilestone } = usePlannerStore();
+  const { goals, addGoal, updateGoal, deleteGoal, toggleMilestone } = usePlannerStore();
   const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active');
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -23,6 +24,19 @@ export default function GoalsView() {
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newMilestones, setNewMilestones] = useState<string[]>(['']);
+
+  // Edit Goal Form State
+  const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDesc, setEditDesc] = useState('');
+  const [editMilestones, setEditMilestones] = useState<{ id?: string; title: string; completed?: boolean }[]>([]);
+
+  const handleStartEdit = (goal: any) => {
+    setEditingGoalId(goal.id);
+    setEditTitle(goal.title);
+    setEditDesc(goal.description || '');
+    setEditMilestones(goal.milestones.map((m: any) => ({ id: m.id, title: m.title, completed: m.completed })));
+  };
 
   const handleAddMilestoneField = () => {
     setNewMilestones([...newMilestones, '']);
@@ -38,6 +52,20 @@ export default function GoalsView() {
     setNewMilestones(updated);
   };
 
+  const handleAddEditMilestoneField = () => {
+    setEditMilestones([...editMilestones, { title: '', completed: false }]);
+  };
+
+  const handleRemoveEditMilestoneField = (index: number) => {
+    setEditMilestones(editMilestones.filter((_, idx) => idx !== index));
+  };
+
+  const handleEditMilestoneChange = (index: number, val: string) => {
+    const updated = [...editMilestones];
+    updated[index] = { ...updated[index], title: val };
+    setEditMilestones(updated);
+  };
+
   const handleSubmitGoal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -49,6 +77,19 @@ export default function GoalsView() {
     setNewDesc('');
     setNewMilestones(['']);
     setShowAddModal(false);
+  };
+
+  const handleUpdateGoalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGoalId || !editTitle.trim()) return;
+
+    const milestones = editMilestones.filter((m) => m.title.trim().length > 0);
+    updateGoal(editingGoalId, editTitle.trim(), editDesc.trim(), milestones);
+
+    setEditingGoalId(null);
+    setEditTitle('');
+    setEditDesc('');
+    setEditMilestones([]);
   };
 
   const filteredGoals = goals.filter((g) => g.status === activeTab);
@@ -134,13 +175,22 @@ export default function GoalsView() {
                           </p>
                         )}
                       </div>
-                      <button
-                        onClick={() => deleteGoal(goal.id)}
-                        className="p-1.5 hover:bg-neutral-100 hover:text-red-500 text-neutral-400 rounded-full transition-colors shrink-0 cursor-pointer"
-                        title="Delete Goal"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => handleStartEdit(goal)}
+                          className="p-1.5 hover:bg-neutral-100 hover:text-neutral-900 text-neutral-400 rounded-full transition-colors cursor-pointer"
+                          title="Edit Goal"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteGoal(goal.id)}
+                          className="p-1.5 hover:bg-neutral-100 hover:text-red-500 text-neutral-400 rounded-full transition-colors cursor-pointer"
+                          title="Delete Goal"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Progress Slider */}
@@ -299,6 +349,108 @@ export default function GoalsView() {
                   className="button-premium text-xs md:text-sm px-4"
                 >
                   Save Goal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Goal Dialog Modal */}
+      {editingGoalId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
+          <div className="bg-card-bg border border-card-border p-6 rounded-2xl max-w-md w-full shadow-nav-shadow animate-in zoom-in-95 duration-120 max-h-[90vh] overflow-y-auto text-foreground">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-extrabold text-sm flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                <span>Edit Long-term Goal</span>
+              </h3>
+              <button
+                onClick={() => setEditingGoalId(null)}
+                className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-455"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateGoalSubmit} className="space-y-4">
+              {/* Title */}
+              <div className="space-y-1">
+                <label className="text-xs text-neutral-455 uppercase tracking-wider font-extrabold">Goal Title</label>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="e.g. Master Next.js Framework"
+                  className="w-full input-premium text-sm font-semibold"
+                  required
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1">
+                <label className="text-xs text-neutral-455 uppercase tracking-wider font-extrabold">Description (Optional)</label>
+                <textarea
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
+                  placeholder="Details, resources or key outcomes..."
+                  rows={2}
+                  className="w-full textarea-premium text-sm font-semibold resize-none"
+                />
+              </div>
+
+              {/* Milestones */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs text-neutral-455 uppercase tracking-wider font-extrabold">Milestones</label>
+                  <button
+                    type="button"
+                    onClick={handleAddEditMilestoneField}
+                    className="text-sm font-bold text-neutral-800 hover:text-black flex items-center gap-1 cursor-pointer"
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>Add</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {editMilestones.map((m, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={m.title}
+                        onChange={(e) => handleEditMilestoneChange(idx, e.target.value)}
+                        placeholder={`Milestone #${idx + 1}`}
+                        className="w-full input-premium text-sm font-semibold py-1.5"
+                      />
+                      {editMilestones.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveEditMilestoneField(idx)}
+                          className="p-2 border border-input-border text-neutral-400 hover:text-red-550 hover:border-red-200 rounded-full cursor-pointer shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2.5 justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingGoalId(null)}
+                  className="button-secondary text-xs md:text-sm px-4"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="button-premium text-xs md:text-sm px-4"
+                >
+                  Save Changes
                 </button>
               </div>
             </form>
