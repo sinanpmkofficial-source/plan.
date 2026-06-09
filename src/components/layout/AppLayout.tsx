@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [loadData]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden bg-background text-foreground font-sans transition-colors duration-300">
+    <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-background text-foreground font-sans transition-colors duration-300">
       {/* Navigation handles both desktop sidebar layout and mobile floating pill layout responsive states */}
       <Navigation />
 
