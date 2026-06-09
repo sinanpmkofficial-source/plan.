@@ -56,7 +56,7 @@ export default function GoalsView() {
   const totalCompleted = goals.filter((g) => g.status === 'completed').length;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground">
+    <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground">
       {/* View Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">

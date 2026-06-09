@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: "Plan — Personal Operating System",
   description: "A minimalist personal planning system combining Brain Dump, Goals, Monthly/Weekly/Daily planning, 5-Time Prayer tracking, and Performance Analytics.",
@@ -22,6 +29,11 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.png",
     apple: "/apple-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Plan",
   },
 };
 

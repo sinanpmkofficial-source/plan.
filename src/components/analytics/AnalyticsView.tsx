@@ -22,6 +22,7 @@ import {
   AlertCircle,
   Sparkles,
 } from 'lucide-react';
+import PageHeader from '../layout/PageHeader';
 
 export default function AnalyticsView() {
   const { dailyPlans, goals } = usePlannerStore();
@@ -128,36 +129,38 @@ export default function AnalyticsView() {
 
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200">
+    <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200">
+      <PageHeader title="Analytics" />
+
       {/* Overview Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="card-premium p-5 bg-white flex items-center gap-4">
-          <div className="p-3 bg-neutral-100 rounded-xl">
-            <Award className="w-6 h-6 text-neutral-900" />
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="card-premium p-4 md:p-5 bg-white flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1">
+          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-xl self-start md:self-auto shrink-0">
+            <Award className="w-5.5 h-5.5 md:w-6 md:h-6 text-neutral-900" />
           </div>
-          <div>
-            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Avg Performance</span>
-            <h4 className="text-xl font-bold text-neutral-900 mt-0.5">{averageScore} / 100</h4>
-          </div>
-        </div>
-
-        <div className="card-premium p-5 bg-white flex items-center gap-4">
-          <div className="p-3 bg-neutral-100 rounded-xl">
-            <Flame className="w-6 h-6 text-neutral-900" />
-          </div>
-          <div>
-            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Avg Prayers Logged</span>
-            <h4 className="text-xl font-bold text-neutral-900 mt-0.5">{averagePrayers} / 5.0</h4>
+          <div className="min-w-0">
+            <span className="text-[9px] md:text-[10px] text-neutral-400 font-bold uppercase tracking-wider block leading-tight">Avg Performance</span>
+            <h4 className="text-lg md:text-xl font-bold text-neutral-900 mt-0.5 truncate">{averageScore} / 100</h4>
           </div>
         </div>
 
-        <div className="card-premium p-5 bg-white flex items-center gap-4">
-          <div className="p-3 bg-neutral-100 rounded-xl">
-            <BarChart3 className="w-6 h-6 text-neutral-900" />
+        <div className="card-premium p-4 md:p-5 bg-white flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1">
+          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-xl self-start md:self-auto shrink-0">
+            <Flame className="w-5.5 h-5.5 md:w-6 md:h-6 text-neutral-900" />
           </div>
-          <div>
-            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Active Goals</span>
-            <h4 className="text-xl font-bold text-neutral-900 mt-0.5">{goals.filter(g => g.status === 'active').length} Objectives</h4>
+          <div className="min-w-0">
+            <span className="text-[9px] md:text-[10px] text-neutral-400 font-bold uppercase tracking-wider block leading-tight">Avg Prayers Logged</span>
+            <h4 className="text-lg md:text-xl font-bold text-neutral-900 mt-0.5 truncate">{averagePrayers} / 5.0</h4>
+          </div>
+        </div>
+
+        <div className="card-premium p-4 md:p-5 bg-white flex items-center gap-4 col-span-2 md:col-span-1">
+          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-xl shrink-0">
+            <BarChart3 className="w-5.5 h-5.5 md:w-6 md:h-6 text-neutral-900" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[9px] md:text-[10px] text-neutral-400 font-bold uppercase tracking-wider block leading-tight">Active Goals</span>
+            <h4 className="text-lg md:text-xl font-bold text-neutral-900 mt-0.5 truncate">{goals.filter(g => g.status === 'active').length} Objectives</h4>
           </div>
         </div>
       </div>

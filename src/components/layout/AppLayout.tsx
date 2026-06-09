@@ -21,7 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Main Content Pane */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Dynamic View Scroll Area */}
-        <main className="flex-1 overflow-y-auto px-4 md:px-8 py-6 pb-28 md:pb-6">
+        <main className="flex-1 overflow-y-auto px-4 md:px-8 pt-0 pb-28 md:pb-6">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full gap-3">
               <Loader2 className="w-8 h-8 text-foreground animate-spin stroke-1.5" />

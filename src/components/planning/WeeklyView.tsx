@@ -74,9 +74,9 @@ export default function WeeklyView() {
   const progress = weeklyTotal > 0 ? Math.round((completedWeekly / weeklyTotal) * 100) : 0;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
+    <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
-      <PageHeader title={`Week ${selectedWeek.split('-W')[1]}, ${selectedWeek.split('-W')[0]}`}>
+      <PageHeader title="Weekly Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevWeek}

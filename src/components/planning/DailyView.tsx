@@ -46,27 +46,14 @@ export default function DailyView() {
     setBulletInput('');
   };
 
-  const formatDayDisplay = (dateStr: string) => {
-    const d = new Date(dateStr);
-    const today = new Date().toISOString().split('T')[0];
-    if (dateStr === today) return 'Today';
-    
-    return d.toLocaleDateString(undefined, {
-      weekday: 'long',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
   const completedBullets = bulletTasks.filter((t) => t.completed).length;
   const progress = bulletTasks.length > 0 ? Math.round((completedBullets / bulletTasks.length) * 100) : 0;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
+    <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
-      <PageHeader title={formatDayDisplay(selectedDate)}>
+      <PageHeader title="Daily Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevDay}
@@ -150,12 +137,12 @@ export default function DailyView() {
                   key={note.id}
                   className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group"
                 >
-                  <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     {/* Checkbox or bullet icon type indicator */}
                     {note.type === 'task' && (
                       <button
                         onClick={() => toggleBulletNote(selectedDate, note.id)}
-                        className="shrink-0 mt-0.5 focus:outline-hidden cursor-pointer"
+                        className="shrink-0 focus:outline-hidden cursor-pointer"
                       >
                         {note.completed ? (
                           <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
@@ -165,14 +152,15 @@ export default function DailyView() {
                       </button>
                     )}
                     {note.type === 'note' && (
-                      <span className="text-neutral-400 select-none font-bold mt-0.5 shrink-0">—</span>
+                      <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
                     )}
                     {note.type === 'event' && (
-                      <span className="text-neutral-850 select-none font-bold mt-0.5 shrink-0">○</span>
+                      <span className="text-neutral-850 select-none font-bold shrink-0">○</span>
                     )}
 
                     <span
-                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
+                      onClick={note.type === 'task' ? () => toggleBulletNote(selectedDate, note.id) : undefined}
+                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
                     >
                       {note.text}
                     </span>

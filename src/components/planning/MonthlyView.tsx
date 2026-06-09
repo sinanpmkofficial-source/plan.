@@ -51,20 +51,14 @@ export default function MonthlyView() {
     setNewTaskInput('');
   };
 
-  const formatMonthDisplay = (monthStr: string) => {
-    const [year, month] = monthStr.split('-');
-    const date = new Date(Number(year), Number(month) - 1, 1);
-    return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-  };
-
   const completedMonthly = (plan.tasks || []).filter((t) => t.completed).length;
   const monthlyTotal = (plan.tasks || []).length;
   const progress = monthlyTotal > 0 ? Math.round((completedMonthly / monthlyTotal) * 100) : 0;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
+    <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
-      <PageHeader title={formatMonthDisplay(selectedMonth)}>
+      <PageHeader title="Monthly Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevMonth}
