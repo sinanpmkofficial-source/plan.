@@ -1,26 +1,164 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f4f7;
+  --foreground: #000000;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.02);
+  --button-hover: rgba(0, 0, 0, 0.02);
+  --input-bg: #ffffff;
+  --input-border: rgba(0, 0, 0, 0.05);
+  --input-focus-ring: rgba(0, 0, 0, 0.02);
+  --input-focus-border: #111111;
+  --kbd-bg: #e8e8ed;
+  --kbd-border: rgba(0, 0, 0, 0.03);
+  --kbd-text: #555555;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --nav-border: rgba(0, 0, 0, 0.03);
+  --nav-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.06);
+  
+  --button-primary-bg: #111111;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #222222;
+  
+  --button-secondary-bg: #ffffff;
+  --button-secondary-text: #111111;
+  --button-secondary-border: rgba(0, 0, 0, 0.04);
+  --button-secondary-hover: #fcfcfd;
+  
+  --divider: rgba(0, 0, 0, 0.04);
+  --scroll-thumb: #dedede;
+  --scroll-thumb-hover: #cccccc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-body {
-  background: var(--background);
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+/* Custom Scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+/* Hide spin-buttons for input numbers */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Base custom classes for high fidelity design */
+.card-premium {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.02), 0 2px 6px -1px rgba(0, 0, 0, 0.01);
+  border-radius: 20px; /* Highly rounded iOS card */
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.01);
+}
+
+.input-premium {
+  border: 1px solid var(--input-border);
+  border-radius: 9999px; /* Pill input */
+  padding: 10px 18px;
+  background-color: var(--input-bg);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.input-premium:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 2px var(--input-focus-ring);
+}
+
+.button-premium {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 9999px; /* Pill button */
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.button-premium:hover {
+  background-color: var(--button-primary-hover);
+  transform: translateY(-1px);
+}
+
+.button-premium:active {
+  transform: translateY(0);
+}
+
+.button-secondary {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: 1px solid var(--button-secondary-border);
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 9999px; /* Pill button */
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.button-secondary:hover {
+  background-color: var(--button-secondary-hover);
+  border-color: var(--button-secondary-border);
+  transform: translateY(-1px);
+}
+
+.button-secondary:active {
+  transform: translateY(0);
+}
+
+/* Custom transitions and scroll-behaviors */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
