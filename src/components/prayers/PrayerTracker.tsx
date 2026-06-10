@@ -2,22 +2,14 @@
 
 import React from 'react';
 import { usePlannerStore } from '@/store/planner-store';
-import { DailyPlan } from '@/types/planner';
 import { Check, Flame } from 'lucide-react';
+import { PRAYERS_CONFIG } from '@/lib/constants';
 
 export default function PrayerTracker() {
   const { selectedDate, getOrCreateDailyPlan, togglePrayer } = usePlannerStore();
 
   const plan = getOrCreateDailyPlan(selectedDate);
-  const prayers = plan.prayers || { fajr: false, dhuhr: false, isha: false, asr: false, maghrib: false };
-
-  const prayerItems: { key: keyof DailyPlan['prayers']; label: string; time: string }[] = [
-    { key: 'fajr', label: 'Fajr', time: 'Dawn' },
-    { key: 'dhuhr', label: 'Dhuhr', time: 'Noon' },
-    { key: 'asr', label: 'Asr', time: 'After' },
-    { key: 'maghrib', label: 'Maghrib', time: 'Sunset' },
-    { key: 'isha', label: 'Isha', time: 'Night' },
-  ];
+  const prayers = plan.prayers || { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
 
   const completedCount = Object.values(prayers).filter(Boolean).length;
 
@@ -38,7 +30,7 @@ export default function PrayerTracker() {
 
       {/* Grid of 5 Prayers */}
       <div className="grid grid-cols-5 gap-2.5">
-        {prayerItems.map((item) => {
+        {PRAYERS_CONFIG.map((item) => {
           const isDone = prayers[item.key];
           return (
             <button

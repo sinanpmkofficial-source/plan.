@@ -3,17 +3,16 @@
 import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import PageHeader from '../layout/PageHeader';
+import BulletNoteItem from './BulletNoteItem';
+import AssignDateButton from './AssignDateButton';
+import { adjustMonth } from '@/lib/date-utils';
+import { BULLET_TYPES } from '@/lib/constants';
 import {
-  MapPin,
   ChevronLeft,
   ChevronRight,
   Plus,
-  Trash2,
-  CheckCircle2,
-  Circle,
   FileText,
 } from 'lucide-react';
-import AssignDateButton from './AssignDateButton';
 
 export default function MonthlyView() {
   const {
@@ -21,6 +20,7 @@ export default function MonthlyView() {
     setMonth,
     getOrCreateMonthlyPlan,
     addMonthlyTask,
+    updateMonthlyTask,
     toggleMonthlyTask,
     deleteMonthlyTask,
     updateMonthlyReflection,
@@ -31,19 +31,8 @@ export default function MonthlyView() {
 
   const plan = getOrCreateMonthlyPlan(selectedMonth);
 
-  const adjustMonth = (monthStr: string, delta: number) => {
-    const [year, month] = monthStr.split('-').map(Number);
-    const date = new Date(year, month - 1 + delta, 1);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-  };
-
-  const handlePrevMonth = () => {
-    setMonth(adjustMonth(selectedMonth, -1));
-  };
-
-  const handleNextMonth = () => {
-    setMonth(adjustMonth(selectedMonth, 1));
-  };
+  const handlePrevMonth = () => setMonth(adjustMonth(selectedMonth, -1));
+  const handleNextMonth = () => setMonth(adjustMonth(selectedMonth, 1));
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +47,6 @@ export default function MonthlyView() {
 
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
-      {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
       <PageHeader title="Monthly Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
@@ -86,7 +74,6 @@ export default function MonthlyView() {
       </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left Column: Monthly Log */}
         <div className="card-premium p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Monthly Log</h4>
@@ -95,9 +82,8 @@ export default function MonthlyView() {
             </span>
           </div>
 
-          {/* Segmented Control Selector */}
           <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
-            {(['task', 'note', 'event'] as const).map((type) => (
+            {BULLET_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
@@ -114,19 +100,12 @@ export default function MonthlyView() {
               type="text"
               value={newTaskInput}
               onChange={(e) => setNewTaskInput(e.target.value)}
-              placeholder={
-                bulletType === 'task'
-                  ? 'Add monthly task...'
-                  : bulletType === 'note'
-                  ? 'Add monthly note...'
-                  : 'Add monthly event...'
-              }
+              placeholder={`Add monthly ${bulletType}...`}
               className="w-full input-premium text-sm py-2 font-semibold"
             />
             <button
               type="submit"
               className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-              style={{ padding: 0 }}
             >
               <Plus className="w-4 h-4" color="white" stroke="white" />
             </button>
@@ -139,58 +118,24 @@ export default function MonthlyView() {
               </div>
             ) : (
               (plan.bulletNotes || []).map((note) => (
-                <div
+                <BulletNoteItem
                   key={note.id}
-                  className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {/* Checkbox or bullet icon type indicator */}
-                    {note.type === 'task' && (
-                      <button
-                        onClick={() => toggleMonthlyTask(selectedMonth, note.id)}
-                        className="shrink-0 focus:outline-hidden cursor-pointer"
-                      >
-                        {note.completed ? (
-                          <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 border border-neutral-300 hover:border-neutral-500 rounded-full block" />
-                        )}
-                      </button>
-                    )}
-                    {note.type === 'note' && (
-                      <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
-                    )}
-                    {note.type === 'event' && (
-                      <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
-                    )}
-
-                    <span
-                      onClick={note.type === 'task' ? () => toggleMonthlyTask(selectedMonth, note.id) : undefined}
-                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
-                    >
-                      {note.text}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                  note={note}
+                  onToggle={() => toggleMonthlyTask(selectedMonth, note.id)}
+                  onUpdate={(text) => updateMonthlyTask(selectedMonth, note.id, text)}
+                  onDelete={() => deleteMonthlyTask(selectedMonth, note.id)}
+                  extraActions={
                     <AssignDateButton
                       taskText={note.text}
                       onAssign={() => deleteMonthlyTask(selectedMonth, note.id)}
                     />
-                    <button
-                      onClick={() => deleteMonthlyTask(selectedMonth, note.id)}
-                      className="w-7 h-7 flex items-center justify-center hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                  }
+                />
               ))
             )}
           </div>
         </div>
 
-        {/* Right Column: Monthly Review & Reflections */}
         <div className="card-premium p-6 space-y-5">
           <div className="space-y-1">
             <h4 className="font-extrabold text-base tracking-tight flex items-center gap-1.5">

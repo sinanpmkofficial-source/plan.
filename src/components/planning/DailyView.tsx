@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import PageHeader from '../layout/PageHeader';
 import PrayerTracker from '../prayers/PrayerTracker';
+import BulletNoteItem from './BulletNoteItem';
+import { adjustDate } from '@/lib/date-utils';
+import { BULLET_TYPES } from '@/lib/constants';
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Trash2,
-  MapPin,
 } from 'lucide-react';
 
 export default function DailyView() {
@@ -17,6 +18,7 @@ export default function DailyView() {
     setDate,
     getOrCreateDailyPlan,
     addBulletNote,
+    updateBulletNote,
     toggleBulletNote,
     deleteBulletNote,
   } = usePlannerStore();
@@ -26,19 +28,8 @@ export default function DailyView() {
 
   const plan = getOrCreateDailyPlan(selectedDate);
 
-  const adjustDate = (dateStr: string, delta: number) => {
-    const d = new Date(dateStr);
-    d.setDate(d.getDate() + delta);
-    return d.toISOString().split('T')[0];
-  };
-
-  const handlePrevDay = () => {
-    setDate(adjustDate(selectedDate, -1));
-  };
-
-  const handleNextDay = () => {
-    setDate(adjustDate(selectedDate, 1));
-  };
+  const handlePrevDay = () => setDate(adjustDate(selectedDate, -1));
+  const handleNextDay = () => setDate(adjustDate(selectedDate, 1));
 
   const handleAddBullet = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +44,6 @@ export default function DailyView() {
 
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
-      {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
       <PageHeader title="Daily Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
@@ -81,7 +71,6 @@ export default function DailyView() {
       </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left Column: Bullet Journal Daily Log */}
         <div className="card-premium p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Daily Log</h4>
@@ -90,9 +79,8 @@ export default function DailyView() {
             </span>
           </div>
 
-          {/* Segmented Control Selector */}
           <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
-            {(['task', 'note', 'event'] as const).map((type) => (
+            {BULLET_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
@@ -109,19 +97,12 @@ export default function DailyView() {
               type="text"
               value={bulletInput}
               onChange={(e) => setBulletInput(e.target.value)}
-              placeholder={
-                bulletType === 'task'
-                  ? 'Log action item...'
-                  : bulletType === 'note'
-                  ? 'Log general observation...'
-                  : 'Log event or meeting...'
-              }
+              placeholder={`Log ${bulletType}...`}
               className="w-full input-premium text-sm py-2 font-semibold"
             />
              <button
               type="submit"
               className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-              style={{ padding: 0 }}
             >
               <Plus className="w-4 h-4" color="white" stroke="white" />
             </button>
@@ -134,52 +115,18 @@ export default function DailyView() {
               </div>
             ) : (
               plan.bulletNotes.map((note) => (
-                <div
+                <BulletNoteItem
                   key={note.id}
-                  className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {/* Checkbox or bullet icon type indicator */}
-                    {note.type === 'task' && (
-                      <button
-                        onClick={() => toggleBulletNote(selectedDate, note.id)}
-                        className="shrink-0 focus:outline-hidden cursor-pointer"
-                      >
-                        {note.completed ? (
-                          <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 border border-neutral-300 hover:border-neutral-500 rounded-full block" />
-                        )}
-                      </button>
-                    )}
-                    {note.type === 'note' && (
-                      <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
-                    )}
-                    {note.type === 'event' && (
-                      <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
-                    )}
-
-                    <span
-                      onClick={note.type === 'task' ? () => toggleBulletNote(selectedDate, note.id) : undefined}
-                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
-                    >
-                      {note.text}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => deleteBulletNote(selectedDate, note.id)}
-                    className="p-1 hover:bg-neutral-100 text-neutral-450 hover:text-red-500 rounded-full transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 shrink-0 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                  note={note}
+                  onToggle={() => toggleBulletNote(selectedDate, note.id)}
+                  onUpdate={(text) => updateBulletNote(selectedDate, note.id, text)}
+                  onDelete={() => deleteBulletNote(selectedDate, note.id)}
+                />
               ))
             )}
           </div>
         </div>
 
-        {/* Right Column: Spiritual Prayer Tracker */}
         <div className="space-y-8">
           <PrayerTracker />
         </div>

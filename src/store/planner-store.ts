@@ -7,6 +7,16 @@ import {
   MonthlyPlan,
   BulletNote,
 } from '@/types/planner';
+import { 
+  getWeekIdFromDate, 
+  getMonthIdFromDate 
+} from '@/lib/date-utils';
+import { 
+  calculateDailyScore, 
+  getOrCreateDailyPlanFn, 
+  getOrCreateWeeklyPlanFn, 
+  getOrCreateMonthlyPlanFn 
+} from '@/lib/planner-utils';
 
 export type PlannerView = 'daily' | 'braindump' | 'goals' | 'weekly' | 'monthly' | 'analytics';
 
@@ -47,6 +57,7 @@ interface PlannerState {
 
   // Actions - Brain Dump
   addBrainDumpItem: (text: string) => void;
+  updateBrainDumpItem: (id: string, text: string) => void;
   deleteBrainDumpItem: (id: string) => void;
   convertBrainDumpItem: (
     id: string,
@@ -71,6 +82,7 @@ interface PlannerState {
   toggleDailyTask: (date: string, taskId: string) => void;
   deleteDailyTask: (date: string, taskId: string) => void;
   addBulletNote: (date: string, type: 'task' | 'note' | 'event', text: string) => void;
+  updateBulletNote: (date: string, noteId: string, text: string) => void;
   toggleBulletNote: (date: string, noteId: string) => void;
   deleteBulletNote: (date: string, noteId: string) => void;
   updateDailyReflection: (date: string, reflection: string) => void;
@@ -79,6 +91,7 @@ interface PlannerState {
   // Actions - Weekly Plan
   getOrCreateWeeklyPlan: (weekId: string) => WeeklyPlan;
   addWeeklyTask: (weekId: string, type: 'task' | 'note' | 'event', text: string) => void;
+  updateWeeklyTask: (weekId: string, taskId: string, text: string) => void;
   toggleWeeklyTask: (weekId: string, taskId: string) => void;
   deleteWeeklyTask: (weekId: string, taskId: string) => void;
   updateWeeklyReflection: (weekId: string, reflection: string) => void;
@@ -86,6 +99,7 @@ interface PlannerState {
   // Actions - Monthly Plan
   getOrCreateMonthlyPlan: (monthId: string) => MonthlyPlan;
   addMonthlyTask: (monthId: string, type: 'task' | 'note' | 'event', text: string) => void;
+  updateMonthlyTask: (monthId: string, taskId: string, text: string) => void;
   toggleMonthlyTask: (monthId: string, taskId: string) => void;
   deleteMonthlyTask: (monthId: string, taskId: string) => void;
   updateMonthlyReflection: (monthId: string, reflection: string) => void;
@@ -96,38 +110,8 @@ interface PlannerState {
   hideToast: () => void;
 }
 
-// Helper: Calculate Daily Performance Score (0 - 100)
-export function calculateDailyScore(plan: DailyPlan): number {
-  // 1. Prayer Tracker (50%): 10 points per prayer checked
-  const prayers = plan.prayers || { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
-  const prayersCount = Object.values(prayers).filter(Boolean).length;
-  const prayerScore = prayersCount * 10;
-
-  // 2. Bullet Journal Tasks (50%): Completion rate of bullet-journal action items
-  let bulletScore = 50;
-  const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
-  if (bulletTasks.length > 0) {
-    const completedBullets = bulletTasks.filter((t) => t.completed).length;
-    bulletScore = Math.round((completedBullets / bulletTasks.length) * 50);
-  }
-
-  return prayerScore + bulletScore;
-}
-
 // Debounce timer for background syncing
 let syncTimeout: NodeJS.Timeout | null = null;
-
-function getWeekIdFromDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
-}
-
-function getMonthIdFromDate(dateStr: string): string {
-  return dateStr.slice(0, 7);
-}
 
 export const usePlannerStore = create<PlannerState>((set, get) => {
   // Helper: Mark entity as dirty and schedule sync
@@ -147,63 +131,6 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     get().triggerSync();
   };
 
-  const getOrCreateDailyPlanFn = (state: any, date: string): DailyPlan => {
-    if (state.dailyPlans[date]) return state.dailyPlans[date];
-    return {
-      date,
-      tasks: [],
-      bulletNotes: [],
-      prayers: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false },
-      reflection: '',
-      score: 0,
-      updatedAt: new Date().toISOString(),
-    };
-  };
-
-  const getOrCreateWeeklyPlanFn = (state: any, weekId: string): WeeklyPlan => {
-    if (state.weeklyPlans[weekId]) {
-      const plan = state.weeklyPlans[weekId];
-      if (!plan.bulletNotes) {
-        plan.bulletNotes = (plan.tasks || []).map((t: any) => ({
-          id: t.id,
-          type: 'task',
-          text: t.text,
-          completed: t.completed,
-        }));
-      }
-      return plan;
-    }
-    return {
-      weekId,
-      tasks: [],
-      bulletNotes: [],
-      reflection: '',
-      updatedAt: new Date().toISOString(),
-    };
-  };
-
-  const getOrCreateMonthlyPlanFn = (state: any, monthId: string): MonthlyPlan => {
-    if (state.monthlyPlans[monthId]) {
-      const plan = state.monthlyPlans[monthId];
-      if (!plan.bulletNotes) {
-        plan.bulletNotes = (plan.tasks || []).map((t: any) => ({
-          id: t.id,
-          type: 'task',
-          text: t.text,
-          completed: t.completed,
-        }));
-      }
-      return plan;
-    }
-    return {
-      monthId,
-      tasks: [],
-      bulletNotes: [],
-      reflection: '',
-      updatedAt: new Date().toISOString(),
-    };
-  };
-
   return {
     // Initial UI and data state
     brainDump: [],
@@ -214,14 +141,8 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
 
     currentView: 'daily',
     selectedDate: new Date().toISOString().split('T')[0],
-    selectedWeek: (() => {
-      const d = new Date();
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-      return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
-    })(),
-    selectedMonth: new Date().toISOString().slice(0, 7),
+    selectedWeek: getWeekIdFromDate(new Date().toISOString().split('T')[0]),
+    selectedMonth: getMonthIdFromDate(new Date().toISOString().split('T')[0]),
     syncStatus: 'saved',
     syncErrorMsg: null,
     isLoading: true,
@@ -370,6 +291,13 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       };
       set((state) => ({ brainDump: [newItem, ...state.brainDump] }));
       markDirty('brainDump', newItem.id);
+    },
+
+    updateBrainDumpItem: (id, text) => {
+      set((state) => ({
+        brainDump: state.brainDump.map((item) => (item.id === id ? { ...item, text } : item)),
+      }));
+      markDirty('brainDump', id);
     },
 
     deleteBrainDumpItem: (id) => {
@@ -605,6 +533,16 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       get().triggerSync();
     },
 
+    updateBulletNote: (date, noteId, text) => {
+      set((state) => {
+        const plan = getOrCreateDailyPlanFn(state, date);
+        plan.bulletNotes = plan.bulletNotes.map((n) => (n.id === noteId ? { ...n, text } : n));
+        plan.updatedAt = new Date().toISOString();
+        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
+      });
+      markDirty('dailyPlans', date);
+    },
+
     toggleBulletNote: (date, noteId) => {
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
@@ -679,6 +617,16 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       markDirty('weeklyPlans', weekId);
     },
 
+    updateWeeklyTask: (weekId, taskId, text) => {
+      set((state) => {
+        const plan = getOrCreateWeeklyPlanFn(state, weekId);
+        plan.bulletNotes = (plan.bulletNotes || []).map((n) => (n.id === taskId ? { ...n, text } : n));
+        plan.updatedAt = new Date().toISOString();
+        return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
+      });
+      markDirty('weeklyPlans', weekId);
+    },
+
     toggleWeeklyTask: (weekId, noteId) => {
       set((state) => {
         const plan = getOrCreateWeeklyPlanFn(state, weekId);
@@ -730,6 +678,16 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
           completed: type === 'task' ? false : undefined,
         };
         plan.bulletNotes = [...(plan.bulletNotes || []), newNote];
+        plan.updatedAt = new Date().toISOString();
+        return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
+      });
+      markDirty('monthlyPlans', monthId);
+    },
+
+    updateMonthlyTask: (monthId, taskId, text) => {
+      set((state) => {
+        const plan = getOrCreateMonthlyPlanFn(state, monthId);
+        plan.bulletNotes = (plan.bulletNotes || []).map((n) => (n.id === taskId ? { ...n, text } : n));
         plan.updatedAt = new Date().toISOString();
         return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
       });

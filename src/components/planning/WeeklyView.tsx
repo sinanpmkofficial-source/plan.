@@ -3,18 +3,16 @@
 import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import PageHeader from '../layout/PageHeader';
+import BulletNoteItem from './BulletNoteItem';
+import AssignDateButton from './AssignDateButton';
+import { adjustWeek } from '@/lib/date-utils';
+import { BULLET_TYPES } from '@/lib/constants';
 import {
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Plus,
-  Trash2,
-  CheckCircle2,
-  Circle,
   FileText,
-  MapPin,
 } from 'lucide-react';
-import AssignDateButton from './AssignDateButton';
 
 export default function WeeklyView() {
   const {
@@ -22,6 +20,7 @@ export default function WeeklyView() {
     setWeek,
     getOrCreateWeeklyPlan,
     addWeeklyTask,
+    updateWeeklyTask,
     toggleWeeklyTask,
     deleteWeeklyTask,
     updateWeeklyReflection,
@@ -32,37 +31,8 @@ export default function WeeklyView() {
 
   const plan = getOrCreateWeeklyPlan(selectedWeek);
 
-  const adjustWeek = (weekStr: string, delta: number) => {
-    try {
-      const [yearStr, weekNoStr] = weekStr.split('-W');
-      const year = Number(yearStr);
-      const week = Number(weekNoStr);
-      
-      const jan4 = new Date(year, 0, 4);
-      const dayOffset = (jan4.getDay() || 7) - 1; // days since Monday
-      const startOfWeek1 = new Date(jan4.getTime() - dayOffset * 24 * 60 * 60 * 1000);
-      
-      const currentWeekTime = startOfWeek1.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000;
-      const adjustedTime = currentWeekTime + delta * 7 * 24 * 60 * 60 * 1000;
-      const d = new Date(adjustedTime);
-      
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-      return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
-    } catch (e) {
-      console.error(e);
-      return weekStr;
-    }
-  };
-
-  const handlePrevWeek = () => {
-    setWeek(adjustWeek(selectedWeek, -1));
-  };
-
-  const handleNextWeek = () => {
-    setWeek(adjustWeek(selectedWeek, 1));
-  };
+  const handlePrevWeek = () => setWeek(adjustWeek(selectedWeek, -1));
+  const handleNextWeek = () => setWeek(adjustWeek(selectedWeek, 1));
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +47,6 @@ export default function WeeklyView() {
 
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
-      {/* Page Header (Unifies title, navigation, sync status, and score badge) */}
       <PageHeader title="Weekly Plan">
         <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
@@ -107,7 +76,6 @@ export default function WeeklyView() {
       </PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left Column: Weekly Log */}
         <div className="card-premium p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Weekly Log</h4>
@@ -116,9 +84,8 @@ export default function WeeklyView() {
             </span>
           </div>
 
-          {/* Segmented Control Selector */}
           <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
-            {(['task', 'note', 'event'] as const).map((type) => (
+            {BULLET_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
@@ -135,19 +102,12 @@ export default function WeeklyView() {
               type="text"
               value={newTaskInput}
               onChange={(e) => setNewTaskInput(e.target.value)}
-              placeholder={
-                bulletType === 'task'
-                  ? 'Add weekly task...'
-                  : bulletType === 'note'
-                  ? 'Add weekly note...'
-                  : 'Add weekly event...'
-              }
+              placeholder={`Add weekly ${bulletType}...`}
               className="w-full input-premium text-sm py-2 font-semibold"
             />
             <button
               type="submit"
               className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-              style={{ padding: 0 }}
             >
               <Plus className="w-4 h-4" color="white" stroke="white" />
             </button>
@@ -160,58 +120,24 @@ export default function WeeklyView() {
               </div>
             ) : (
               (plan.bulletNotes || []).map((note) => (
-                <div
+                <BulletNoteItem
                   key={note.id}
-                  className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {/* Checkbox or bullet icon type indicator */}
-                    {note.type === 'task' && (
-                      <button
-                        onClick={() => toggleWeeklyTask(selectedWeek, note.id)}
-                        className="shrink-0 focus:outline-hidden cursor-pointer"
-                      >
-                        {note.completed ? (
-                          <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 border border-neutral-300 hover:border-neutral-500 rounded-full block" />
-                        )}
-                      </button>
-                    )}
-                    {note.type === 'note' && (
-                      <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
-                    )}
-                    {note.type === 'event' && (
-                      <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
-                    )}
-
-                    <span
-                      onClick={note.type === 'task' ? () => toggleWeeklyTask(selectedWeek, note.id) : undefined}
-                      className={`text-sm break-words leading-relaxed font-bold ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
-                    >
-                      {note.text}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                  note={note}
+                  onToggle={() => toggleWeeklyTask(selectedWeek, note.id)}
+                  onUpdate={(text) => updateWeeklyTask(selectedWeek, note.id, text)}
+                  onDelete={() => deleteWeeklyTask(selectedWeek, note.id)}
+                  extraActions={
                     <AssignDateButton
                       taskText={note.text}
                       onAssign={() => deleteWeeklyTask(selectedWeek, note.id)}
                     />
-                    <button
-                      onClick={() => deleteWeeklyTask(selectedWeek, note.id)}
-                      className="w-7 h-7 flex items-center justify-center hover:bg-neutral-100 text-neutral-455 hover:text-red-550 rounded-full transition-colors shrink-0 cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                  }
+                />
               ))
             )}
           </div>
         </div>
 
-        {/* Right Column: Weekly Reflections */}
         <div className="card-premium p-6 space-y-5">
           <div className="space-y-1">
             <h4 className="font-extrabold text-base tracking-tight flex items-center gap-1.5">

@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Calendar as CalendarIcon, Check, X } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { usePlannerStore } from '@/store/planner-store';
 
@@ -18,7 +17,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
   const { addBulletNote, showToast } = usePlannerStore();
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Date | undefined>(undefined);
+  const [selectedDate, setSelectedDate] = useState('');
   const [pos, setPos] = useState<PanelPos>({ top: 0, left: 0 });
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -27,7 +26,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
   const calcPos = useCallback(() => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
-    const panelH = 320;
+    const panelH = 160;
     const panelW = 260;
     const top = rect.top > panelH ? rect.top - panelH - 6 : rect.bottom + 6;
     let left = rect.right - panelW;
@@ -40,10 +39,10 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
     e.stopPropagation();
     if (open) {
       setOpen(false);
-      setSelected(undefined);
+      setSelectedDate('');
     } else {
       calcPos();
-      setSelected(undefined);
+      setSelectedDate(new Date().toISOString().split('T')[0]);
       setOpen(true);
     }
   };
@@ -67,7 +66,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
       const target = e.target as Node;
       if (!panelRef.current?.contains(target) && !buttonRef.current?.contains(target)) {
         setOpen(false);
-        setSelected(undefined);
+        setSelectedDate('');
       }
     };
     document.addEventListener('mousedown', handler);
@@ -80,19 +79,20 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
 
   const handleConfirm = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!selected) return;
-    const dateStr = format(selected, 'yyyy-MM-dd');
-    addBulletNote(dateStr, 'task', taskText);
-    showToast(`Scheduled for ${format(selected, 'MMM d, yyyy')}`);
+    if (!selectedDate) return;
+    
+    addBulletNote(selectedDate, 'task', taskText);
+    const displayDate = format(new Date(selectedDate), 'MMM d, yyyy');
+    showToast(`Scheduled for ${displayDate}`);
     if (onAssign) onAssign();
     setOpen(false);
-    setSelected(undefined);
+    setSelectedDate('');
   };
 
   const handleCancel = (e: React.MouseEvent) => {
     e.stopPropagation();
     setOpen(false);
-    setSelected(undefined);
+    setSelectedDate('');
   };
 
   const panel = (
@@ -100,28 +100,36 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
       ref={panelRef}
       onClick={(e) => e.stopPropagation()}
       style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999 }}
-      className="bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden"
+      className="bg-white rounded-2xl shadow-xl border border-neutral-100 p-4 w-[260px] space-y-4"
     >
-      <Calendar
-        mode="single"
-        selected={selected}
-        onSelect={setSelected}
-        today={new Date()}
-      />
-      <div className="flex gap-2 px-3 pb-3 pt-1 border-t border-neutral-100">
+      <div className="space-y-2">
+        <label htmlFor="assign-date" className="block text-xs font-bold text-neutral-500 uppercase tracking-wider">
+          Select Date
+        </label>
+        <input
+          id="assign-date"
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="w-full input-premium text-sm font-bold py-2"
+          style={{ colorScheme: 'light' }}
+        />
+      </div>
+      
+      <div className="flex gap-2">
         <button
           type="button"
           onClick={handleCancel}
-          className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-full text-xs font-bold text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1 py-2 rounded-full text-xs font-bold text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
         >
           <X className="w-3 h-3" /> Cancel
         </button>
         <button
           type="button"
           onClick={handleConfirm}
-          disabled={!selected}
-          className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-full text-xs font-bold transition-colors ${
-            selected
+          disabled={!selectedDate}
+          className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-full text-xs font-bold transition-colors ${
+            selectedDate
               ? 'bg-neutral-900 text-white hover:bg-neutral-800 cursor-pointer'
               : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
           }`}
