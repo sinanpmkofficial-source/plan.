@@ -88,8 +88,8 @@ export default function GoalsView() {
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-black tracking-tight">Goals System</h3>
-        <button onClick={() => setShowAddModal(true)} className="button-premium text-xs md:text-sm whitespace-nowrap shrink-0">
-          <Plus className="w-4 h-4" color="white" stroke="white" />
+        <button onClick={() => setShowAddModal(true)} className="button-premium text-xs md:text-sm whitespace-nowrap shrink-0 bg-black text-white hover:bg-neutral-900">
+          <Plus size={18} stroke="white" strokeWidth={3} />
           <span>New Goal</span>
         </button>
       </div>

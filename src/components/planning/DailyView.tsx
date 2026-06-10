@@ -9,8 +9,8 @@ import { BULLET_TYPES } from '@/lib/constants';
 import {
   ChevronLeft,
   ChevronRight,
-  Plus,
 } from 'lucide-react';
+import { QuickAddInput } from '../ui/QuickAddInput';
 
 export default function DailyView() {
   const {
@@ -62,10 +62,10 @@ export default function DailyView() {
           />
           <button
             onClick={handleNextDay}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
+            className=" hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
             title="Next Day"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4 m-2 text-white" />
           </button>
         </div>
       </PageHeader>
@@ -92,21 +92,12 @@ export default function DailyView() {
             ))}
           </div>
 
-          <form onSubmit={handleAddBullet} className="flex gap-2">
-            <input
-              type="text"
-              value={bulletInput}
-              onChange={(e) => setBulletInput(e.target.value)}
-              placeholder={`Log ${bulletType}...`}
-              className="w-full input-premium text-sm py-2 font-semibold"
-            />
-             <button
-              type="submit"
-              className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" color="white" stroke="white" />
-            </button>
-          </form>
+          <QuickAddInput
+            value={bulletInput}
+            onChange={setBulletInput}
+            onSubmit={handleAddBullet}
+            placeholder={`Log ${bulletType}...`}
+          />
 
           <div className="space-y-1.5">
             {plan.bulletNotes.length === 0 ? (

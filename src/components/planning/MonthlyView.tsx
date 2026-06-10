@@ -10,9 +10,9 @@ import { BULLET_TYPES } from '@/lib/constants';
 import {
   ChevronLeft,
   ChevronRight,
-  Plus,
   FileText,
 } from 'lucide-react';
+import { QuickAddInput } from '../ui/QuickAddInput';
 
 export default function MonthlyView() {
   const {
@@ -95,21 +95,12 @@ export default function MonthlyView() {
             ))}
           </div>
 
-          <form onSubmit={handleAddTask} className="flex gap-2">
-            <input
-              type="text"
-              value={newTaskInput}
-              onChange={(e) => setNewTaskInput(e.target.value)}
-              placeholder={`Add monthly ${bulletType}...`}
-              className="w-full input-premium text-sm py-2 font-semibold"
-            />
-            <button
-              type="submit"
-              className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" color="white" stroke="white" />
-            </button>
-          </form>
+          <QuickAddInput
+            value={newTaskInput}
+            onChange={setNewTaskInput}
+            onSubmit={handleAddTask}
+            placeholder={`Add monthly ${bulletType}...`}
+          />
 
           <div className="space-y-1.5">
             {(plan.bulletNotes || []).length === 0 ? (

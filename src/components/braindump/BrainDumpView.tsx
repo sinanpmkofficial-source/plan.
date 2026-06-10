@@ -6,7 +6,6 @@ import { BrainDumpItem } from '@/types/planner';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Inbox,
-  Plus,
   Trash2,
   Calendar,
   Sparkles,
@@ -17,6 +16,7 @@ import {
   Check,
   X,
 } from 'lucide-react';
+import { QuickAddInput } from '@/components/ui/QuickAddInput';
 
 import PageHeader from '../layout/PageHeader';
 import ConfirmationModal from '../ui/ConfirmationModal';
@@ -64,22 +64,14 @@ export default function BrainDumpView() {
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       <PageHeader title="Brain Dump Inbox" />
 
-      <form onSubmit={handleSubmit} className="flex gap-2 max-w-2xl mx-auto mb-10 select-none">
-        <input
-          id="quick-brain-dump-input"
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Capture a thought... (Press '/' to focus)"
-          className="w-full input-premium text-sm py-2 font-semibold"
-        />
-        <button
-          type="submit"
-          className="button-premium w-10 h-10 rounded-full flex items-center justify-center p-0 shrink-0 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" color="white" stroke="white" />
-        </button>
-      </form>
+      <QuickAddInput
+        id="quick-brain-dump-input"
+        value={inputValue}
+        onChange={setInputValue}
+        onSubmit={handleSubmit}
+        placeholder="Capture a thought... (Press '/' to focus)"
+        className="max-w-2xl mx-auto mb-10"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-4">
