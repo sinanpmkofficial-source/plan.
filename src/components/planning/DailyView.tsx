@@ -45,10 +45,10 @@ export default function DailyView() {
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       <PageHeader title="Daily Plan">
-        <div className="flex items-center gap-1 bg-kbd-bg rounded-md p-1 shadow-none">
+        <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
           <button
             onClick={handlePrevDay}
-            className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-800 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-800 transition-colors cursor-pointer"
             title="Previous Day"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -62,7 +62,7 @@ export default function DailyView() {
           />
           <button
             onClick={handleNextDay}
-            className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-800 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-800 transition-colors cursor-pointer"
             title="Next Day"
           >
             <ChevronRight className="w-4 h-4" />
@@ -79,13 +79,13 @@ export default function DailyView() {
             </span>
           </div>
 
-          <div className="bg-kbd-bg p-1 rounded-md flex gap-1 text-xs font-bold select-none">
+          <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
             {BULLET_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setBulletType(type)}
-                className={`flex-1 py-1.5 px-3 rounded-md text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-black text-white shadow-none' : 'text-neutral-550 hover:text-black hover:bg-neutral-200/50' }`}
+                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-black text-white shadow-none' : 'text-neutral-550 hover:text-black hover:bg-neutral-200/50' }`}
               >
                 {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
               </button>

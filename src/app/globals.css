@@ -183,7 +183,7 @@ input[type=number] {
   color: var(--button-primary-text);
   font-weight: 700;
   padding: 10px 20px;
-  border-radius: 10px; /* Modern rounded shape */
+  border-radius: 9999px; /* Fully rounded shape */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -208,7 +208,7 @@ input[type=number] {
   border: 1px solid var(--button-secondary-border);
   font-weight: 700;
   padding: 10px 20px;
-  border-radius: 10px; /* Modern rounded shape */
+  border-radius: 9999px; /* Fully rounded shape */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -273,7 +273,7 @@ input, select, textarea {
   color: var(--foreground) !important;
   font-weight: 600 !important;
   font-size: 0.8rem !important;
-  border-radius: 6px !important;
+  border-radius: 50% !important; /* Circular calendar cells */
   transition: all 0.15s ease !important;
 }
 

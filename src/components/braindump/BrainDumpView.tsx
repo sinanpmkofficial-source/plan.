@@ -255,7 +255,7 @@ export default function BrainDumpView() {
             setParsedItems([]);
             setShowParser(!showParser);
           }}
-          className="flex items-center gap-2 px-4 py-2 border border-dashed border-neutral-300 hover:border-black rounded-md text-xs font-black cursor-pointer hover:bg-neutral-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-dashed border-neutral-300 hover:border-black rounded-full text-xs font-black cursor-pointer hover:bg-neutral-50 transition-colors"
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>{showParser ? 'Close Smart Parser' : 'Open Smart Parser'}</span>
@@ -416,7 +416,7 @@ export default function BrainDumpView() {
                       onClick={() => {
                         setParsedItems(parsedItems.filter((_, i) => i !== idx));
                       }}
-                      className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-400 hover:text-black cursor-pointer"
+                      className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-black cursor-pointer"
                       title="Discard item"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -602,10 +602,10 @@ function BrainDumpItemComponent({
             autoFocus
           />
           <div className="flex justify-end gap-2">
-            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-400 cursor-pointer">
+            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
-            <button onClick={handleSave} className="p-1.5 hover:bg-neutral-200 text-black rounded-md cursor-pointer">
+            <button onClick={handleSave} className="p-1.5 hover:bg-neutral-200 text-black rounded-full cursor-pointer">
               <Check className="w-4 h-4" />
             </button>
           </div>
@@ -618,30 +618,30 @@ function BrainDumpItemComponent({
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-divider pt-3.5 mt-1">
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-md text-neutral-400 cursor-pointer" title="Delete">
+          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-full text-neutral-400 cursor-pointer" title="Delete">
             <Trash2 className="w-4 h-4" />
           </button>
           {!editing && (
-            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-md text-neutral-400 cursor-pointer" title="Edit">
+            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-full text-neutral-400 cursor-pointer" title="Edit">
               <Pencil className="w-4 h-4" />
             </button>
           )}
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-500 font-bold">
-          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
             <Clock className="w-3.5 h-3.5 text-neutral-450" />
             <span>Today</span>
           </button>
-          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
             <Sparkles className="w-3.5 h-3.5 text-neutral-455" />
             <span>Week</span>
           </button>
-          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
             <Calendar className="w-3.5 h-3.5 text-neutral-450" />
             <span>Month</span>
           </button>
-          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
             <Target className="w-3.5 h-3.5 text-neutral-455" />
             <span>Goal</span>
           </button>
@@ -680,7 +680,7 @@ function ProcessedItemComponent({ item, onDelete }: { item: BrainDumpItem; onDel
           Converted to {item.convertedTo}
         </span>
       </div>
-      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-400 hover:text-black cursor-pointer">
+      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-black cursor-pointer">
         <Trash2 className="w-3.5 h-3.5" />
       </button>
 
