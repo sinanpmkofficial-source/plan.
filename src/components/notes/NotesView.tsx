@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Plus, Search, Trash2, ChevronLeft, FileText, Loader2, Save } from 'lucide-react';
+import { Plus, Search, Trash2, ChevronLeft, ChevronRight, Menu, FileText, Loader2, Save } from 'lucide-react';
 import { format } from 'date-fns';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { usePlannerStore } from '@/store/planner-store';
@@ -26,6 +26,7 @@ export default function NotesView() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [savingState, setSavingState] = useState<SavingState>('idle');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   // Deletion state
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
@@ -238,7 +239,9 @@ export default function NotesView() {
       <div
         className={`${
           selectedNoteId ? 'hidden md:flex' : 'flex'
-        } w-full md:w-80 border-r border-divider flex-col h-full bg-neutral-50/30 shrink-0`}
+        } ${
+          isSidebarCollapsed && selectedNoteId ? 'md:w-0 md:opacity-0 md:border-r-0' : 'md:w-80 border-r border-divider'
+        } w-full flex-col h-full bg-neutral-50/30 shrink-0 transition-all duration-300 overflow-hidden`}
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-divider space-y-3 shrink-0">
@@ -343,6 +346,15 @@ export default function NotesView() {
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>List</span>
+                </button>
+
+                {/* Sidebar Collapse Toggle for Desktop */}
+                <button
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  className="hidden md:flex items-center justify-center p-1.5 hover:bg-neutral-100 rounded-md text-neutral-400 hover:text-black transition-colors cursor-pointer"
+                  title={isSidebarCollapsed ? "Show Notes List" : "Collapse Notes List"}
+                >
+                  {isSidebarCollapsed ? <Menu className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </button>
 
                 {/* Saving status indicator */}

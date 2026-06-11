@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { usePlannerStore } from '@/store/planner-store';
 import Navigation from '@/components/layout/Navigation';
 import { Loader2, Trash2, X } from 'lucide-react';
@@ -8,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { loadData, isLoading, toast, hideToast } = usePlannerStore();
+  const pathname = usePathname();
 
   useEffect(() => {
     loadData();
@@ -20,10 +22,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main Content Pane */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Dynamic View Scroll Area */}
-        <main className="flex-1 overflow-y-auto px-4 md:px-8 pt-0 pb-28 md:pb-6">
-          {children}
-        </main>
+        {/* Dynamic View Scroll Area with clean route transition */}
+        <AnimatePresence mode="wait">
+          <motion.main
+            key={pathname}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.12, ease: 'easeOut' }}
+            className="flex-1 overflow-y-auto px-4 md:px-8 pt-0 pb-28 md:pb-6"
+          >
+            {children}
+          </motion.main>
+        </AnimatePresence>
       </div>
 
       {/* Floating Toast Notification */}
