@@ -10,6 +10,7 @@ import {
   BarChart3,
   Clock,
   CalendarDays,
+  FileText,
 } from 'lucide-react';
 
 export default function Navigation() {
@@ -20,6 +21,7 @@ export default function Navigation() {
     { id: 'daily', label: 'Today', mobileLabel: 'Today', icon: Clock, path: '/' },
     { id: 'braindump', label: 'Brain Dump', mobileLabel: 'Dump', icon: Inbox, path: '/braindump' },
     { id: 'goals', label: 'Goals System', mobileLabel: 'Goals', icon: Target, path: '/goals' },
+    { id: 'notes', label: 'Notes', mobileLabel: 'Notes', icon: FileText, path: '/notes' },
     { id: 'weekly', label: 'Weekly Plan', mobileLabel: 'Weekly', icon: CalendarDays, path: '/weekly' },
     { id: 'monthly', label: 'Monthly Plan', mobileLabel: 'Monthly', icon: Calendar, path: '/monthly' },
     { id: 'analytics', label: 'Analytics', mobileLabel: 'Stats', icon: BarChart3, path: '/analytics' },
