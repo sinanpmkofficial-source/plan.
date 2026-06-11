@@ -120,7 +120,7 @@ export default function WeeklyView() {
                   extraActions={
                     <AssignDateButton
                       taskText={note.text}
-                      onAssign={() => deleteWeeklyTask(selectedWeek, note.id)}
+                      onAssign={() => deleteWeeklyTask(selectedWeek, note.id, true)}
                       context="weekly"
                     />
                   }

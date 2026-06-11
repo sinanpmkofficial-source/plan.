@@ -93,7 +93,7 @@ interface PlannerState {
   addWeeklyTask: (weekId: string, type: 'task' | 'note' | 'event', text: string) => void;
   updateWeeklyTask: (weekId: string, taskId: string, text: string) => void;
   toggleWeeklyTask: (weekId: string, taskId: string) => void;
-  deleteWeeklyTask: (weekId: string, taskId: string) => void;
+  deleteWeeklyTask: (weekId: string, taskId: string, silent?: boolean) => void;
   updateWeeklyReflection: (weekId: string, reflection: string) => void;
 
   // Actions - Monthly Plan
@@ -101,7 +101,7 @@ interface PlannerState {
   addMonthlyTask: (monthId: string, type: 'task' | 'note' | 'event', text: string) => void;
   updateMonthlyTask: (monthId: string, taskId: string, text: string) => void;
   toggleMonthlyTask: (monthId: string, taskId: string) => void;
-  deleteMonthlyTask: (monthId: string, taskId: string) => void;
+  deleteMonthlyTask: (monthId: string, taskId: string, silent?: boolean) => void;
   updateMonthlyReflection: (monthId: string, reflection: string) => void;
 
   // Toast Notifications
@@ -685,7 +685,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       markDirty('weeklyPlans', weekId);
     },
 
-    deleteWeeklyTask: (weekId, noteId) => {
+    deleteWeeklyTask: (weekId, noteId, silent) => {
       const plan = get().weeklyPlans[weekId];
       const note = plan?.bulletNotes?.find((n) => n.id === noteId);
       const text = note?.text || 'Weekly note';
@@ -696,7 +696,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
       });
       markDirty('weeklyPlans', weekId);
-      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
+      if (!silent) {
+        get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
+      }
     },
 
     updateWeeklyReflection: (weekId, reflection) => {
@@ -752,7 +754,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       markDirty('monthlyPlans', monthId);
     },
 
-    deleteMonthlyTask: (monthId, noteId) => {
+    deleteMonthlyTask: (monthId, noteId, silent) => {
       const plan = get().monthlyPlans[monthId];
       const note = plan?.bulletNotes?.find((n) => n.id === noteId);
       const text = note?.text || 'Monthly note';
@@ -763,7 +765,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
       });
       markDirty('monthlyPlans', monthId);
-      get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
+      if (!silent) {
+        get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
+      }
     },
 
     updateMonthlyReflection: (monthId, reflection) => {

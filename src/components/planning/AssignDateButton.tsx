@@ -126,6 +126,21 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
 
   const weekDays = getWeekDays();
   const monthDays = getMonthDays();
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  // Calculate grid offsets for monthly calendar rendering (starting on Monday)
+  let offsetDays = 0;
+  if (context === 'monthly' && selectedMonth) {
+    try {
+      const [year, month] = selectedMonth.split('-').map(Number);
+      const firstDayOfWeek = new Date(year, month - 1, 1).getDay();
+      offsetDays = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const weekdaysLabel = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   const panel = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -138,38 +153,45 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
       <div
         ref={panelRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-white rounded-2xl border border-neutral-200 p-6 w-[280px] space-y-3 shadow-none text-black select-none z-10 animate-in zoom-in-95 duration-100"
+        className="relative bg-white rounded-2xl border border-neutral-200 p-6 w-[432px] space-y-4 shadow-none text-black select-none z-10 animate-in zoom-in-95 duration-100"
       >
-        <div className="flex items-center justify-between border-b border-divider pb-2 mb-1">
+        <div className="flex items-center justify-between border-b border-divider pb-2.5 mb-1">
           <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400">
             {context === 'weekly' ? 'Assign to Week Day' : 'Assign to Month Day'}
           </span>
           <button onClick={handleCancel} className="p-1 hover:bg-neutral-100 rounded text-neutral-400 hover:text-black cursor-pointer">
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {!showCustomPicker ? (
           <>
             {context === 'weekly' && (
-              <div className="grid grid-cols-2 gap-1.5">
-                {weekDays.map((wd) => (
-                  <button
-                    key={wd.dateStr}
-                    onClick={() => handleQuickSelect(wd.dateStr)}
-                    className="px-2.5 py-1.5 text-left bg-neutral-50 hover:bg-black hover:text-white border border-neutral-200 hover:border-black rounded-md transition-colors cursor-pointer group flex flex-col"
-                  >
-                    <span className="text-[9px] uppercase tracking-wider text-neutral-400 font-extrabold group-hover:text-neutral-300">
-                      {wd.dayName}
-                    </span>
-                    <span className="text-xs font-black leading-tight">
-                      {wd.dayNum}
-                    </span>
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-2">
+                {weekDays.map((wd) => {
+                  const isToday = wd.dateStr === todayStr;
+                  return (
+                    <button
+                      key={wd.dateStr}
+                      onClick={() => handleQuickSelect(wd.dateStr)}
+                      className={`relative px-4 py-3 text-left border rounded-md transition-colors cursor-pointer group flex flex-col justify-between h-16 ${
+                        isToday
+                          ? 'border-2 border-black bg-black text-white font-extrabold'
+                          : 'bg-neutral-50/50 hover:bg-black hover:text-white border-neutral-200 hover:border-black text-black'
+                      }`}
+                    >
+                      <span className={`text-[9px] uppercase tracking-wider font-extrabold ${isToday ? 'text-neutral-300' : 'text-neutral-400 group-hover:text-neutral-300'}`}>
+                        {wd.dayName} {isToday && '• Today'}
+                      </span>
+                      <span className="text-base font-black leading-tight">
+                        {wd.dayNum}
+                      </span>
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => setShowCustomPicker(true)}
-                  className="col-span-2 py-2 text-center text-xs font-black border border-dashed border-neutral-300 hover:border-black rounded-md cursor-pointer hover:bg-neutral-50 transition-colors"
+                  className="col-span-2 py-3 text-center text-xs font-black border border-dashed border-neutral-300 hover:border-black rounded-md cursor-pointer hover:bg-neutral-50 transition-colors"
                 >
                   Choose Custom Date...
                 </button>
@@ -177,21 +199,43 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
             )}
 
             {context === 'monthly' && (
-              <div className="space-y-2">
-                <div className="grid grid-cols-7 gap-1 max-h-[140px] overflow-y-auto pr-1">
-                  {monthDays.map((md) => (
-                    <button
-                      key={md.dateStr}
-                      onClick={() => handleQuickSelect(md.dateStr)}
-                      className="w-7 h-7 flex items-center justify-center text-xs font-black bg-neutral-50 hover:bg-black hover:text-white border border-neutral-200 hover:border-black rounded-md transition-colors cursor-pointer"
-                    >
-                      {md.dayNum}
-                    </button>
+              <div className="space-y-4">
+                {/* Weekday Labels */}
+                <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-black text-neutral-400">
+                  {weekdaysLabel.map((l, i) => (
+                    <div key={i}>{l}</div>
                   ))}
+                </div>
+                {/* Visual Calendar Grid */}
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: offsetDays }).map((_, idx) => (
+                    <div key={`offset-${idx}`} className="w-12 h-12" />
+                  ))}
+                  {monthDays.map((md) => {
+                    const isToday = md.dateStr === todayStr;
+                    return (
+                      <button
+                        key={md.dateStr}
+                        onClick={() => handleQuickSelect(md.dateStr)}
+                        className={`relative w-12 h-12 flex flex-col items-center justify-center text-sm font-black rounded-md transition-colors cursor-pointer border ${
+                          isToday
+                            ? 'border-2 border-black bg-black text-white'
+                            : 'border-neutral-200 bg-neutral-50/50 hover:bg-black hover:text-white hover:border-black text-black'
+                        }`}
+                      >
+                        <span className={isToday ? 'mb-1' : ''}>{md.dayNum}</span>
+                        {isToday && (
+                          <span className="absolute bottom-1 text-[7px] font-black uppercase tracking-wider text-neutral-200">
+                            Today
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
                 <button
                   onClick={() => setShowCustomPicker(true)}
-                  className="w-full py-2 text-center text-xs font-black border border-dashed border-neutral-300 hover:border-black rounded-md cursor-pointer hover:bg-neutral-50 transition-colors"
+                  className="w-full py-3 text-center text-xs font-black border border-dashed border-neutral-300 hover:border-black rounded-md cursor-pointer hover:bg-neutral-50 transition-colors"
                 >
                   Choose Custom Date...
                 </button>

@@ -118,7 +118,7 @@ export default function MonthlyView() {
                   extraActions={
                     <AssignDateButton
                       taskText={note.text}
-                      onAssign={() => deleteMonthlyTask(selectedMonth, note.id)}
+                      onAssign={() => deleteMonthlyTask(selectedMonth, note.id, true)}
                       context="monthly"
                     />
                   }
