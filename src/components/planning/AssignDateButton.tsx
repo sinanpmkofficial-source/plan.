@@ -159,7 +159,7 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
       ref={panelRef}
       onClick={(e) => e.stopPropagation()}
       style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999 }}
-      className="bg-white rounded-xl border border-neutral-200 p-4 w-[280px] space-y-3 shadow-none text-black select-none"
+      className="bg-white/80 backdrop-blur-md rounded-xl border border-neutral-200 p-4 w-[280px] space-y-3 shadow-none text-black select-none"
     >
       <div className="flex items-center justify-between border-b border-divider pb-2 mb-1">
         <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400">
