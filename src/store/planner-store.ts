@@ -113,6 +113,49 @@ interface PlannerState {
 // Debounce timer for background syncing
 let syncTimeout: NodeJS.Timeout | null = null;
 
+const isBrowser = typeof window !== 'undefined';
+
+const getLocalStorageData = () => {
+  if (!isBrowser) return { brainDump: [], goals: [], dailyPlans: {}, weeklyPlans: {}, monthlyPlans: {} };
+  try {
+    const data = localStorage.getItem('planner-data');
+    if (data) {
+      const parsed = JSON.parse(data);
+      return {
+        brainDump: parsed.brainDump || [],
+        goals: parsed.goals || [],
+        dailyPlans: parsed.dailyPlans || {},
+        weeklyPlans: parsed.weeklyPlans || {},
+        monthlyPlans: parsed.monthlyPlans || {},
+      };
+    }
+  } catch (e) {
+    console.error('Failed to parse local storage data', e);
+  }
+  return { brainDump: [], goals: [], dailyPlans: {}, weeklyPlans: {}, monthlyPlans: {} };
+};
+
+const saveLocalStorageData = (state: {
+  brainDump: any[];
+  goals: any[];
+  dailyPlans: any;
+  weeklyPlans: any;
+  monthlyPlans: any;
+}) => {
+  if (!isBrowser) return;
+  try {
+    localStorage.setItem('planner-data', JSON.stringify({
+      brainDump: state.brainDump,
+      goals: state.goals,
+      dailyPlans: state.dailyPlans,
+      weeklyPlans: state.weeklyPlans,
+      monthlyPlans: state.monthlyPlans,
+    }));
+  } catch (e) {
+    console.error('Failed to save to local storage', e);
+  }
+};
+
 export const usePlannerStore = create<PlannerState>((set, get) => {
   // Helper: Mark entity as dirty and schedule sync
   const markDirty = (
@@ -132,12 +175,8 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
   };
 
   return {
-    // Initial UI and data state
-    brainDump: [],
-    goals: [],
-    dailyPlans: {},
-    weeklyPlans: {},
-    monthlyPlans: {},
+    // Initial UI and data state from local cache
+    ...getLocalStorageData(),
 
     currentView: 'daily',
     selectedDate: new Date().toISOString().split('T')[0],
@@ -145,7 +184,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     selectedMonth: getMonthIdFromDate(new Date().toISOString().split('T')[0]),
     syncStatus: 'saved',
     syncErrorMsg: null,
-    isLoading: true,
+    isLoading: false, // Default false to avoid skeleton blocker screen
     toast: null,
 
     dirtyBrainDump: new Set(),
@@ -156,7 +195,13 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
 
     // Core Sync Actions
     loadData: async () => {
-      set({ isLoading: true });
+      const cached = getLocalStorageData();
+      const hasCachedData = cached.brainDump.length > 0 || cached.goals.length > 0 || Object.keys(cached.dailyPlans).length > 0;
+      
+      if (!hasCachedData) {
+        set({ isLoading: true });
+      }
+
       try {
         const res = await fetch('/api/sync');
         if (!res.ok) throw new Error('Failed to load initial data');
@@ -170,6 +215,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
           isLoading: false,
           syncStatus: 'saved',
         });
+        saveLocalStorageData(data);
       } catch (err: any) {
         console.error(err);
         set({ isLoading: false, syncStatus: 'error', syncErrorMsg: err.message });
@@ -731,3 +777,10 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
   };
 });
+
+if (isBrowser) {
+  usePlannerStore.subscribe((state) => {
+    saveLocalStorageData(state);
+  });
+}
+

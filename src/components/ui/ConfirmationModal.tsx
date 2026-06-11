@@ -37,20 +37,20 @@ export default function ConfirmationModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onCancel}
-            className="absolute inset-0 bg-black/40 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/40 backdrop-blur-md"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative bg-white rounded-3xl shadow-2xl border border-neutral-100 p-6 max-w-sm w-full space-y-5 overflow-hidden"
+            className="relative bg-white rounded-2xl shadow-none border border-neutral-200 p-6 max-w-sm w-full space-y-5 overflow-hidden text-black"
           >
             <div className="flex items-start gap-4">
-              <div className={`p-3 rounded-2xl shrink-0 ${variant === 'danger' ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500'}`}>
+              <div className={`p-3 rounded-md shrink-0 ${variant === 'danger' ? 'bg-neutral-100 text-black' : 'bg-neutral-100 text-black'}`}>
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-extrabold text-neutral-900 tracking-tight">{title}</h3>
+                <h3 className="text-lg font-extrabold text-black tracking-tight">{title}</h3>
                 <p className="text-sm font-semibold text-neutral-500 leading-relaxed">{message}</p>
               </div>
             </div>
@@ -58,17 +58,13 @@ export default function ConfirmationModal({
             <div className="flex gap-3">
               <button
                 onClick={onCancel}
-                className="flex-1 py-3 rounded-2xl text-sm font-bold text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-md text-sm font-bold text-neutral-500 hover:bg-neutral-100 border border-neutral-200 transition-colors cursor-pointer"
               >
                 {cancelLabel}
               </button>
               <button
                 onClick={onConfirm}
-                className={`flex-1 py-3 rounded-2xl text-sm font-bold text-white transition-all shadow-lg cursor-pointer ${
-                  variant === 'danger' 
-                    ? 'bg-red-500 hover:bg-red-600 shadow-red-200' 
-                    : 'bg-neutral-900 hover:bg-neutral-800 shadow-neutral-200'
-                }`}
+                className="flex-1 py-2.5 rounded-md text-sm font-bold text-white bg-black hover:bg-neutral-900 border border-black transition-colors cursor-pointer"
               >
                 {confirmLabel}
               </button>

@@ -27,9 +27,10 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
   const prayerScore = prayersCount * 10;
 
   let taskScore = 50;
-  if (dailyPlan.tasks && dailyPlan.tasks.length > 0) {
-    const completedTasks = dailyPlan.tasks.filter((t) => t.completed).length;
-    taskScore = Math.round((completedTasks / dailyPlan.tasks.length) * 50);
+  const bulletTasks = (dailyPlan.bulletNotes || []).filter((n) => n.type === 'task');
+  if (bulletTasks.length > 0) {
+    const completedTasks = bulletTasks.filter((t) => t.completed).length;
+    taskScore = Math.round((completedTasks / bulletTasks.length) * 50);
   }
 
   return (
@@ -77,7 +78,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
             onMouseEnter={() => setShowScoreInfo(true)}
             onMouseLeave={() => setShowScoreInfo(false)}
             onClick={() => setShowScoreInfo((prev) => !prev)}
-            className="flex items-center gap-1.5 py-1 px-3 rounded-full border border-input-border bg-kbd-bg hover:bg-neutral-100 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 py-1 px-3 rounded-md border border-input-border bg-kbd-bg hover:bg-neutral-200 transition-all cursor-pointer"
           >
             <Award className="w-3.5 h-3.5 text-neutral-900" />
             <span className="text-xs font-extrabold text-neutral-900">
@@ -87,7 +88,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
 
           {/* Breakdown popup */}
           {showScoreInfo && (
-            <div className="absolute right-0 mt-2.5 w-52 bg-card-bg border border-card-border rounded-2xl p-4 shadow-nav-shadow z-50 text-xs text-foreground">
+            <div className="absolute right-0 mt-2.5 w-52 bg-card-bg border border-neutral-200 rounded-xl p-4 shadow-none z-50 text-xs text-foreground backdrop-blur-md">
               <h4 className="font-bold mb-2 flex items-center gap-1 border-b border-divider pb-1.5">
                 <Info className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Score Breakdown</span>

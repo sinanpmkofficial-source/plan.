@@ -42,7 +42,7 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-neutral-50 text-neutral-900 font-sans flex flex-col">
+      <body className="min-h-full bg-background text-foreground font-sans flex flex-col">
         <AppLayout>{children}</AppLayout>
       </body>
     </html>

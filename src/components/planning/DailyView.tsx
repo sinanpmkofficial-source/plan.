@@ -45,10 +45,10 @@ export default function DailyView() {
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
       <PageHeader title="Daily Plan">
-        <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
+        <div className="flex items-center gap-1 bg-kbd-bg rounded-md p-1 shadow-none">
           <button
             onClick={handlePrevDay}
-            className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-800 transition-colors cursor-pointer"
             title="Previous Day"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -57,15 +57,15 @@ export default function DailyView() {
             type="date"
             value={selectedDate}
             onChange={(e) => setDate(e.target.value)}
-            className="text-xs font-extrabold px-2 py-0.5 bg-transparent border-0 outline-none text-center cursor-pointer w-[125px]"
-            style={{ color: '#111111', colorScheme: 'light' }}
+            className="text-xs font-extrabold px-2 py-0.5 bg-transparent border-0 outline-none text-center cursor-pointer w-[125px] text-black"
+            style={{ colorScheme: 'light' }}
           />
           <button
             onClick={handleNextDay}
-            className=" hover:bg-neutral-100 rounded-full text-neutral-600 transition-colors cursor-pointer"
+            className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-800 transition-colors cursor-pointer"
             title="Next Day"
           >
-            <ChevronRight className="w-4 h-4 m-2 text-white" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </PageHeader>
@@ -74,18 +74,18 @@ export default function DailyView() {
         <div className="card-premium p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight">Daily Log</h4>
-            <span className="text-xs font-bold text-black select-none">
+            <span className="text-xs font-bold text-neutral-500 select-none">
               {progress}% completed
             </span>
           </div>
 
-          <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-xs font-bold select-none">
+          <div className="bg-kbd-bg p-1 rounded-md flex gap-1 text-xs font-bold select-none">
             {BULLET_TYPES.map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setBulletType(type)}
-                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-white text-neutral-950 shadow-xs' : 'text-neutral-500 hover:text-neutral-700' }`}
+                className={`flex-1 py-1.5 px-3 rounded-md text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-black text-white shadow-none' : 'text-neutral-550 hover:text-black hover:bg-neutral-200/50' }`}
               >
                 {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
               </button>
@@ -101,7 +101,7 @@ export default function DailyView() {
 
           <div className="space-y-1.5">
             {plan.bulletNotes.length === 0 ? (
-              <div className="py-12 text-center text-neutral-450 text-sm border border-dashed border-divider rounded-2xl font-bold">
+              <div className="py-12 text-center text-neutral-400 text-sm border border-dashed border-divider rounded-lg font-bold">
                 Daily Log is empty. Add a task or note above!
               </div>
             ) : (

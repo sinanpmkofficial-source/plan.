@@ -1,34 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f4f7;
+  --background: #ffffff;
   --foreground: #000000;
   --card-bg: #ffffff;
-  --card-border: rgba(0, 0, 0, 0.02);
-  --button-hover: rgba(0, 0, 0, 0.02);
+  --card-border: #e5e5e5;
+  --button-hover: #f5f5f5;
   --input-bg: #ffffff;
-  --input-border: rgba(0, 0, 0, 0.05);
-  --input-focus-ring: rgba(0, 0, 0, 0.02);
-  --input-focus-border: #111111;
-  --kbd-bg: #e8e8ed;
-  --kbd-border: rgba(0, 0, 0, 0.03);
-  --kbd-text: #555555;
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(0, 0, 0, 0.03);
-  --nav-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.06);
+  --input-border: #e5e5e5;
+  --input-focus-ring: transparent;
+  --input-focus-border: #000000;
+  --kbd-bg: #f5f5f5;
+  --kbd-border: #e5e5e5;
+  --kbd-text: #000000;
+  --nav-bg: #ffffff;
+  --nav-border: #e5e5e5;
+  --nav-shadow: none;
   
-  --button-primary-bg: #111111;
+  --button-primary-bg: #000000;
   --button-primary-text: #ffffff;
-  --button-primary-hover: #222222;
+  --button-primary-hover: #171717;
   
   --button-secondary-bg: #ffffff;
-  --button-secondary-text: #111111;
-  --button-secondary-border: rgba(0, 0, 0, 0.04);
-  --button-secondary-hover: #fcfcfd;
+  --button-secondary-text: #000000;
+  --button-secondary-border: #000000;
+  --button-secondary-hover: #f5f5f5;
   
-  --divider: rgba(0, 0, 0, 0.04);
-  --scroll-thumb: #dedede;
-  --scroll-thumb-hover: #cccccc;
+  --divider: #e5e5e5;
+  --scroll-thumb: #d4d4d4;
+  --scroll-thumb-hover: #a3a3a3;
 }
 
 @theme inline {
@@ -108,20 +108,20 @@ input[type=number] {
 .card-premium {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.02), 0 2px 6px -1px rgba(0, 0, 0, 0.01);
-  border-radius: 20px; /* Highly rounded iOS card */
+  box-shadow: none; /* Keep it flat and clean */
+  border-radius: 16px; /* Modern rounded corners */
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-premium:hover {
+  border-color: #000000;
   transform: translateY(-1px);
-  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.03), 0 2px 10px -2px rgba(0, 0, 0, 0.01);
 }
 
 .input-premium {
   border: 1px solid var(--input-border);
-  border-radius: 9999px; /* Pill input */
-  padding: 10px 18px;
+  border-radius: 10px; /* Modern rounded shape */
+  padding: 10px 16px;
   background-color: var(--input-bg);
   color: var(--foreground);
   outline: none;
@@ -130,12 +130,11 @@ input[type=number] {
 
 .input-premium:focus {
   border-color: var(--input-focus-border);
-  box-shadow: 0 0 0 2px var(--input-focus-ring);
 }
 
 .textarea-premium {
   border: 1px solid var(--input-border);
-  border-radius: 16px; /* Rounded rectangle instead of pill */
+  border-radius: 10px;
   padding: 12px 16px;
   background-color: var(--input-bg);
   color: var(--foreground);
@@ -145,22 +144,21 @@ input[type=number] {
 
 .textarea-premium:focus {
   border-color: var(--input-focus-border);
-  box-shadow: 0 0 0 2px var(--input-focus-ring);
 }
 
 .button-premium {
   background-color: var(--button-primary-bg);
   color: var(--button-primary-text);
-  font-weight: 600;
-  padding: 10px 22px;
-  border-radius: 9999px; /* Pill button */
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px; /* Modern rounded shape */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   cursor: pointer;
-  border: none;
+  border: 1px solid var(--button-primary-bg);
 }
 
 .button-premium:hover {
@@ -169,27 +167,27 @@ input[type=number] {
 }
 
 .button-premium:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .button-secondary {
   background-color: var(--button-secondary-bg);
   color: var(--button-secondary-text);
   border: 1px solid var(--button-secondary-border);
-  font-weight: 600;
-  padding: 10px 22px;
-  border-radius: 9999px; /* Pill button */
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px; /* Modern rounded shape */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .button-secondary:hover {
   background-color: var(--button-secondary-hover);
-  border-color: var(--button-secondary-border);
+  border-color: #000000;
   transform: translateY(-1px);
 }
 
 .button-secondary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 /* Custom transitions and scroll-behaviors */

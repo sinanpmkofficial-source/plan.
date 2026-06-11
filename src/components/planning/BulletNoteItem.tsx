@@ -41,7 +41,7 @@ export default function BulletNoteItem({
   };
 
   return (
-    <div className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-50 rounded-xl transition-colors group">
+    <div className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-neutral-100 rounded-md transition-colors group">
       <div className="flex items-center gap-2.5 min-w-0 flex-1">
         {/* Type Indicator / Toggle */}
         {note.type === 'task' && (
@@ -50,9 +50,9 @@ export default function BulletNoteItem({
             className="shrink-0 focus:outline-hidden cursor-pointer"
           >
             {note.completed ? (
-              <span className="w-4 h-4 border border-neutral-900 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
+              <span className="w-4 h-4 border border-black bg-black text-white rounded flex items-center justify-center text-[10px] font-black">✓</span>
             ) : (
-              <span className="w-4 h-4 border border-neutral-300 hover:border-neutral-500 rounded-full block" />
+              <span className="w-4 h-4 border border-neutral-300 hover:border-black rounded block" />
             )}
           </button>
         )}
@@ -60,7 +60,7 @@ export default function BulletNoteItem({
           <span className="text-neutral-400 select-none font-bold shrink-0">—</span>
         )}
         {note.type === 'event' && (
-          <MapPin className="w-4 h-4 text-neutral-800 shrink-0" />
+          <span className="text-neutral-400 select-none font-bold shrink-0">○</span>
         )}
 
         {/* Text / Input */}
@@ -70,7 +70,7 @@ export default function BulletNoteItem({
               type="text"
               value={editingText}
               onChange={(e) => setEditingText(e.target.value)}
-              className="flex-1 bg-transparent border-b border-neutral-300 outline-none text-sm font-bold py-0"
+              className="flex-1 bg-transparent border-b border-black outline-none text-sm font-bold py-0 text-black"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleSaveEdit();
@@ -79,13 +79,13 @@ export default function BulletNoteItem({
             />
             <button
               onClick={handleSaveEdit}
-              className="p-1 hover:bg-neutral-100 text-emerald-600 rounded-full transition-colors cursor-pointer"
+              className="p-1 hover:bg-neutral-200 text-black rounded transition-colors cursor-pointer"
             >
               <Check className="w-3 h-3" />
             </button>
             <button
               onClick={handleCancelEdit}
-              className="p-1 hover:bg-neutral-100 text-neutral-400 rounded-full transition-colors cursor-pointer"
+              className="p-1 hover:bg-neutral-200 text-neutral-400 rounded transition-colors cursor-pointer"
             >
               <X className="w-3 h-3" />
             </button>
@@ -93,7 +93,7 @@ export default function BulletNoteItem({
         ) : (
           <span
             onClick={note.type === 'task' ? onToggle : undefined}
-            className={`text-sm break-words leading-relaxed font-bold flex-1 ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-650 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-850' }`}
+            className={`text-sm break-words leading-relaxed font-bold flex-1 ${ note.type === 'task' ? 'cursor-pointer hover:text-neutral-600 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-neutral-900' }`}
           >
             {note.text}
           </span>
@@ -104,7 +104,7 @@ export default function BulletNoteItem({
         <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
           <button
             onClick={handleStartEdit}
-            className="p-1 hover:bg-neutral-100 text-neutral-450 hover:text-neutral-900 rounded-full transition-colors cursor-pointer"
+            className="p-1 hover:bg-neutral-200 text-neutral-400 hover:text-black rounded transition-colors cursor-pointer"
             title="Edit"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -114,7 +114,7 @@ export default function BulletNoteItem({
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="p-1 hover:bg-neutral-100 text-neutral-450 hover:text-red-500 rounded-full transition-colors shrink-0 cursor-pointer"
+            className="p-1 hover:bg-neutral-200 text-neutral-400 hover:text-black rounded transition-colors shrink-0 cursor-pointer"
             title="Delete"
           >
             <Trash2 className="w-3.5 h-3.5" />

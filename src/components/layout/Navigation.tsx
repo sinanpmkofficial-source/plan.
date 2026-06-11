@@ -32,7 +32,7 @@ export default function Navigation() {
         <div className="flex flex-col pt-6 px-4">
           {/* Brand Header */}
           <div className="flex items-center gap-2.5 px-3 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center text-white font-mono font-bold text-lg">
+            <div className="w-8 h-8 rounded-md bg-black flex items-center justify-center text-white font-mono font-bold text-lg">
               P
             </div>
             <div>
@@ -49,7 +49,7 @@ export default function Navigation() {
                 <Link
                   key={item.id}
                   href={item.path}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-bold transition-all group cursor-pointer ${ isActive ? 'bg-neutral-900 text-white shadow-xs' : 'text-neutral-500 hover:text-foreground hover:bg-neutral-100' }`}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-md text-sm font-bold transition-all group cursor-pointer ${ isActive ? 'bg-black text-white shadow-none' : 'text-neutral-500 hover:text-foreground hover:bg-neutral-100' }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4 shrink-0" />
@@ -62,8 +62,8 @@ export default function Navigation() {
         </div>
       </aside>
 
-      {/* MOBILE PILL MENU: Redesigned iOS bottom tab bar style (Icon only) */}
-      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-nav-bg backdrop-blur-md border border-nav-border rounded-full px-3 py-2 items-center justify-around gap-1.5 shadow-nav-shadow w-[calc(100%-2rem)] max-w-[420px] select-none transition-all duration-300">
+      {/* MOBILE MENU: Redesigned bottom tab bar style (Icon only) */}
+      <nav className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-white border border-nav-border rounded-lg px-3 py-2 items-center justify-around gap-1.5 shadow-none w-[calc(100%-2rem)] max-w-[420px] select-none transition-all duration-300">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
@@ -71,7 +71,7 @@ export default function Navigation() {
             <Link
               key={item.id}
               href={item.path}
-              className={`flex items-center justify-center p-3 rounded-full transition-all relative cursor-pointer w-12 h-12 shrink-0 ${ isActive ? 'bg-neutral-900 text-white shadow-sm scale-105' : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100/50' }`}
+              className={`flex items-center justify-center p-3 rounded-md transition-all relative cursor-pointer w-12 h-12 shrink-0 ${ isActive ? 'bg-black text-white shadow-none' : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-150/50' }`}
             >
               <Icon className="w-5.5 h-5.5 shrink-0" />
             </Link>

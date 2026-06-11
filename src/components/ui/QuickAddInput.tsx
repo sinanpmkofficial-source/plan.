@@ -28,19 +28,18 @@ export function QuickAddInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full input-premium text-sm py-2 font-semibold"
+        className="w-full input-premium text-sm font-semibold text-black"
       />
       <button
         type="submit"
-        style={{ padding: 0 }}
-        className="button-premium w-10 h-10 rounded-full flex items-center justify-center shrink-0 cursor-pointer bg-black hover:bg-neutral-900 active:scale-95 transition-all"
+        className="button-premium flex items-center justify-center shrink-0 cursor-pointer text-white px-4 gap-1.5"
         aria-label="Add"
       >
         <Plus 
-          size={18} 
-          color="white"
-          strokeWidth={3} 
+          size={16} 
+          strokeWidth={3.5} 
         />
+        <span className="hidden sm:inline text-[10px] uppercase tracking-widest font-black">Add</span>
       </button>
     </form>
   );

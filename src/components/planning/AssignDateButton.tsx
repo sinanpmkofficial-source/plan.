@@ -100,7 +100,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
       ref={panelRef}
       onClick={(e) => e.stopPropagation()}
       style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999 }}
-      className="bg-white rounded-2xl shadow-xl border border-neutral-100 p-4 w-[260px] space-y-4"
+      className="bg-white rounded-lg border border-neutral-200 p-4 w-[260px] space-y-4 shadow-none"
     >
       <div className="space-y-2">
         <label htmlFor="assign-date" className="block text-xs font-bold text-neutral-500 uppercase tracking-wider">
@@ -111,7 +111,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="w-full input-premium text-sm font-bold py-2"
+          className="w-full input-premium text-sm font-bold py-2 text-black"
           style={{ colorScheme: 'light' }}
         />
       </div>
@@ -120,7 +120,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
         <button
           type="button"
           onClick={handleCancel}
-          className="flex-1 flex items-center justify-center gap-1 py-2 rounded-full text-xs font-bold text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-bold text-neutral-500 hover:bg-neutral-100 transition-colors cursor-pointer"
         >
           <X className="w-3 h-3" /> Cancel
         </button>
@@ -128,9 +128,9 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
           type="button"
           onClick={handleConfirm}
           disabled={!selectedDate}
-          className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-full text-xs font-bold transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-bold transition-colors ${
             selectedDate
-              ? 'bg-neutral-900 text-white hover:bg-neutral-800 cursor-pointer'
+              ? 'bg-black text-white hover:bg-neutral-900 cursor-pointer'
               : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
           }`}
         >
@@ -146,7 +146,7 @@ export default function AssignDateButton({ taskText, onAssign }: AssignDateButto
         ref={buttonRef}
         type="button"
         onClick={handleToggle}
-        className="w-7 h-7 flex items-center justify-center hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900 rounded-full transition-colors cursor-pointer"
+        className="w-7 h-7 flex items-center justify-center hover:bg-neutral-200 text-neutral-400 hover:text-black rounded-md transition-colors cursor-pointer"
         title="Assign to a Date"
       >
         <CalendarIcon className="w-3.5 h-3.5" />

@@ -89,7 +89,7 @@ export default function BrainDumpView() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center p-8 border border-dashed border-divider rounded-2xl bg-card-bg/20 text-neutral-400 min-h-[250px]"
+                  className="flex flex-col items-center justify-center p-8 border border-dashed border-divider rounded-lg bg-card-bg/20 text-neutral-400 min-h-[250px]"
                 >
                   <Inbox className="w-8 h-8 stroke-1 mb-2 text-neutral-400" />
                   <p className="text-sm font-bold">Your brain dump is clear.</p>
@@ -116,7 +116,7 @@ export default function BrainDumpView() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 px-1">
             <CheckCircle2 className="w-4 h-4 text-neutral-400" />
-            <h4 className="font-extrabold text-sm text-neutral-450 uppercase tracking-wider">
+            <h4 className="font-extrabold text-sm text-neutral-400 uppercase tracking-wider">
               Processed ({convertedItems.length})
             </h4>
           </div>
@@ -124,7 +124,7 @@ export default function BrainDumpView() {
           <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
             <AnimatePresence initial={false}>
               {convertedItems.length === 0 ? (
-                <div className="p-6 border border-dashed border-divider rounded-2xl text-center text-neutral-405 text-sm font-semibold">
+                <div className="p-6 border border-dashed border-divider rounded-lg text-center text-neutral-400 text-sm font-semibold">
                   Processed logs will appear here.
                 </div>
               ) : (
@@ -142,8 +142,8 @@ export default function BrainDumpView() {
       </div>
 
       {showGoalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-card-bg border border-card-border p-6 rounded-2xl max-w-sm w-full shadow-nav-shadow animate-in zoom-in-95 duration-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
+          <div className="bg-card-bg border border-neutral-200 p-6 rounded-2xl max-w-sm w-full shadow-none animate-in zoom-in-95 duration-100">
             <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2">
               <Target className="w-4 h-4" />
               <span>Convert to Goal</span>
@@ -231,10 +231,10 @@ function BrainDumpItemComponent({
             autoFocus
           />
           <div className="flex justify-end gap-2">
-            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-400 cursor-pointer">
+            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-400 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
-            <button onClick={handleSave} className="p-1.5 hover:bg-neutral-100 text-emerald-600 rounded-full cursor-pointer">
+            <button onClick={handleSave} className="p-1.5 hover:bg-neutral-200 text-black rounded-md cursor-pointer">
               <Check className="w-4 h-4" />
             </button>
           </div>
@@ -247,31 +247,31 @@ function BrainDumpItemComponent({
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-divider pt-3.5 mt-1">
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-100 hover:text-red-500 rounded-full text-neutral-400 cursor-pointer" title="Delete">
+          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-md text-neutral-400 cursor-pointer" title="Delete">
             <Trash2 className="w-4 h-4" />
           </button>
           {!editing && (
-            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-neutral-100 hover:text-neutral-900 rounded-full text-neutral-400 cursor-pointer" title="Edit">
+            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-md text-neutral-400 cursor-pointer" title="Edit">
               <Pencil className="w-4 h-4" />
             </button>
           )}
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-500 font-bold">
-          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
-            <Clock className="w-3.5 h-3.5 text-neutral-400" />
+          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+            <Clock className="w-3.5 h-3.5 text-neutral-450" />
             <span>Today</span>
           </button>
-          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
-            <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
+          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+            <Sparkles className="w-3.5 h-3.5 text-neutral-450" />
             <span>Week</span>
           </button>
-          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
-            <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+            <Calendar className="w-3.5 h-3.5 text-neutral-450" />
             <span>Month</span>
           </button>
-          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-input-focus-border hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
-            <Target className="w-3.5 h-3.5 text-neutral-400" />
+          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-md cursor-pointer text-neutral-700">
+            <Target className="w-3.5 h-3.5 text-neutral-455" />
             <span>Goal</span>
           </button>
         </div>
@@ -299,7 +299,7 @@ function ProcessedItemComponent({ item, onDelete }: { item: BrainDumpItem; onDel
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-3.5 bg-card-bg border border-card-border rounded-2xl flex items-start justify-between gap-3 text-neutral-550"
+      className="p-3.5 bg-card-bg border border-neutral-200 rounded-xl flex items-start justify-between gap-3 text-neutral-500 font-bold"
     >
       <div className="space-y-1 min-w-0">
         <p className="text-sm font-bold line-through text-neutral-400 break-words leading-relaxed">
@@ -309,7 +309,7 @@ function ProcessedItemComponent({ item, onDelete }: { item: BrainDumpItem; onDel
           Converted to {item.convertedTo}
         </span>
       </div>
-      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-red-550 cursor-pointer">
+      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 rounded-md text-neutral-400 hover:text-black cursor-pointer">
         <Trash2 className="w-3.5 h-3.5" />
       </button>
 
