@@ -104,20 +104,20 @@ export default function BulletNoteItem({
         <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
           <button
             onClick={handleStartEdit}
-            className="p-1 hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors cursor-pointer"
             title="Edit"
           >
-            <Pencil className="w-3.5 h-3.5" />
+            <Pencil className="w-4 h-4" />
           </button>
           
           {extraActions}
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="p-1 hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors shrink-0 cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors shrink-0 cursor-pointer"
             title="Delete"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       )}

@@ -126,16 +126,16 @@ function ActionItemRow({
           <button
             onClick={() => sendActionToDaily(goalId, milestoneId, action.id)}
             title="Send to Today's Daily Log"
-            className="p-1 rounded-full hover:bg-button-hover text-foreground/40 hover:text-foreground transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-button-hover text-foreground/40 hover:text-foreground transition-colors cursor-pointer"
           >
-            <Send className="w-3 h-3" />
+            <Send className="w-4 h-4" />
           </button>
         )}
         <button
           onClick={() => deleteActionItem(goalId, milestoneId, action.id)}
-          className="p-1 rounded-full hover:bg-button-hover text-foreground/40 hover:text-foreground transition-colors cursor-pointer"
+          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-button-hover text-foreground/40 hover:text-foreground transition-colors cursor-pointer"
         >
-          <Trash2 className="w-3 h-3" />
+          <Trash2 className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -340,11 +340,11 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: GoalItem; onEdit: () => vo
           </div>
 
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="p-1.5 hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer" title="Edit Goal">
-              <Pencil className="w-3.5 h-3.5" />
+            <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer" title="Edit Goal">
+              <Pencil className="w-4 h-4" />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1.5 hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer" title="Delete Goal">
-              <Trash2 className="w-3.5 h-3.5" />
+            <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer" title="Delete Goal">
+              <Trash2 className="w-4 h-4" />
             </button>
             {expanded ? <ChevronUp className="w-4 h-4 text-foreground/40" /> : <ChevronDown className="w-4 h-4 text-foreground/40" />}
           </div>
@@ -444,8 +444,8 @@ function MilestoneFormItem({
         />
       </div>
       {canRemove && (
-        <button type="button" onClick={onRemove} className="p-2 border border-input-border text-foreground/40 hover:text-foreground hover:border-foreground rounded-full cursor-pointer shrink-0">
-          <Trash2 className="w-3.5 h-3.5" />
+        <button type="button" onClick={onRemove} className="w-8 h-8 flex items-center justify-center border border-input-border text-foreground/40 hover:text-foreground hover:border-foreground rounded-full cursor-pointer shrink-0">
+          <Trash2 className="w-4 h-4" />
         </button>
       )}
     </div>

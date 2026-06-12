@@ -103,10 +103,10 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
       <button
         type="button"
         onClick={handleOpen}
-        className="w-7 h-7 flex items-center justify-center hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer"
+        className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-foreground/40 hover:text-foreground rounded-full transition-colors cursor-pointer"
         title="Schedule to a date"
       >
-        <CalendarIcon className="w-3.5 h-3.5" />
+        <CalendarIcon className="w-4 h-4" />
       </button>
 
       <input
