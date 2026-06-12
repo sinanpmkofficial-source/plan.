@@ -7,10 +7,21 @@ export interface BrainDumpItem {
   createdAt: string; // ISO string
 }
 
-export interface Milestone {
+export interface ActionItem {
   id: string;
   title: string;
   completed: boolean;
+  priority: 'high' | 'medium' | 'low';
+  dueDate?: string; // YYYY-MM-DD
+  sentToDaily?: string; // YYYY-MM-DD of when it was sent
+}
+
+export interface Milestone {
+  id: string;
+  title: string;
+  completed: boolean; // derived: true when all actionItems are done (or manually set if no actions)
+  dueDate?: string; // YYYY-MM-DD
+  actionItems: ActionItem[];
 }
 
 export interface GoalItem {
@@ -18,6 +29,7 @@ export interface GoalItem {
   title: string;
   description: string;
   status: 'active' | 'completed';
+  dueDate?: string; // YYYY-MM-DD
   milestones: Milestone[];
   createdAt: string; // ISO string
 }

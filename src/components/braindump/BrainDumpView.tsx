@@ -209,7 +209,7 @@ export default function BrainDumpView() {
         const monthVal = item.scheduledValue || selectedMonth;
         addMonthlyTask(monthVal, 'task', text);
       } else if (item.type === 'new_goal') {
-        addGoal(text, '', []);
+        addGoal(text, '', undefined, []);
       } else if (item.type === 'goal') {
         const goalTitle = item.scheduledValue;
         const goal = goals.find((g) => g.title === goalTitle);
@@ -222,9 +222,9 @@ export default function BrainDumpView() {
               completed: false,
             },
           ];
-          updateGoal(goal.id, goal.title, goal.description, updatedMilestones);
+          updateGoal(goal.id, goal.title, goal.description, goal.dueDate, updatedMilestones);
         } else {
-          addGoal(text, '', []);
+          addGoal(text, '', undefined, []);
         }
       }
     });
@@ -263,9 +263,9 @@ export default function BrainDumpView() {
       </div>
 
       {showParser && (
-        <div className="card-premium p-6 max-w-2xl mx-auto mb-10 space-y-4 animate-in slide-in-from-top-4 duration-200 text-black">
+        <div className="card-premium p-6 max-w-2xl mx-auto mb-10 space-y-4 animate-in slide-in-from-top-4 duration-200 text-foreground">
           <div className="space-y-1">
-            <h3 className="font-extrabold text-sm text-black flex items-center gap-2">
+            <h3 className="font-extrabold text-sm text-foreground flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
               <span>Smart Thought Parser</span>
             </h3>
@@ -320,7 +320,7 @@ export default function BrainDumpView() {
                         updated[idx].text = e.target.value;
                         setParsedItems(updated);
                       }}
-                      className="flex-1 input-premium py-1 px-3 text-xs bg-white text-black font-semibold border-neutral-200 focus:border-black"
+                      className="flex-1 input-premium py-1 px-3 text-xs font-semibold"
                     />
 
                     {/* Target type dropdown */}
@@ -337,7 +337,7 @@ export default function BrainDumpView() {
                         else updated[idx].scheduledValue = '';
                         setParsedItems(updated);
                       }}
-                      className="input-premium py-1 px-2 text-xs bg-white border-neutral-200 text-black font-semibold w-full sm:w-36 focus:border-black"
+                      className="input-premium py-1 px-2 text-xs font-semibold w-full sm:w-36"
                     >
                       <option value="inbox">Brain Dump</option>
                       <option value="task">Daily Task</option>
@@ -357,7 +357,7 @@ export default function BrainDumpView() {
                           updated[idx].scheduledValue = e.target.value;
                           setParsedItems(updated);
                         }}
-                        className="input-premium py-1 px-2 text-xs bg-white border border-neutral-200 text-black font-semibold focus:border-black"
+                        className="input-premium py-1 px-2 text-xs font-semibold"
                       />
                     )}
 
@@ -371,7 +371,7 @@ export default function BrainDumpView() {
                           updated[idx].scheduledValue = e.target.value;
                           setParsedItems(updated);
                         }}
-                        className="input-premium py-1 px-2 text-xs bg-white border border-neutral-200 text-black font-semibold w-24 focus:border-black"
+                        className="input-premium py-1 px-2 text-xs font-semibold w-24"
                       />
                     )}
 
@@ -385,7 +385,7 @@ export default function BrainDumpView() {
                           updated[idx].scheduledValue = e.target.value;
                           setParsedItems(updated);
                         }}
-                        className="input-premium py-1 px-2 text-xs bg-white border border-neutral-200 text-black font-semibold w-20 focus:border-black"
+                        className="input-premium py-1 px-2 text-xs font-semibold w-20"
                       />
                     )}
 
@@ -397,7 +397,7 @@ export default function BrainDumpView() {
                           updated[idx].scheduledValue = e.target.value;
                           setParsedItems(updated);
                         }}
-                        className="input-premium py-1 px-2 text-xs bg-white border border-neutral-200 text-black font-semibold w-full sm:w-40 focus:border-black"
+                        className="input-premium py-1 px-2 text-xs font-semibold w-full sm:w-40"
                       >
                         {goals.length === 0 ? (
                           <option value="">No Active Goals</option>
@@ -416,7 +416,7 @@ export default function BrainDumpView() {
                       onClick={() => {
                         setParsedItems(parsedItems.filter((_, i) => i !== idx));
                       }}
-                      className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-black cursor-pointer"
+                      className="p-1.5 hover:bg-button-hover rounded-full text-neutral-400 hover:text-foreground cursor-pointer"
                       title="Discard item"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -514,7 +514,7 @@ export default function BrainDumpView() {
 
       {showGoalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
-          <div className="bg-card-bg border border-neutral-200 p-6 rounded-2xl max-w-sm w-full shadow-none animate-in zoom-in-95 duration-100">
+          <div className="bg-card-bg border border-card-border p-6 rounded-2xl max-w-sm w-full shadow-none animate-in zoom-in-95 duration-100">
             <h3 className="font-extrabold text-sm mb-3 flex items-center gap-2">
               <Target className="w-4 h-4" />
               <span>Convert to Goal</span>
@@ -591,57 +591,57 @@ function BrainDumpItemComponent({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.18 }}
-      className="card-premium p-5 flex flex-col justify-between gap-4 text-black"
+      className="card-premium p-5 flex flex-col justify-between gap-4 text-foreground"
     >
       {editing ? (
         <div className="flex flex-col gap-2">
           <textarea
             value={editingText}
             onChange={(e) => setEditingText(e.target.value)}
-            className="w-full textarea-premium text-base font-bold text-neutral-850 resize-none min-h-[80px]"
+            className="w-full textarea-premium text-base font-bold resize-none min-h-[80px]"
             autoFocus
           />
           <div className="flex justify-end gap-2">
-            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 cursor-pointer">
+            <button onClick={() => setEditing(false)} className="p-1.5 hover:bg-button-hover rounded-full text-neutral-400 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
-            <button onClick={handleSave} className="p-1.5 hover:bg-neutral-200 text-black rounded-full cursor-pointer">
+            <button onClick={handleSave} className="p-1.5 hover:bg-button-hover text-foreground rounded-full cursor-pointer">
               <Check className="w-4 h-4" />
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-base font-bold text-neutral-800 leading-relaxed break-words">
+        <p className="text-base font-bold text-foreground leading-relaxed break-words">
           {item.text}
         </p>
       )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-divider pt-3.5 mt-1">
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-full text-neutral-400 cursor-pointer" title="Delete">
+          <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-button-hover hover:text-foreground rounded-full text-neutral-400 cursor-pointer" title="Delete">
             <Trash2 className="w-4 h-4" />
           </button>
           {!editing && (
-            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-neutral-200 hover:text-black rounded-full text-neutral-400 cursor-pointer" title="Edit">
+            <button onClick={() => setEditing(true)} className="p-1.5 hover:bg-button-hover hover:text-foreground rounded-full text-neutral-400 cursor-pointer" title="Edit">
               <Pencil className="w-4 h-4" />
             </button>
           )}
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-500 font-bold">
-          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
+          <button onClick={onConvertToTask} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-foreground hover:bg-button-hover rounded-full cursor-pointer text-foreground">
             <Clock className="w-3.5 h-3.5 text-neutral-450" />
             <span>Today</span>
           </button>
-          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
+          <button onClick={onConvertToWeekly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-foreground hover:bg-button-hover rounded-full cursor-pointer text-foreground">
             <Sparkles className="w-3.5 h-3.5 text-neutral-455" />
             <span>Week</span>
           </button>
-          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
+          <button onClick={onConvertToMonthly} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-foreground hover:bg-button-hover rounded-full cursor-pointer text-foreground">
             <Calendar className="w-3.5 h-3.5 text-neutral-450" />
             <span>Month</span>
           </button>
-          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-black hover:bg-neutral-100 rounded-full cursor-pointer text-neutral-700">
+          <button onClick={onConvertToGoal} className="flex items-center gap-1.5 py-1 px-3 border border-input-border hover:border-foreground hover:bg-button-hover rounded-full cursor-pointer text-foreground">
             <Target className="w-3.5 h-3.5 text-neutral-455" />
             <span>Goal</span>
           </button>
@@ -670,7 +670,7 @@ function ProcessedItemComponent({ item, onDelete }: { item: BrainDumpItem; onDel
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-3.5 bg-card-bg border border-neutral-200 rounded-xl flex items-start justify-between gap-3 text-neutral-500 font-bold"
+      className="p-3.5 bg-card-bg border border-card-border rounded-xl flex items-start justify-between gap-3 text-neutral-500 font-bold"
     >
       <div className="space-y-1 min-w-0">
         <p className="text-sm font-bold line-through text-neutral-400 break-words leading-relaxed">
@@ -680,7 +680,7 @@ function ProcessedItemComponent({ item, onDelete }: { item: BrainDumpItem; onDel
           Converted to {item.convertedTo}
         </span>
       </div>
-      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-black cursor-pointer">
+      <button onClick={() => setShowDeleteConfirm(true)} className="p-1.5 hover:bg-button-hover rounded-full text-neutral-400 hover:text-foreground cursor-pointer">
         <Trash2 className="w-3.5 h-3.5" />
       </button>
 

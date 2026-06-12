@@ -28,11 +28,11 @@ export function QuickAddInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full input-premium text-sm font-semibold text-black"
+        className="w-full input-premium text-sm font-semibold"
       />
       <button
         type="submit"
-        className="button-premium flex items-center justify-center shrink-0 cursor-pointer text-white px-4 gap-1.5"
+        className="button-premium flex items-center justify-center shrink-0 cursor-pointer px-4 gap-1.5"
         aria-label="Add"
       >
         <Plus 

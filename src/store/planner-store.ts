@@ -6,6 +6,7 @@ import {
   WeeklyPlan,
   MonthlyPlan,
   BulletNote,
+  ActionItem,
 } from '@/types/planner';
 import { 
   getWeekIdFromDate, 
@@ -66,15 +67,21 @@ interface PlannerState {
   ) => void;
 
   // Actions - Goals
-  addGoal: (title: string, description: string, milestones: string[]) => void;
+  addGoal: (title: string, description: string, dueDate: string | undefined, milestones: { title: string; dueDate?: string }[]) => void;
   updateGoal: (
     id: string,
     title: string,
     description: string,
-    milestones: { id?: string; title: string; completed?: boolean }[]
+    dueDate: string | undefined,
+    milestones: { id?: string; title: string; dueDate?: string; completed?: boolean; actionItems?: ActionItem[] }[]
   ) => void;
   deleteGoal: (id: string) => void;
   toggleMilestone: (goalId: string, milestoneId: string) => void;
+  addActionItem: (goalId: string, milestoneId: string, title: string, priority: ActionItem['priority'], dueDate?: string) => void;
+  updateActionItem: (goalId: string, milestoneId: string, actionId: string, fields: Partial<Pick<ActionItem, 'title' | 'priority' | 'dueDate' | 'completed'>>) => void;
+  toggleActionItem: (goalId: string, milestoneId: string, actionId: string) => void;
+  deleteActionItem: (goalId: string, milestoneId: string, actionId: string) => void;
+  sendActionToDaily: (goalId: string, milestoneId: string, actionId: string) => void;
 
   // Actions - Daily Plan
   getOrCreateDailyPlan: (date: string) => DailyPlan;
@@ -422,16 +429,19 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     },
 
     // Goals Actions
-    addGoal: (title, description, milestones) => {
+    addGoal: (title, description, dueDate, milestones) => {
       const newGoal: GoalItem = {
         id: crypto.randomUUID(),
         title,
         description,
         status: 'active',
+        dueDate: dueDate || undefined,
         milestones: milestones.map((m) => ({
           id: crypto.randomUUID(),
-          title: m,
+          title: m.title,
           completed: false,
+          dueDate: m.dueDate || undefined,
+          actionItems: [],
         })),
         createdAt: new Date().toISOString(),
       };
@@ -439,16 +449,22 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       markDirty('goals', newGoal.id);
     },
 
-    updateGoal: (id, title, description, milestones) => {
+    updateGoal: (id, title, description, dueDate, milestones) => {
       set((state) => ({
         goals: state.goals.map((g) => {
           if (g.id === id) {
             const updatedMilestones = milestones.map((m) => {
               const existing = g.milestones.find((em) => em.id === m.id);
+              const actionItems = existing?.actionItems || m.actionItems || [];
+              const derivedCompleted = actionItems.length > 0
+                ? actionItems.every((a) => a.completed)
+                : (existing ? existing.completed : (m.completed || false));
               return {
                 id: m.id || crypto.randomUUID(),
                 title: m.title,
-                completed: existing ? existing.completed : (m.completed || false),
+                completed: derivedCompleted,
+                dueDate: m.dueDate || undefined,
+                actionItems,
               };
             });
             const allCompleted = updatedMilestones.length > 0 && updatedMilestones.every((m) => m.completed);
@@ -456,6 +472,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
               ...g,
               title,
               description,
+              dueDate: dueDate || undefined,
               milestones: updatedMilestones,
               status: (allCompleted ? 'completed' : 'active') as GoalItem['status'],
             };
@@ -479,9 +496,12 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       set((state) => {
         const updatedGoals = state.goals.map((g) => {
           if (g.id === goalId) {
-            const updatedMilestones = g.milestones.map((m) =>
-              m.id === milestoneId ? { ...m, completed: !m.completed } : m
-            );
+            const updatedMilestones = g.milestones.map((m) => {
+              if (m.id !== milestoneId) return m;
+              // If milestone has action items, don't allow manual toggle — driven by actions
+              if ((m.actionItems || []).length > 0) return m;
+              return { ...m, completed: !m.completed };
+            });
             const allCompleted = updatedMilestones.length > 0 && updatedMilestones.every((m) => m.completed);
             return {
               ...g,
@@ -494,6 +514,123 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         return { goals: updatedGoals };
       });
       markDirty('goals', goalId);
+    },
+
+    addActionItem: (goalId, milestoneId, title, priority, dueDate) => {
+      const newAction: ActionItem = {
+        id: crypto.randomUUID(),
+        title,
+        completed: false,
+        priority,
+        dueDate: dueDate || undefined,
+      };
+      set((state) => ({
+        goals: state.goals.map((g) => {
+          if (g.id !== goalId) return g;
+          return {
+            ...g,
+            milestones: g.milestones.map((m) => {
+              if (m.id !== milestoneId) return m;
+              const actionItems = [...(m.actionItems || []), newAction];
+              return { ...m, actionItems, completed: actionItems.every((a) => a.completed) };
+            }),
+          };
+        }),
+      }));
+      markDirty('goals', goalId);
+    },
+
+    updateActionItem: (goalId, milestoneId, actionId, fields) => {
+      set((state) => ({
+        goals: state.goals.map((g) => {
+          if (g.id !== goalId) return g;
+          return {
+            ...g,
+            milestones: g.milestones.map((m) => {
+              if (m.id !== milestoneId) return m;
+              const actionItems = (m.actionItems || []).map((a) =>
+                a.id === actionId ? { ...a, ...fields } : a
+              );
+              return { ...m, actionItems, completed: actionItems.length > 0 && actionItems.every((a) => a.completed) };
+            }),
+          };
+        }),
+      }));
+      markDirty('goals', goalId);
+    },
+
+    toggleActionItem: (goalId, milestoneId, actionId) => {
+      set((state) => {
+        const updatedGoals = state.goals.map((g) => {
+          if (g.id !== goalId) return g;
+          const updatedMilestones = g.milestones.map((m) => {
+            if (m.id !== milestoneId) return m;
+            const actionItems = (m.actionItems || []).map((a) =>
+              a.id === actionId ? { ...a, completed: !a.completed } : a
+            );
+            const milestoneCompleted = actionItems.length > 0 && actionItems.every((a) => a.completed);
+            return { ...m, actionItems, completed: milestoneCompleted };
+          });
+          const allMilestoneDone = updatedMilestones.length > 0 && updatedMilestones.every((m) => m.completed);
+          return {
+            ...g,
+            milestones: updatedMilestones,
+            status: (allMilestoneDone ? 'completed' : 'active') as GoalItem['status'],
+          };
+        });
+        return { goals: updatedGoals };
+      });
+      markDirty('goals', goalId);
+    },
+
+    deleteActionItem: (goalId, milestoneId, actionId) => {
+      set((state) => ({
+        goals: state.goals.map((g) => {
+          if (g.id !== goalId) return g;
+          return {
+            ...g,
+            milestones: g.milestones.map((m) => {
+              if (m.id !== milestoneId) return m;
+              const actionItems = (m.actionItems || []).filter((a) => a.id !== actionId);
+              const milestoneCompleted = actionItems.length > 0 && actionItems.every((a) => a.completed);
+              return { ...m, actionItems, completed: milestoneCompleted };
+            }),
+          };
+        }),
+      }));
+      markDirty('goals', goalId);
+    },
+
+    sendActionToDaily: (goalId, milestoneId, actionId) => {
+      const todayDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD using local time
+      const goal = get().goals.find((g) => g.id === goalId);
+      const milestone = goal?.milestones.find((m) => m.id === milestoneId);
+      const action = milestone?.actionItems?.find((a) => a.id === actionId);
+      if (!action) return;
+
+      // Add to today's daily log
+      get().addBulletNote(todayDate, 'task', action.title);
+
+      // Mark as sent
+      set((state) => ({
+        goals: state.goals.map((g) => {
+          if (g.id !== goalId) return g;
+          return {
+            ...g,
+            milestones: g.milestones.map((m) => {
+              if (m.id !== milestoneId) return m;
+              return {
+                ...m,
+                actionItems: (m.actionItems || []).map((a) =>
+                  a.id === actionId ? { ...a, sentToDaily: todayDate } : a
+                ),
+              };
+            }),
+          };
+        }),
+      }));
+      markDirty('goals', goalId);
+      get().showToast('Action sent to Today\'s Daily Log');
     },
 
     // Daily Plan Actions

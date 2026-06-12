@@ -133,33 +133,33 @@ export default function AnalyticsView() {
 
       {/* Overview Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        <div className="card-premium p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1">
-          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-md self-start md:self-auto shrink-0 text-black">
+        <div className="card-premium p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1 text-foreground">
+          <div className="p-2.5 md:p-3 bg-button-hover rounded-full self-start md:self-auto shrink-0 text-foreground">
             <Award className="w-5.5 h-5.5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[9px] md:text-[10px] text-neutral-500 font-bold uppercase tracking-wider block leading-tight">Avg Performance</span>
-            <h4 className="text-lg md:text-xl font-bold text-black mt-0.5 truncate">{averageScore} / 100</h4>
+            <h4 className="text-lg md:text-xl font-bold text-foreground mt-0.5 truncate">{averageScore} / 100</h4>
           </div>
         </div>
 
-        <div className="card-premium p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1">
-          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-md self-start md:self-auto shrink-0 text-black">
+        <div className="card-premium p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 col-span-1 text-foreground">
+          <div className="p-2.5 md:p-3 bg-button-hover rounded-full self-start md:self-auto shrink-0 text-foreground">
             <Flame className="w-5.5 h-5.5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[9px] md:text-[10px] text-neutral-500 font-bold uppercase tracking-wider block leading-tight">Avg Prayers Logged</span>
-            <h4 className="text-lg md:text-xl font-bold text-black mt-0.5 truncate">{averagePrayers} / 5.0</h4>
+            <h4 className="text-lg md:text-xl font-bold text-foreground mt-0.5 truncate">{averagePrayers} / 5.0</h4>
           </div>
         </div>
 
-        <div className="card-premium p-4 md:p-5 flex items-center gap-4 col-span-2 md:col-span-1">
-          <div className="p-2.5 md:p-3 bg-neutral-100 rounded-md shrink-0 text-black">
+        <div className="card-premium p-4 md:p-5 flex items-center gap-4 col-span-2 md:col-span-1 text-foreground">
+          <div className="p-2.5 md:p-3 bg-button-hover rounded-full shrink-0 text-foreground">
             <BarChart3 className="w-5.5 h-5.5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[9px] md:text-[10px] text-neutral-500 font-bold uppercase tracking-wider block leading-tight">Active Goals</span>
-            <h4 className="text-lg md:text-xl font-bold text-black mt-0.5 truncate">{goals.filter(g => g.status === 'active').length} Objectives</h4>
+            <h4 className="text-lg md:text-xl font-bold text-foreground mt-0.5 truncate">{goals.filter(g => g.status === 'active').length} Objectives</h4>
           </div>
         </div>
       </div>
@@ -167,24 +167,25 @@ export default function AnalyticsView() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Performance Score Trend Chart */}
-        <div className="card-premium p-6 space-y-4">
+        <div className="card-premium p-6 space-y-4 text-foreground">
           <div>
-            <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Performance Trend</h4>
+            <h4 className="font-bold text-sm text-foreground tracking-tight">Performance Trend</h4>
           </div>
-          <div className="h-64 w-full text-black">
+          <div className="h-64 w-full text-foreground">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
-                <XAxis dataKey="date" tickLine={false} axisLine={false} style={{ fontSize: 10, fill: '#666', fontWeight: 600 }} />
-                <YAxis domain={[0, 100]} tickLine={false} axisLine={false} style={{ fontSize: 10, fill: '#666', fontWeight: 600 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--divider)" />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} style={{ fontSize: 10, fill: 'var(--foreground)', opacity: 0.6, fontWeight: 600 }} />
+                <YAxis domain={[0, 100]} tickLine={false} axisLine={false} style={{ fontSize: 10, fill: 'var(--foreground)', opacity: 0.6, fontWeight: 600 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: 8, border: '1px solid #000000', fontSize: 11, boxShadow: 'none' }}
-                  labelStyle={{ fontWeight: 'bold', color: '#000000' }}
+                  contentStyle={{ backgroundColor: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--card-border)', fontSize: 11, boxShadow: 'none' }}
+                  labelStyle={{ fontWeight: 'bold', color: 'var(--foreground)' }}
+                  itemStyle={{ color: 'var(--foreground)' }}
                 />
                 <Line
                   type="monotone"
                   dataKey="score"
-                  stroke="#000000"
+                  stroke="var(--foreground)"
                   strokeWidth={2}
                   dot={{ r: 3, strokeWidth: 1 }}
                   activeDot={{ r: 5 }}
@@ -196,21 +197,22 @@ export default function AnalyticsView() {
         </div>
 
         {/* Prayer Consistency Bar Chart */}
-        <div className="card-premium p-6 space-y-4">
+        <div className="card-premium p-6 space-y-4 text-foreground">
           <div>
-            <h4 className="font-bold text-sm text-neutral-900 tracking-tight">Prayer Consistency</h4>
+            <h4 className="font-bold text-sm text-foreground tracking-tight">Prayer Consistency</h4>
           </div>
-          <div className="h-64 w-full text-black">
+          <div className="h-64 w-full text-foreground">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={prayerData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
-                <XAxis dataKey="name" tickLine={false} axisLine={false} style={{ fontSize: 10, fill: '#666', fontWeight: 600 }} />
-                <YAxis domain={[0, 100]} tickLine={false} axisLine={false} style={{ fontSize: 10, fill: '#666', fontWeight: 600 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--divider)" />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} style={{ fontSize: 10, fill: 'var(--foreground)', opacity: 0.6, fontWeight: 600 }} />
+                <YAxis domain={[0, 100]} tickLine={false} axisLine={false} style={{ fontSize: 10, fill: 'var(--foreground)', opacity: 0.6, fontWeight: 600 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: 8, border: '1px solid #000000', fontSize: 11, boxShadow: 'none' }}
-                  labelStyle={{ fontWeight: 'bold', color: '#000000' }}
+                  contentStyle={{ backgroundColor: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--card-border)', fontSize: 11, boxShadow: 'none' }}
+                  labelStyle={{ fontWeight: 'bold', color: 'var(--foreground)' }}
+                  itemStyle={{ color: 'var(--foreground)' }}
                 />
-                <Bar dataKey="rate" fill="#000000" radius={[3, 3, 0, 0]} name="Consistency %" />
+                <Bar dataKey="rate" fill="var(--foreground)" radius={[3, 3, 0, 0]} name="Consistency %" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -218,26 +220,26 @@ export default function AnalyticsView() {
       </div>
 
       {/* Score Calculation Guide */}
-      <div className="card-premium p-6 space-y-4">
+      <div className="card-premium p-6 space-y-4 text-foreground">
         <div className="flex items-center gap-2">
-          <Award className="w-4.5 h-4.5 text-neutral-800" />
-          <h4 className="font-extrabold text-sm text-neutral-900 tracking-tight">Performance Score Calculation</h4>
+          <Award className="w-4.5 h-4.5 text-foreground" />
+          <h4 className="font-extrabold text-sm text-foreground tracking-tight">Performance Score Calculation</h4>
         </div>
         <p className="text-xs md:text-sm text-neutral-500 font-semibold leading-relaxed">
           Your daily performance score is dynamically computed out of 100 points based on two core categories:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-          <div className="p-4 bg-neutral-50 rounded-lg border border-divider space-y-1">
+          <div className="p-4 bg-button-hover/50 rounded-lg border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Spiritual Tracker (50%)</span>
-            <p className="text-sm font-bold text-neutral-800">5-Time Prayers Consistency</p>
-            <p className="text-xs text-neutral-500 leading-relaxed font-semibold">
+            <p className="text-sm font-bold text-foreground">5-Time Prayers Consistency</p>
+            <p className="text-xs text-neutral-550 leading-relaxed font-semibold">
               Earn 10 points for each prayer logged (Fajr, Dhuhr, Asr, Maghrib, Isha) up to a maximum of 50 points.
             </p>
           </div>
-          <div className="p-4 bg-neutral-50 rounded-lg border border-divider space-y-1">
+          <div className="p-4 bg-button-hover/50 rounded-lg border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Today's Tasks (50%)</span>
-            <p className="text-sm font-bold text-neutral-800">Bullet Journal Task Completion</p>
-            <p className="text-xs text-neutral-500 leading-relaxed font-semibold">
+            <p className="text-sm font-bold text-foreground">Bullet Journal Task Completion</p>
+            <p className="text-xs text-neutral-550 leading-relaxed font-semibold">
               Earn points based on the completion percentage of your logged tasks, up to a maximum of 50 points.
             </p>
           </div>

@@ -6,10 +6,11 @@ import { Loader2, Check, RefreshCw, Award, Info } from 'lucide-react';
 
 interface PageHeaderProps {
   title: string;
+  subtitle?: string;
   children?: React.ReactNode;
 }
 
-export default function PageHeader({ title, children }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, children }: PageHeaderProps) {
   const {
     selectedDate,
     getOrCreateDailyPlan,
@@ -38,6 +39,9 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
       <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
         <div className="space-y-0.5">
           <h3 className="text-2xl font-black tracking-tight">{title}</h3>
+          {subtitle && (
+            <p className="text-xs font-bold text-neutral-455  tracking-widest">{subtitle}</p>
+          )}
         </div>
         {children}
       </div>
@@ -65,7 +69,7 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
             </span>
             <button
               onClick={retrySync}
-              className="p-1 hover:bg-neutral-100 rounded-full text-neutral-500 hover:text-neutral-900 transition-colors cursor-pointer"
+              className="p-1 hover:bg-button-hover rounded-full text-neutral-500 hover:text-foreground transition-colors cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
             </button>
@@ -78,17 +82,17 @@ export default function PageHeader({ title, children }: PageHeaderProps) {
             onMouseEnter={() => setShowScoreInfo(true)}
             onMouseLeave={() => setShowScoreInfo(false)}
             onClick={() => setShowScoreInfo((prev) => !prev)}
-            className="flex items-center gap-1.5 py-1 px-3 rounded-md border border-input-border bg-kbd-bg hover:bg-neutral-200 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 py-1.5 px-4 rounded-full border border-input-border bg-kbd-bg hover:bg-button-hover transition-all cursor-pointer"
           >
-            <Award className="w-3.5 h-3.5 text-neutral-900" />
-            <span className="text-xs font-extrabold text-neutral-900">
+            <Award className="w-3.5 h-3.5 text-foreground" />
+            <span className="text-xs font-extrabold text-foreground">
               Score: {score}
             </span>
           </button>
 
           {/* Breakdown popup */}
           {showScoreInfo && (
-            <div className="absolute right-0 mt-2.5 w-52 bg-card-bg border border-neutral-200 rounded-xl p-4 shadow-none z-50 text-xs text-foreground backdrop-blur-md">
+            <div className="absolute right-0 mt-2.5 w-52 bg-card-bg border border-card-border rounded-xl p-4 shadow-none z-50 text-xs text-foreground backdrop-blur-md">
               <h4 className="font-bold mb-2 flex items-center gap-1 border-b border-divider pb-1.5">
                 <Info className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Score Breakdown</span>
