@@ -10,6 +10,7 @@ import {
   BarChart3,
   Clock,
   CalendarDays,
+  Settings,
 } from 'lucide-react';
 
 export default function Navigation() {
@@ -23,6 +24,7 @@ export default function Navigation() {
     { id: 'weekly', label: 'Weekly Plan', mobileLabel: 'Weekly', icon: CalendarDays, path: '/weekly' },
     { id: 'monthly', label: 'Monthly Plan', mobileLabel: 'Monthly', icon: Calendar, path: '/monthly' },
     { id: 'analytics', label: 'Analytics', mobileLabel: 'Stats', icon: BarChart3, path: '/analytics' },
+    { id: 'settings', label: 'Settings', mobileLabel: 'Settings', icon: Settings, path: '/settings' },
   ];
 
   return (

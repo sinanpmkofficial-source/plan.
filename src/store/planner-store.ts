@@ -678,8 +678,9 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     addBulletNote: (date, type, text) => {
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
+        const noteId = crypto.randomUUID();
         const newNote: BulletNote = {
-          id: crypto.randomUUID(),
+          id: noteId,
           type,
           text,
           completed: type === 'task' ? false : undefined,
@@ -696,7 +697,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         // Propagate to Weekly Plan
         const weekId = getWeekIdFromDate(date);
         const weeklyPlan = getOrCreateWeeklyPlanFn(state, weekId);
-        const newWeeklyNote: BulletNote = { id: crypto.randomUUID(), type, text, completed: type === 'task' ? false : undefined };
+        const newWeeklyNote: BulletNote = { id: noteId, type, text, completed: type === 'task' ? false : undefined };
         weeklyPlan.bulletNotes = [...(weeklyPlan.bulletNotes || []), newWeeklyNote];
         weeklyPlan.updatedAt = new Date().toISOString();
         updatedState.weeklyPlans = { ...state.weeklyPlans, [weekId]: weeklyPlan };
@@ -705,7 +706,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         // Propagate to Monthly Plan
         const monthId = getMonthIdFromDate(date);
         const monthlyPlan = getOrCreateMonthlyPlanFn(state, monthId);
-        const newMonthlyNote: BulletNote = { id: crypto.randomUUID(), type, text, completed: type === 'task' ? false : undefined };
+        const newMonthlyNote: BulletNote = { id: noteId, type, text, completed: type === 'task' ? false : undefined };
         monthlyPlan.bulletNotes = [...(monthlyPlan.bulletNotes || []), newMonthlyNote];
         monthlyPlan.updatedAt = new Date().toISOString();
         updatedState.monthlyPlans = { ...state.monthlyPlans, [monthId]: monthlyPlan };
@@ -721,22 +722,101 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         const plan = getOrCreateDailyPlanFn(state, date);
         plan.bulletNotes = plan.bulletNotes.map((n) => (n.id === noteId ? { ...n, text } : n));
         plan.updatedAt = new Date().toISOString();
-        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
+
+        const updatedState: any = {
+          dailyPlans: { ...state.dailyPlans, [date]: plan },
+          dirtyDailyPlans: new Set(state.dirtyDailyPlans).add(date)
+        };
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.map((n) => (n.id === noteId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.map((n) => (n.id === noteId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('dailyPlans', date);
+      get().triggerSync();
     },
 
     toggleBulletNote: (date, noteId) => {
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
-        plan.bulletNotes = plan.bulletNotes.map((n) =>
-          n.id === noteId && n.type === 'task' ? { ...n, completed: !n.completed } : n
-        );
+        let wasToggled = false;
+        let nextCompletedState: boolean | undefined;
+
+        plan.bulletNotes = plan.bulletNotes.map((n) => {
+          if (n.id === noteId && n.type === 'task') {
+            wasToggled = true;
+            nextCompletedState = !n.completed;
+            return { ...n, completed: nextCompletedState };
+          }
+          return n;
+        });
+
+        if (!wasToggled) return {};
+
         plan.score = calculateDailyScore(plan);
         plan.updatedAt = new Date().toISOString();
-        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
+
+        const updatedState: any = {
+          dailyPlans: { ...state.dailyPlans, [date]: plan },
+          dirtyDailyPlans: new Set(state.dirtyDailyPlans).add(date)
+        };
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('dailyPlans', date);
+      get().triggerSync();
     },
 
     deleteBulletNote: (date, noteId) => {
@@ -748,10 +828,42 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         plan.bulletNotes = plan.bulletNotes.filter((n) => n.id !== noteId);
         plan.score = calculateDailyScore(plan);
         plan.updatedAt = new Date().toISOString();
-        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
+
+        const updatedState: any = {
+          dailyPlans: { ...state.dailyPlans, [date]: plan },
+          dirtyDailyPlans: new Set(state.dirtyDailyPlans).add(date)
+        };
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('dailyPlans', date);
       get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
+      get().triggerSync();
     },
 
     updateDailyReflection: (date, reflection) => {
@@ -805,21 +917,101 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         const plan = getOrCreateWeeklyPlanFn(state, weekId);
         plan.bulletNotes = (plan.bulletNotes || []).map((n) => (n.id === taskId ? { ...n, text } : n));
         plan.updatedAt = new Date().toISOString();
-        return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
+
+        const updatedState: any = {
+          weeklyPlans: { ...state.weeklyPlans, [weekId]: plan },
+          dirtyWeeklyPlans: new Set(state.dirtyWeeklyPlans).add(weekId)
+        };
+
+        // Sync to Daily Plans
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === taskId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.map((n) => (n.id === taskId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === taskId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.map((n) => (n.id === taskId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('weeklyPlans', weekId);
+      get().triggerSync();
     },
 
     toggleWeeklyTask: (weekId, noteId) => {
       set((state) => {
         const plan = getOrCreateWeeklyPlanFn(state, weekId);
-        plan.bulletNotes = (plan.bulletNotes || []).map((n) =>
-          n.id === noteId && n.type === 'task' ? { ...n, completed: !n.completed } : n
-        );
+        let wasToggled = false;
+        let nextCompletedState: boolean | undefined;
+
+        plan.bulletNotes = (plan.bulletNotes || []).map((n) => {
+          if (n.id === noteId && n.type === 'task') {
+            wasToggled = true;
+            nextCompletedState = !n.completed;
+            return { ...n, completed: nextCompletedState };
+          }
+          return n;
+        });
+
+        if (!wasToggled) return {};
+
         plan.updatedAt = new Date().toISOString();
-        return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
+
+        const updatedState: any = {
+          weeklyPlans: { ...state.weeklyPlans, [weekId]: plan },
+          dirtyWeeklyPlans: new Set(state.dirtyWeeklyPlans).add(weekId)
+        };
+
+        // Sync to Daily Plans (and recalculate score)
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedDPlan.score = calculateDailyScore(updatedDPlan);
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('weeklyPlans', weekId);
+      get().triggerSync();
     },
 
     deleteWeeklyTask: (weekId, noteId, silent) => {
@@ -830,12 +1022,45 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         const plan = getOrCreateWeeklyPlanFn(state, weekId);
         plan.bulletNotes = (plan.bulletNotes || []).filter((n) => n.id !== noteId);
         plan.updatedAt = new Date().toISOString();
-        return { weeklyPlans: { ...state.weeklyPlans, [weekId]: plan } };
+
+        const updatedState: any = {
+          weeklyPlans: { ...state.weeklyPlans, [weekId]: plan },
+          dirtyWeeklyPlans: new Set(state.dirtyWeeklyPlans).add(weekId)
+        };
+
+        // Sync to Daily Plans (and recalculate score)
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedDPlan.score = calculateDailyScore(updatedDPlan);
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Monthly Plans
+        Object.entries(state.monthlyPlans).forEach(([mId, mPlan]) => {
+          if (mPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedMPlan = {
+              ...mPlan,
+              bulletNotes: mPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.monthlyPlans = { ...(updatedState.monthlyPlans || state.monthlyPlans), [mId]: updatedMPlan };
+            updatedState.dirtyMonthlyPlans = new Set(updatedState.dirtyMonthlyPlans || state.dirtyMonthlyPlans).add(mId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('weeklyPlans', weekId);
       if (!silent) {
         get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
       }
+      get().triggerSync();
     },
 
     updateWeeklyReflection: (weekId, reflection) => {
@@ -874,21 +1099,101 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         const plan = getOrCreateMonthlyPlanFn(state, monthId);
         plan.bulletNotes = (plan.bulletNotes || []).map((n) => (n.id === taskId ? { ...n, text } : n));
         plan.updatedAt = new Date().toISOString();
-        return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
+
+        const updatedState: any = {
+          monthlyPlans: { ...state.monthlyPlans, [monthId]: plan },
+          dirtyMonthlyPlans: new Set(state.dirtyMonthlyPlans).add(monthId)
+        };
+
+        // Sync to Daily Plans
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === taskId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.map((n) => (n.id === taskId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === taskId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.map((n) => (n.id === taskId ? { ...n, text } : n)),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('monthlyPlans', monthId);
+      get().triggerSync();
     },
 
     toggleMonthlyTask: (monthId, noteId) => {
       set((state) => {
         const plan = getOrCreateMonthlyPlanFn(state, monthId);
-        plan.bulletNotes = (plan.bulletNotes || []).map((n) =>
-          n.id === noteId && n.type === 'task' ? { ...n, completed: !n.completed } : n
-        );
+        let wasToggled = false;
+        let nextCompletedState: boolean | undefined;
+
+        plan.bulletNotes = (plan.bulletNotes || []).map((n) => {
+          if (n.id === noteId && n.type === 'task') {
+            wasToggled = true;
+            nextCompletedState = !n.completed;
+            return { ...n, completed: nextCompletedState };
+          }
+          return n;
+        });
+
+        if (!wasToggled) return {};
+
         plan.updatedAt = new Date().toISOString();
-        return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
+
+        const updatedState: any = {
+          monthlyPlans: { ...state.monthlyPlans, [monthId]: plan },
+          dirtyMonthlyPlans: new Set(state.dirtyMonthlyPlans).add(monthId)
+        };
+
+        // Sync to Daily Plans (and recalculate score)
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedDPlan.score = calculateDailyScore(updatedDPlan);
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.map((n) =>
+                n.id === noteId && n.type === 'task' ? { ...n, completed: nextCompletedState } : n
+              ),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('monthlyPlans', monthId);
+      get().triggerSync();
     },
 
     deleteMonthlyTask: (monthId, noteId, silent) => {
@@ -899,12 +1204,45 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         const plan = getOrCreateMonthlyPlanFn(state, monthId);
         plan.bulletNotes = (plan.bulletNotes || []).filter((n) => n.id !== noteId);
         plan.updatedAt = new Date().toISOString();
-        return { monthlyPlans: { ...state.monthlyPlans, [monthId]: plan } };
+
+        const updatedState: any = {
+          monthlyPlans: { ...state.monthlyPlans, [monthId]: plan },
+          dirtyMonthlyPlans: new Set(state.dirtyMonthlyPlans).add(monthId)
+        };
+
+        // Sync to Daily Plans (and recalculate score)
+        Object.entries(state.dailyPlans).forEach(([dStr, dPlan]) => {
+          if (dPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedDPlan = {
+              ...dPlan,
+              bulletNotes: dPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedDPlan.score = calculateDailyScore(updatedDPlan);
+            updatedState.dailyPlans = { ...(updatedState.dailyPlans || state.dailyPlans), [dStr]: updatedDPlan };
+            updatedState.dirtyDailyPlans = new Set(updatedState.dirtyDailyPlans || state.dirtyDailyPlans).add(dStr);
+          }
+        });
+
+        // Sync to Weekly Plans
+        Object.entries(state.weeklyPlans).forEach(([wId, wPlan]) => {
+          if (wPlan.bulletNotes?.some((n) => n.id === noteId)) {
+            const updatedWPlan = {
+              ...wPlan,
+              bulletNotes: wPlan.bulletNotes.filter((n) => n.id !== noteId),
+              updatedAt: new Date().toISOString(),
+            };
+            updatedState.weeklyPlans = { ...(updatedState.weeklyPlans || state.weeklyPlans), [wId]: updatedWPlan };
+            updatedState.dirtyWeeklyPlans = new Set(updatedState.dirtyWeeklyPlans || state.dirtyWeeklyPlans).add(wId);
+          }
+        });
+
+        return updatedState;
       });
-      markDirty('monthlyPlans', monthId);
       if (!silent) {
         get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
       }
+      get().triggerSync();
     },
 
     updateMonthlyReflection: (monthId, reflection) => {
