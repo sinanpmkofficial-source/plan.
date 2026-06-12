@@ -46,12 +46,16 @@ export default function ConfirmationModal({
             className="relative bg-card-bg rounded-2xl shadow-none border border-card-border p-6 max-w-sm w-full space-y-5 overflow-hidden text-foreground"
           >
             <div className="flex items-start gap-4">
-              <div className="p-3 rounded-md shrink-0 bg-button-hover text-foreground">
+              <div className={`p-3 rounded-xl shrink-0 ${
+                variant === 'danger'
+                  ? 'bg-red-500/10 text-red-500'
+                  : 'bg-button-hover text-foreground'
+              }`}>
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-extrabold text-foreground tracking-tight">{title}</h3>
-                <p className="text-sm font-semibold text-neutral-450 leading-relaxed">{message}</p>
+                <p className="text-sm font-semibold text-neutral-455 leading-relaxed">{message}</p>
               </div>
             </div>
 
@@ -64,7 +68,11 @@ export default function ConfirmationModal({
               </button>
               <button
                 onClick={onConfirm}
-                className="flex-1 py-2.5 rounded-full text-sm font-bold text-background bg-foreground hover:opacity-80 border border-foreground transition-colors cursor-pointer"
+                className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-colors cursor-pointer border ${
+                  variant === 'danger'
+                    ? 'bg-red-600 hover:bg-red-700 text-white border-red-600'
+                    : 'bg-foreground hover:opacity-80 text-background border-foreground'
+                }`}
               >
                 {confirmLabel}
               </button>
