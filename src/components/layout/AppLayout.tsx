@@ -26,10 +26,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <AnimatePresence mode="wait">
           <motion.main
             key={pathname}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.12, ease: 'easeOut' }}
+            initial={{ opacity: 0, scale: 0.98, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -8 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 30, mass: 0.8 }}
             className="flex-1 overflow-y-auto px-4 md:px-8 pt-0 pb-28 md:pb-6"
           >
             {children}

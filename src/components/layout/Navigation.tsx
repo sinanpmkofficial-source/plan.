@@ -70,16 +70,21 @@ export default function Navigation() {
                 <Link
                   key={item.id}
                   href={item.path}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-sm font-bold transition-all group cursor-pointer ${
-                    isActive
-                      ? 'bg-foreground text-background shadow-none'
-                      : 'text-neutral-500 hover:text-foreground hover:bg-button-hover'
-                  }`}
+                  className="w-full block"
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{item.label}</span>
-                  </div>
+                  <motion.div
+                    whileTap={{ scale: 0.96 }}
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-sm font-bold transition-all group cursor-pointer ${
+                      isActive
+                        ? 'bg-foreground text-background shadow-none'
+                        : 'text-neutral-500 hover:text-foreground hover:bg-button-hover'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span>{item.label}</span>
+                    </div>
+                  </motion.div>
                 </Link>
               );
             })}
@@ -96,19 +101,24 @@ export default function Navigation() {
             <Link
               key={item.id}
               href={item.path}
-              className={`flex items-center justify-center p-3 rounded-full transition-all relative cursor-pointer w-12 h-12 shrink-0 ${
-                isActive
-                  ? 'bg-foreground text-background shadow-none'
-                  : 'text-neutral-455 hover:text-foreground hover:bg-button-hover'
-              }`}
             >
-              <Icon className="w-5.5 h-5.5 shrink-0" />
+              <motion.div
+                whileTap={{ scale: 0.92 }}
+                className={`flex items-center justify-center p-3 rounded-full transition-all relative cursor-pointer w-12 h-12 shrink-0 ${
+                  isActive
+                    ? 'bg-foreground text-background shadow-none'
+                    : 'text-neutral-455 hover:text-foreground hover:bg-button-hover'
+                }`}
+              >
+                <Icon className="w-5.5 h-5.5 shrink-0" />
+              </motion.div>
             </Link>
           );
         })}
 
         {/* More button */}
-        <button
+        <motion.button
+          whileTap={{ scale: 0.92 }}
           onClick={() => setIsMoreOpen(true)}
           className={`flex items-center justify-center p-3 rounded-full transition-all relative cursor-pointer w-12 h-12 shrink-0 ${
             isMoreActive
@@ -117,7 +127,7 @@ export default function Navigation() {
           }`}
         >
           <MoreHorizontal className="w-5.5 h-5.5 shrink-0" />
-        </button>
+        </motion.button>
       </nav>
 
       {/* iOS STYLE BOTTOM SHEET ACTION SHEET */}

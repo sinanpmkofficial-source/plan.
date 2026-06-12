@@ -135,25 +135,32 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+/* Prevent iOS auto-zoom on input focus by ensuring font-size is at least 16px */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Base custom classes for high fidelity design */
 .card-premium {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
   box-shadow: none; /* Keep it flat and clean */
-  border-radius: 16px; /* Modern rounded corners */
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 22px; /* Premium minimalist rounded corners */
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-
 
 .input-premium {
   border: 1px solid var(--input-border);
-  border-radius: 10px; /* Modern rounded shape */
+  border-radius: 14px; /* Soft rounder shape */
   padding: 10px 16px;
   background-color: var(--input-bg);
   color: var(--foreground);
   outline: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .input-premium:focus {
@@ -162,12 +169,12 @@ input[type=number] {
 
 .textarea-premium {
   border: 1px solid var(--input-border);
-  border-radius: 10px;
+  border-radius: 16px; /* Soft rounder shape */
   padding: 12px 16px;
   background-color: var(--input-bg);
   color: var(--foreground);
   outline: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .textarea-premium:focus {
@@ -180,7 +187,7 @@ input[type=number] {
   font-weight: 700;
   padding: 10px 20px;
   border-radius: 9999px; /* Fully rounded shape */
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -191,11 +198,11 @@ input[type=number] {
 
 .button-premium:hover {
   background-color: var(--button-primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(-0.5px);
 }
 
 .button-premium:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
 }
 
 .button-secondary {
@@ -205,17 +212,17 @@ input[type=number] {
   font-weight: 700;
   padding: 10px 20px;
   border-radius: 9999px; /* Fully rounded shape */
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .button-secondary:hover {
   background-color: var(--button-secondary-hover);
   border-color: var(--foreground);
-  transform: translateY(-1px);
+  transform: translateY(-0.5px);
 }
 
 .button-secondary:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
 }
 
 /* Custom transitions and scroll-behaviors */
