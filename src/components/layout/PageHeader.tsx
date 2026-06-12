@@ -129,7 +129,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
         {/* Left — Title block + children (nav controls) */}
         <div className="flex sm:items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
           <div className="min-w-0">
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-none truncate">{title}</h2>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight truncate pb-1">{title}</h2>
             {subtitle && (
               <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-foreground/40 mt-1.5">
                 {subtitle}
