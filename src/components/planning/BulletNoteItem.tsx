@@ -41,7 +41,7 @@ export default function BulletNoteItem({
   };
 
   return (
-    <div className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-button-hover rounded-md transition-colors group">
+    <div className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-button-hover rounded-xl transition-colors group">
       <div className="flex items-center gap-2.5 min-w-0 flex-1">
         {/* Type Indicator / Toggle */}
         {note.type === 'task' && (

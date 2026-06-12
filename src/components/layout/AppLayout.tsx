@@ -45,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="fixed z-50 bottom-24 left-4 right-4 md:left-auto md:right-8 md:bottom-8 md:w-80 p-3.5 bg-neutral-950 text-white rounded-lg shadow-none flex items-center justify-between border border-neutral-800 gap-3"
+            className="fixed z-50 bottom-24 left-4 right-4 md:left-auto md:right-8 md:bottom-8 md:w-80 p-3.5 bg-neutral-950 text-white rounded-xl shadow-none flex items-center justify-between border border-neutral-800 gap-3"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               {toast.type === 'delete' ? (

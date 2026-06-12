@@ -179,7 +179,7 @@ export default function Navigation() {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-foreground/5 flex items-center justify-center text-foreground">
+                          <div className="w-8 h-8 rounded-xl bg-foreground/5 flex items-center justify-center text-foreground">
                             <Icon className="w-4.5 h-4.5" />
                           </div>
                           <span className={`text-sm font-extrabold ${isItemActive ? 'text-foreground font-black' : 'text-foreground/80'}`}>

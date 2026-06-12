@@ -46,7 +46,7 @@ export default function ConfirmationModal({
             className="relative bg-card-bg rounded-2xl shadow-none border border-card-border p-6 max-w-sm w-full space-y-5 overflow-hidden text-foreground"
           >
             <div className="flex items-start gap-4">
-              <div className={`p-3 rounded-xl shrink-0 ${
+              <div className={`p-3 rounded-2xl shrink-0 ${
                 variant === 'danger'
                   ? 'bg-red-500/10 text-red-500'
                   : 'bg-button-hover text-foreground'

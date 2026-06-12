@@ -81,7 +81,7 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
           <p className="text-sm font-bold text-foreground leading-relaxed">
             Move this task to <span className="underline underline-offset-2">{pickedDate ? format(parseISO(pickedDate), 'EEEE, MMM d') : ''}</span>?
           </p>
-          <div className="bg-kbd-bg rounded-xl px-4 py-3 border border-card-border">
+          <div className="bg-kbd-bg rounded-2xl px-4 py-3 border border-card-border">
             <p className="text-xs font-semibold text-foreground/60 line-clamp-3 leading-relaxed">"{taskText}"</p>
           </div>
           <p className="text-[10px] text-foreground/40 font-semibold">

@@ -183,7 +183,7 @@ export default function SettingsView() {
                     </div>
                     <h3 className="font-extrabold text-sm text-red-500">Reset Failed</h3>
                   </div>
-                  <p className="text-xs text-foreground/60 font-semibold leading-relaxed bg-kbd-bg rounded-lg px-3 py-2 font-mono break-all">
+                  <p className="text-xs text-foreground/60 font-semibold leading-relaxed bg-kbd-bg rounded-xl px-3 py-2 font-mono break-all">
                     {errorMsg}
                   </p>
                   <div className="flex justify-end">

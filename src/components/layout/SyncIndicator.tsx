@@ -107,7 +107,7 @@ export default function SyncIndicator() {
 
           {/* Tooltip Breakdown */}
           {showScoreInfo && (
-            <div className="absolute right-0 mt-2.5 w-56 bg-card-bg border border-card-border rounded-xl p-4 shadow-nav-shadow z-50 text-[11px] animate-in fade-in duration-100 text-foreground">
+            <div className="absolute right-0 mt-2.5 w-56 bg-card-bg border border-card-border rounded-2xl p-4 shadow-nav-shadow z-50 text-[11px] animate-in fade-in duration-100 text-foreground">
               <h4 className="font-bold mb-2.5 flex items-center gap-1.5 border-b border-divider pb-1.5">
                 <Info className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Score Breakdown</span>

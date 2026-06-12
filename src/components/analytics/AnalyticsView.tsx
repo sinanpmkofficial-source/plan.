@@ -229,14 +229,14 @@ export default function AnalyticsView() {
           Your daily performance score is dynamically computed out of 100 points based on two core categories:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-          <div className="p-4 bg-button-hover/50 rounded-lg border border-divider space-y-1">
+          <div className="p-4 bg-button-hover/50 rounded-2xl border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Spiritual Tracker (50%)</span>
             <p className="text-sm font-bold text-foreground">5-Time Prayers Consistency</p>
             <p className="text-xs text-neutral-550 leading-relaxed font-semibold">
               Earn 10 points for each prayer logged (Fajr, Dhuhr, Asr, Maghrib, Isha) up to a maximum of 50 points.
             </p>
           </div>
-          <div className="p-4 bg-button-hover/50 rounded-lg border border-divider space-y-1">
+          <div className="p-4 bg-button-hover/50 rounded-2xl border border-divider space-y-1">
             <span className="text-xs uppercase tracking-wider font-extrabold text-neutral-400 block">Today's Tasks (50%)</span>
             <p className="text-sm font-bold text-foreground">Bullet Journal Task Completion</p>
             <p className="text-xs text-neutral-550 leading-relaxed font-semibold">
