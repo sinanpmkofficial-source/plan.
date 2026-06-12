@@ -105,7 +105,7 @@ export default function DailyView() {
                   className={`relative flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer flex-1 min-w-0 max-w-[56px] text-center ${
                     isSelected
                       ? 'bg-foreground text-background font-black scale-105 shadow-md z-10'
-                      : 'bg-neutral-100 dark:bg-neutral-900 hover:bg-neutral-200 dark:hover:bg-[#1c1c1e] text-foreground'
+                      : 'bg-neutral-100 dark:bg-neutral-900 hover:bg-neutral-200 dark:hover:bg-[#1c1c1e]  text:black text-foreground'
                   }`}
                 >
                   {/* Indicator Dot (Today / Has tasks) */}
@@ -119,7 +119,11 @@ export default function DailyView() {
                   </div>
 
                   <span className="text-sm font-extrabold tracking-tight mt-1">{dayNum}</span>
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-foreground/45 mt-0.5">{dayNameShort}</span>
+                  <span className={`text-[9px] font-extrabold uppercase tracking-wider mt-0.5 ${
+                    isSelected ? 'text-background/65' : 'text-foreground/45'
+                  }`}>
+                    {dayNameShort}
+                  </span>
                 </motion.button>
               );
             })}
