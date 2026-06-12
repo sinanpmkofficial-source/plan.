@@ -63,7 +63,8 @@ interface PlannerState {
   convertBrainDumpItem: (
     id: string,
     type: 'task' | 'goal' | 'weekly' | 'monthly',
-    targetValue: string // date, goal details, etc.
+    targetValue: string, // date, goal details, etc.
+    bulletType?: 'task' | 'note' | 'event'
   ) => void;
 
   // Actions - Goals
@@ -362,7 +363,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       get().showToast(`"${text.slice(0, 20)}${text.length > 20 ? '...' : ''}" deleted`, 'delete');
     },
 
-    convertBrainDumpItem: (id, type, targetValue) => {
+    convertBrainDumpItem: (id, type, targetValue, bulletType = 'task') => {
       set((state) => {
         const updatedDump = state.brainDump.map((item) => {
           if (item.id === id) {
@@ -386,7 +387,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
           // targetValue is YYYY-MM-DD
           const dailyPlan = getOrCreateDailyPlanFn(state, targetValue);
           const itemText = state.brainDump.find((x) => x.id === id)?.text || '';
-          dailyPlan.bulletNotes = [...dailyPlan.bulletNotes, { id: crypto.randomUUID(), type: 'task', text: itemText, completed: false }];
+          dailyPlan.bulletNotes = [...dailyPlan.bulletNotes, { id: crypto.randomUUID(), type: bulletType, text: itemText, completed: false }];
           dailyPlan.score = calculateDailyScore(dailyPlan);
           dailyPlan.updatedAt = new Date().toISOString();
           updatedState.dailyPlans = { ...state.dailyPlans, [targetValue]: dailyPlan };

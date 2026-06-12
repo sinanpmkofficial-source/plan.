@@ -22,8 +22,6 @@ export default function BrainDumpView() {
     addBrainDumpItem,
     updateBrainDumpItem,
     deleteBrainDumpItem,
-    convertBrainDumpItem,
-    selectedDate,
   } = usePlannerStore();
 
   const [inputValue, setInputValue] = useState('');
@@ -106,7 +104,6 @@ export default function BrainDumpView() {
                   item={item}
                   onUpdate={(text: string) => updateBrainDumpItem(item.id, text)}
                   onDelete={() => deleteBrainDumpItem(item.id)}
-                  onConvertToTask={() => convertBrainDumpItem(item.id, 'task', selectedDate)}
                 />
               ))
             )}
@@ -121,18 +118,22 @@ interface ItemProps {
   item: BrainDumpItem;
   onUpdate: (text: string) => void;
   onDelete: () => void;
-  onConvertToTask: () => void;
 }
 
 function BrainDumpItemComponent({
   item,
   onUpdate,
   onDelete,
-  onConvertToTask,
 }: ItemProps) {
+  const { selectedDate, convertBrainDumpItem } = usePlannerStore();
   const [editing, setEditing] = useState(false);
   const [editingText, setEditingText] = useState(item.text);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Conversion inline panel states
+  const [isConverting, setIsConverting] = useState(false);
+  const [convertType, setConvertType] = useState<'task' | 'note' | 'event'>('task');
+  const [convertDate, setConvertDate] = useState(selectedDate);
 
   const handleSave = () => {
     if (editingText.trim()) onUpdate(editingText.trim());
@@ -179,37 +180,97 @@ function BrainDumpItemComponent({
         </p>
       )}
 
-      <div className="flex items-center justify-between gap-4 border-t border-divider pt-3.5 mt-1">
-        <div className="flex items-center gap-3">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowDeleteConfirm(true)}
-            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover hover:text-red-500 rounded-full text-neutral-400 cursor-pointer transition-colors"
-            title="Delete"
-          >
-            <Trash2 className="w-4 h-4" />
-          </motion.button>
-          {!editing && (
+      {isConverting ? (
+        <div className="border-t border-divider pt-3.5 space-y-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400">
+              Log Type & Date
+            </span>
+            <div className="flex flex-col sm:flex-row gap-2 items-center">
+              {/* Type pill selectors */}
+              <div className="bg-kbd-bg p-1 rounded-full flex gap-1 text-[10px] font-bold select-none w-full sm:w-auto sm:flex-1">
+                {(['task', 'note', 'event'] as const).map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setConvertType(type)}
+                    className={`flex-1 py-1.5 px-2 rounded-full text-center transition-all cursor-pointer ${
+                      convertType === type
+                        ? 'bg-foreground text-background shadow-none font-black'
+                        : 'text-neutral-500 hover:text-foreground'
+                    }`}
+                  >
+                    {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Date Input */}
+              <input
+                type="date"
+                value={convertDate}
+                onChange={(e) => setConvertDate(e.target.value)}
+                className="input-premium py-1.5 px-3 text-xs font-semibold w-full sm:w-36 shrink-0"
+                style={{ colorScheme: 'normal' }}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end pt-1">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setEditing(true)}
-              className="w-8 h-8 flex items-center justify-center hover:bg-button-hover hover:text-foreground rounded-full text-neutral-400 cursor-pointer transition-colors"
-              title="Edit"
+              onClick={() => setIsConverting(false)}
+              className="button-secondary text-[11px] px-3.5 py-1.5"
             >
-              <Pencil className="w-4 h-4" />
+              Cancel
             </motion.button>
-          )}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                convertBrainDumpItem(item.id, 'task', convertDate, convertType);
+              }}
+              className="button-premium text-[11px] px-3.5 py-1.5"
+            >
+              Confirm
+            </motion.button>
+          </div>
         </div>
+      ) : (
+        <div className="flex items-center justify-between gap-4 border-t border-divider pt-3.5 mt-1">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-8 h-8 flex items-center justify-center hover:bg-button-hover hover:text-red-500 rounded-full text-neutral-400 cursor-pointer transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
+            {!editing && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setEditing(true)}
+                className="w-8 h-8 flex items-center justify-center hover:bg-button-hover hover:text-foreground rounded-full text-neutral-400 cursor-pointer transition-colors"
+                title="Edit"
+              >
+                <Pencil className="w-4 h-4" />
+              </motion.button>
+            )}
+          </div>
 
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={onConvertToTask}
-          className="flex items-center gap-1.5 py-1.5 px-4 bg-foreground text-background hover:opacity-90 rounded-full cursor-pointer font-bold text-xs transition-opacity"
-        >
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>Convert to Action</span>
-        </motion.button>
-      </div>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setConvertDate(selectedDate);
+              setIsConverting(true);
+            }}
+            className="flex items-center gap-1.5 py-1.5 px-4 bg-foreground text-background hover:opacity-90 rounded-full cursor-pointer font-bold text-xs transition-opacity"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>Convert to Action</span>
+          </motion.button>
+        </div>
+      )}
 
       <ConfirmationModal
         isOpen={showDeleteConfirm}
