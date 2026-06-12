@@ -617,7 +617,7 @@ function BrainDumpItemComponent({
       )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-divider pt-3.5 mt-1">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-3">
           <button onClick={() => setShowDeleteConfirm(true)} className="w-8 h-8 flex items-center justify-center hover:bg-button-hover hover:text-foreground rounded-full text-neutral-400 cursor-pointer" title="Delete">
             <Trash2 className="w-4 h-4" />
           </button>

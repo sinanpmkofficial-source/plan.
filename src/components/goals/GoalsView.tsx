@@ -121,7 +121,7 @@ function ActionItemRow({
       )}
 
       {/* Actions (show on hover) */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+      <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
         {!action.sentToDaily && (
           <button
             onClick={() => sendActionToDaily(goalId, milestoneId, action.id)}

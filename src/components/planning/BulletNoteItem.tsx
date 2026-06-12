@@ -101,7 +101,7 @@ export default function BulletNoteItem({
       </div>
 
       {!editing && (
-        <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+        <div className="flex items-center gap-3 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
           <button
             onClick={handleStartEdit}
             className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors cursor-pointer"
