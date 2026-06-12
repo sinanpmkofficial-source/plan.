@@ -127,7 +127,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
       <div className="pt-4 pb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
         {/* Left — Title block + children (nav controls) */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
+        <div className="flex sm:items-center gap-3 sm:gap-4 min-w-0 w-full sm:w-auto">
           <div className="min-w-0">
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-none truncate">{title}</h2>
             {subtitle && (
@@ -146,7 +146,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
         </div>
 
         {/* Right — Sync + Score */}
-        <div className="flex items-center gap-3 shrink-0 select-none">
+        <div className="flex items-center justify-end gap-3 shrink-0 select-none">
 
           {/* Sync indicator */}
           <div className="text-[11px] font-bold text-foreground/40">
@@ -176,68 +176,7 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
             )}
           </div>
 
-          {/* Score pill */}
-          <div className="relative">
-            <button
-              onClick={() => setShowScoreBreakdown((v) => !v)}
-              className="flex items-center gap-2.5 pl-2.5 pr-4 py-1.5 rounded-full border border-card-border bg-kbd-bg hover:bg-button-hover hover:border-foreground/30 transition-all cursor-pointer group"
-              title="View score breakdown"
-            >
-              {/* Mini arc */}
-              <div className="relative flex items-center justify-center">
-                <ScoreArc score={score} />
-                <span className="absolute bottom-0 text-[9px] font-black text-foreground leading-none">
-                  {score}
-                </span>
-              </div>
-
-              <div className="text-left">
-                <div className="text-[10px] font-extrabold uppercase tracking-widest text-foreground/40 leading-none">Score</div>
-                <div className="text-xs font-extrabold text-foreground leading-tight mt-0.5">{scoreLabel}</div>
-              </div>
-            </button>
-
-            {/* Breakdown popover */}
-            {showScoreBreakdown && (
-              <>
-                {/* Backdrop to close on outside click */}
-                <div className="fixed inset-0 z-40" onClick={() => setShowScoreBreakdown(false)} />
-                <div className="absolute right-0 top-full mt-2 z-50 w-56 bg-card-bg border border-card-border rounded-2xl p-4 shadow-none animate-in fade-in zoom-in-95 duration-100">
-                  <div className="flex items-center justify-between mb-3 border-b border-divider pb-2.5">
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-foreground/40">{popoverTitle}</span>
-                    <button onClick={() => setShowScoreBreakdown(false)} className="p-0.5 hover:bg-button-hover rounded-full text-foreground/30 hover:text-foreground cursor-pointer">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-
-                  {/* Big score display */}
-                  <div className="text-center mb-4">
-                    <span className="text-5xl font-black tracking-tight">{score}</span>
-                    <span className="text-lg font-extrabold text-foreground/30">/100</span>
-                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-foreground/40 mt-1">{scoreLabel}</p>
-                  </div>
-
-                  {/* Breakdown rows */}
-                  <div className="space-y-2.5">
-                    {breakdown.map(({ label, value, max }) => (
-                      <div key={label}>
-                        <div className="flex justify-between text-[10px] font-extrabold mb-1">
-                          <span className="text-foreground/50 uppercase tracking-wider">{label}</span>
-                          <span className="text-foreground">{value}<span className="text-foreground/30">/{max}</span></span>
-                        </div>
-                        <div className="h-1 w-full bg-divider rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-foreground rounded-full transition-all duration-500"
-                            style={{ width: `${max > 0 ? (value / max) * 100 : 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+         
         </div>
 
       </div>

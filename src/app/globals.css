@@ -144,10 +144,7 @@ input[type=number] {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.card-premium:hover {
-  border-color: var(--foreground);
-  transform: translateY(-1px);
-}
+
 
 .input-premium {
   border: 1px solid var(--input-border);
