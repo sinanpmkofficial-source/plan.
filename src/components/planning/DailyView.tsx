@@ -4,7 +4,7 @@ import { usePlannerStore } from '@/store/planner-store';
 import PrayerTracker from '../prayers/PrayerTracker';
 import BulletNoteItem from './BulletNoteItem';
 import { BULLET_TYPES } from '@/lib/constants';
-import { format, addDays, isSameDay, parseISO } from 'date-fns';
+import { format, addDays, isSameDay, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
   Calendar as CalendarIcon,
@@ -59,6 +59,10 @@ export default function DailyView() {
   const parsedDate = parseISO(selectedDate);
   const sliderDays = Array.from({ length: 15 }, (_, i) => addDays(parsedDate, i - 7));
 
+  const weekStart = startOfWeek(parsedDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(parsedDate, { weekStartsOn: 1 });
+  const formattedWeekRange = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`;
+
   // Auto-scroll selected date to center
   useEffect(() => {
     if (selectedRef.current && containerRef.current) {
@@ -108,7 +112,7 @@ export default function DailyView() {
         {/* Date Jump picker button */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-neutral-450 mr-2">
-            {format(parsedDate, 'MMMM yyyy')}
+            {formattedWeekRange}
           </span>
           <button
             onClick={() => setIsCalendarOpen(true)}
@@ -123,6 +127,7 @@ export default function DailyView() {
             selectedDate={parsedDate}
             onSelect={(date) => setDate(format(date, 'yyyy-MM-dd'))}
             onClose={() => setIsCalendarOpen(false)}
+            highlightType="week"
           />
         </div>
       </header>
