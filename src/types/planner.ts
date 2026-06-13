@@ -73,10 +73,22 @@ export interface MonthlyPlan {
   updatedAt: string; // ISO string
 }
 
+export interface Habit {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string; // ISO string
+  completedDates: Record<string, boolean>; // key YYYY-MM-DD -> completed
+  skippedDates: Record<string, boolean>; // key YYYY-MM-DD -> skipped
+}
+
 export interface SyncPayload {
   brainDump: BrainDumpItem[];
   goals: GoalItem[];
   dailyPlans: Record<string, DailyPlan>;
   weeklyPlans: Record<string, WeeklyPlan>;
   monthlyPlans: Record<string, MonthlyPlan>;
+  habits?: Habit[];
+  deletedHabits?: string[];
 }
+

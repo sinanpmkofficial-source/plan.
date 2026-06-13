@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
-import PageHeader from '../layout/PageHeader';
 import BulletNoteItem from './BulletNoteItem';
 import AssignDateButton from './AssignDateButton';
-import { adjustMonth } from '@/lib/date-utils';
 import { BULLET_TYPES } from '@/lib/constants';
+import { format, parse } from 'date-fns';
 import {
-  ChevronLeft,
-  ChevronRight,
   FileText,
+  Calendar as CalendarIcon,
+  Cloud,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { QuickAddInput } from '../ui/QuickAddInput';
 
@@ -24,15 +25,15 @@ export default function MonthlyView() {
     toggleMonthlyTask,
     deleteMonthlyTask,
     updateMonthlyReflection,
+    syncStatus,
+    retrySync,
   } = usePlannerStore();
 
   const [newTaskInput, setNewTaskInput] = useState('');
   const [bulletType, setBulletType] = useState<'task' | 'note' | 'event'>('task');
+  const monthInputRef = useRef<HTMLInputElement>(null);
 
   const plan = getOrCreateMonthlyPlan(selectedMonth);
-
-  const handlePrevMonth = () => setMonth(adjustMonth(selectedMonth, -1));
-  const handleNextMonth = () => setMonth(adjustMonth(selectedMonth, 1));
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,33 +46,68 @@ export default function MonthlyView() {
   const completedMonthly = bulletTasks.filter((t) => t.completed).length;
   const progress = bulletTasks.length > 0 ? Math.round((completedMonthly / bulletTasks.length) * 100) : 0;
 
+  const parsedMonthDate = parse(selectedMonth, 'yyyy-MM', new Date());
+  const formattedMonth = format(parsedMonthDate, 'MMMM yyyy');
+
   return (
     <div className="max-w-4xl mx-auto pt-6 space-y-8 animate-in fade-in duration-200 text-foreground pb-10">
-      <PageHeader title="Monthly Plan">
-        <div className="flex items-center gap-1 bg-kbd-bg rounded-full p-1 shadow-none">
+      
+      {/* Brand Header */}
+      <header className="flex items-center justify-between pb-2 select-none">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-black tracking-tighter leading-none">plan.</h1>
+          
+          {/* Cloud Sync badge */}
+          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold tracking-tight transition-all duration-300 border ${
+            syncStatus === 'syncing'
+              ? 'bg-neutral-800/40 border-neutral-700/50 text-neutral-400'
+              : syncStatus === 'error'
+              ? 'bg-red-500/10 border-red-500/20 text-red-400'
+              : 'bg-neutral-900/60 border-neutral-800/80 text-neutral-400'
+          }`}>
+            {syncStatus === 'syncing' ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
+                <span>Saving...</span>
+              </>
+            ) : syncStatus === 'error' ? (
+              <button onClick={retrySync} className="flex items-center gap-1.5 text-red-400 cursor-pointer bg-transparent border-0 outline-none">
+                <RefreshCw className="w-3 h-3 animate-pulse" />
+                <span>Sync Error</span>
+              </button>
+            ) : (
+              <>
+                <Cloud className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Cloud Sync</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Month Jump picker button */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-neutral-455 mr-2">
+            {formattedMonth}
+          </span>
           <button
-            onClick={handlePrevMonth}
-            className="p-1.5 hover:bg-button-hover rounded-full text-foreground transition-colors cursor-pointer"
-            title="Previous Month"
+            onClick={() => monthInputRef.current?.showPicker()}
+            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover border border-card-border rounded-full text-foreground/50 hover:text-foreground transition-all cursor-pointer"
+            title="Pick a month"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <CalendarIcon className="w-4 h-4" />
           </button>
           <input
             type="month"
+            ref={monthInputRef}
             value={selectedMonth}
-            onChange={(e) => setMonth(e.target.value)}
-            className="text-xs font-extrabold px-2 py-0.5 bg-transparent border-0 outline-none text-center cursor-pointer w-[95px] text-foreground"
+            onChange={(e) => {
+              if (e.target.value) setMonth(e.target.value);
+            }}
+            className="absolute opacity-0 pointer-events-none w-0 h-0"
             style={{ colorScheme: 'normal' }}
           />
-          <button
-            onClick={handleNextMonth}
-            className="p-1.5 hover:bg-button-hover rounded-full text-foreground transition-colors cursor-pointer"
-            title="Next Month"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
-      </PageHeader>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <div className="card-premium p-6 space-y-5">
