@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '../layout/PageHeader';
 import ConfirmationModal from '../ui/ConfirmationModal';
+import DatePickerInput from '../ui/DatePickerInput';
 
 export default function BrainDumpView() {
   const {
@@ -206,12 +207,11 @@ function BrainDumpItemComponent({
               </div>
               
               {/* Date Input */}
-              <input
-                type="date"
+              <DatePickerInput
                 value={convertDate}
-                onChange={(e) => setConvertDate(e.target.value)}
-                className="input-premium py-1.5 px-3 text-xs font-semibold w-full sm:w-36 shrink-0"
-                style={{ colorScheme: 'normal' }}
+                onChange={setConvertDate}
+                className="py-1.5 px-3 text-xs font-semibold w-full sm:w-44 shrink-0"
+                placeholder="Select Date"
               />
             </div>
           </div>

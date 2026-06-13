@@ -20,6 +20,7 @@ import {
   Send,
 } from 'lucide-react';
 import ConfirmationModal from '../ui/ConfirmationModal';
+import DatePickerInput from '../ui/DatePickerInput';
 import { ActionItem, GoalItem, Milestone } from '@/types/planner';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -259,12 +260,11 @@ function MilestoneRow({
                       <option value="medium">🟡 Medium</option>
                       <option value="low">⚪ Low</option>
                     </select>
-                    <input
-                      type="date"
+                    <DatePickerInput
                       value={actionDue}
-                      onChange={(e) => setActionDue(e.target.value)}
-                      className="text-[10px] font-bold bg-kbd-bg border border-card-border rounded-full px-2 py-1 text-foreground outline-none cursor-pointer"
-                      style={{ colorScheme: 'normal' }}
+                      onChange={setActionDue}
+                      className="text-[10px] font-bold bg-kbd-bg border border-card-border rounded-full px-2 py-1 text-foreground outline-none cursor-pointer w-32 shrink-0"
+                      placeholder="Action Due Date"
                     />
                     <div className="flex gap-1.5 ml-auto">
                       <button onClick={() => setShowAddAction(false)} className="text-[10px] font-bold text-foreground/40 hover:text-foreground cursor-pointer">Cancel</button>
@@ -434,13 +434,11 @@ function MilestoneFormItem({
           placeholder={placeholder}
           className="flex-1 input-premium text-sm font-semibold py-1.5"
         />
-        <input
-          type="date"
+        <DatePickerInput
           value={dueDate}
-          onChange={(e) => onDueDateChange(e.target.value)}
-          className="text-xs font-bold bg-kbd-bg border border-input-border rounded-full px-3 py-1.5 text-foreground outline-none cursor-pointer"
-          style={{ colorScheme: 'normal' }}
-          title="Milestone due date (optional)"
+          onChange={onDueDateChange}
+          className="text-xs font-bold bg-kbd-bg border border-input-border rounded-full px-3 py-1.5 text-foreground outline-none cursor-pointer w-full sm:w-36 shrink-0"
+          placeholder="Milestone Date"
         />
       </div>
       {canRemove && (
@@ -501,7 +499,11 @@ function GoalForm({
       </div>
       <div className="space-y-1">
         <label className="text-xs text-foreground/50 uppercase tracking-wider font-extrabold">Goal Due Date</label>
-        <input type="date" value={dueDate} onChange={(e) => onDueDateChange(e.target.value)} className="w-full input-premium text-sm font-semibold" style={{ colorScheme: 'normal' }} />
+        <DatePickerInput
+          value={dueDate}
+          onChange={onDueDateChange}
+          placeholder="Select Goal Due Date"
+        />
       </div>
       <div className="space-y-2">
         <div className="flex justify-between items-center">

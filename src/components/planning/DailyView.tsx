@@ -13,6 +13,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { QuickAddInput } from '../ui/QuickAddInput';
+import DatePickerModal from '../ui/DatePickerModal';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -37,7 +38,7 @@ export default function DailyView() {
 
   const [bulletType, setBulletType] = useState<'task' | 'note' | 'event'>('task');
   const [bulletInput, setBulletInput] = useState('');
-  const dateInputRef = useRef<HTMLInputElement>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef<HTMLButtonElement>(null);
 
@@ -110,21 +111,18 @@ export default function DailyView() {
             {format(parsedDate, 'MMMM yyyy')}
           </span>
           <button
-            onClick={() => dateInputRef.current?.showPicker()}
+            onClick={() => setIsCalendarOpen(true)}
             className="w-8 h-8 flex items-center justify-center hover:bg-button-hover border border-card-border rounded-full text-foreground/50 hover:text-foreground transition-all cursor-pointer"
             title="Pick a date"
           >
             <CalendarIcon className="w-4 h-4" />
           </button>
-          <input
-            type="date"
-            ref={dateInputRef}
-            value={selectedDate}
-            onChange={(e) => {
-              if (e.target.value) setDate(e.target.value);
-            }}
-            className="absolute opacity-0 pointer-events-none w-0 h-0"
-            style={{ colorScheme: 'normal' }}
+          
+          <DatePickerModal
+            isOpen={isCalendarOpen}
+            selectedDate={parsedDate}
+            onSelect={(date) => setDate(format(date, 'yyyy-MM-dd'))}
+            onClose={() => setIsCalendarOpen(false)}
           />
         </div>
       </header>

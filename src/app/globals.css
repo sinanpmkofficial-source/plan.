@@ -240,3 +240,85 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
+/* Custom React Day Picker Dark Mode styling overrides */
+.rdp {
+  --rdp-cell-size: 38px;
+  --rdp-accent-color: var(--foreground);
+  --rdp-background-color: var(--button-hover);
+  --rdp-accent-color-left: var(--background);
+  color: var(--foreground);
+  margin: 0;
+}
+
+.rdp-day_selected, .rdp-day_selected:hover {
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+}
+
+.rdp-day_today {
+  font-weight: 800;
+  border: 1.5px solid var(--foreground) !important;
+  border-radius: 12px !important;
+}
+
+.rdp-day:hover:not(.rdp-day_selected) {
+  background-color: var(--button-hover) !important;
+  border-radius: 12px !important;
+}
+
+.rdp-day_active-week {
+  background-color: var(--button-hover) !important;
+  color: var(--foreground) !important;
+  opacity: 0.8;
+  border-radius: 0px !important;
+}
+
+.rdp-day_active-week:hover {
+  background-color: var(--button-hover) !important;
+  opacity: 1;
+}
+
+.rdp-day_active-month {
+  background-color: var(--button-hover) !important;
+  color: var(--foreground) !important;
+  opacity: 0.8;
+  border-radius: 0px !important;
+}
+
+.rdp-day_active-month:hover {
+  background-color: var(--button-hover) !important;
+  opacity: 1;
+}
+
+.rdp-button {
+  cursor: pointer;
+  border-radius: 12px !important;
+  font-weight: 600;
+}
+
+.rdp-nav_button {
+  color: var(--foreground) !important;
+  border-radius: 12px !important;
+}
+
+.rdp-nav_button:hover {
+  background-color: var(--button-hover) !important;
+}
+
+.rdp-head_cell {
+  font-weight: 800 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0.45;
+}
+
+.rdp-caption_label {
+  font-weight: 800 !important;
+  text-transform: capitalize;
+  font-size: 0.9rem !important;
+}
+
+

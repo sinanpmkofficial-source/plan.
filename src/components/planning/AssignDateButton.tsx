@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { usePlannerStore } from '@/store/planner-store';
+import DatePickerModal from '../ui/DatePickerModal';
 
 interface AssignDateButtonProps {
   taskText: string;
@@ -17,28 +18,17 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
 
   const [open, setOpen] = useState(false);
   const [pickedDate, setPickedDate] = useState('');
-  const dateInputRef = useRef<HTMLInputElement>(null);
-
-  // Today in local time (YYYY-MM-DD)
-  const todayLocal = new Date().toLocaleDateString('en-CA');
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (dateInputRef.current) {
-      try {
-        dateInputRef.current.showPicker();
-      } catch (err) {
-        dateInputRef.current.click();
-      }
-    }
+    setIsCalendarOpen(true);
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (val) {
-      setPickedDate(val);
-      setOpen(true);
-    }
+  const handleDateSelect = (date: Date) => {
+    const formatted = format(date, 'yyyy-MM-dd');
+    setPickedDate(formatted);
+    setOpen(true);
   };
 
   const handleClose = (e?: React.MouseEvent) => {
@@ -109,13 +99,12 @@ export default function AssignDateButton({ taskText, onAssign, context }: Assign
         <CalendarIcon className="w-4 h-4" />
       </button>
 
-      <input
-        type="date"
-        ref={dateInputRef}
-        min={todayLocal}
-        onChange={handleDateChange}
-        className="absolute opacity-0 pointer-events-none w-0 h-0"
-        style={{ colorScheme: 'normal' }}
+      <DatePickerModal
+        isOpen={isCalendarOpen}
+        selectedDate={pickedDate ? parseISO(pickedDate) : new Date()}
+        onSelect={handleDateSelect}
+        onClose={() => setIsCalendarOpen(false)}
+        title="Choose Target Date"
       />
 
       {open && typeof document !== 'undefined' && createPortal(panel, document.body)}
