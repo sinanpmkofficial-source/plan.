@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import BulletNoteItem from './BulletNoteItem';
 import AssignDateButton from './AssignDateButton';
+import { adjustMonth } from '@/lib/date-utils';
 import { BULLET_TYPES } from '@/lib/constants';
 import { format, parse } from 'date-fns';
 import {
@@ -12,6 +13,8 @@ import {
   Cloud,
   Loader2,
   RefreshCw,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { QuickAddInput } from '../ui/QuickAddInput';
 
@@ -85,10 +88,29 @@ export default function MonthlyView() {
         </div>
 
         {/* Month Jump picker button */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-neutral-455 mr-2">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setMonth(adjustMonth(selectedMonth, -1))}
+            className="w-7 h-7 flex items-center justify-center hover:bg-button-hover rounded-full text-foreground/50 hover:text-foreground transition-all cursor-pointer"
+            title="Previous Month"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          
+          <span className="text-xs font-bold text-neutral-450 px-1 select-none">
             {formattedMonth}
           </span>
+
+          <button
+            onClick={() => setMonth(adjustMonth(selectedMonth, 1))}
+            className="w-7 h-7 flex items-center justify-center hover:bg-button-hover rounded-full text-foreground/50 hover:text-foreground transition-all cursor-pointer"
+            title="Next Month"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          <div className="h-4 w-px bg-divider mx-1" />
+
           <button
             onClick={() => monthInputRef.current?.showPicker()}
             className="w-8 h-8 flex items-center justify-center hover:bg-button-hover border border-card-border rounded-full text-foreground/50 hover:text-foreground transition-all cursor-pointer"
