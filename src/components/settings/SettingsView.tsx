@@ -138,7 +138,7 @@ export default function SettingsView() {
                     </button>
                   </div>
                   <p className="text-xs text-foreground/60 font-semibold leading-relaxed">
-                    Are you absolutely sure? Every piece of data will be deleted immediately — goals, milestones, action items, daily logs, reflections, prayers — <strong className="text-foreground">everything</strong>.
+                    Are you absolutely sure? Every piece of data will be deleted immediately — goals, milestones, action items, daily logs, reflections — <strong className="text-foreground">everything</strong>.
                   </p>
                   <div className="flex gap-2.5 justify-end">
                     <button onClick={() => setStep('idle')} className="button-secondary text-xs px-4 py-2">Cancel</button>

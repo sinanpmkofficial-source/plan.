@@ -45,13 +45,6 @@ export interface DailyPlan {
   date: string; // YYYY-MM-DD
   tasks: { id: string; text: string; completed: boolean }[];
   bulletNotes: BulletNote[];
-  prayers: {
-    fajr: boolean;
-    dhuhr: boolean;
-    asr: boolean;
-    maghrib: boolean;
-    isha: boolean;
-  };
   reflection: string;
   score: number;
   updatedAt: string; // ISO string

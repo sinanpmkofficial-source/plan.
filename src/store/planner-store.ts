@@ -93,8 +93,8 @@ interface PlannerState {
   updateBulletNote: (date: string, noteId: string, text: string) => void;
   toggleBulletNote: (date: string, noteId: string) => void;
   deleteBulletNote: (date: string, noteId: string) => void;
+  moveBulletNote: (dateOrId: string, noteId: string, direction: 'up' | 'down', context: 'daily' | 'weekly' | 'monthly') => void;
   updateDailyReflection: (date: string, reflection: string) => void;
-  togglePrayer: (date: string, prayer: keyof DailyPlan['prayers']) => void;
 
   // Actions - Weekly Plan
   getOrCreateWeeklyPlan: (weekId: string) => WeeklyPlan;
@@ -867,24 +867,60 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
       get().triggerSync();
     },
 
+    moveBulletNote: (dateOrId, noteId, direction, context) => {
+      set((state) => {
+        let plan: DailyPlan | WeeklyPlan | MonthlyPlan | undefined;
+        const key = dateOrId;
+        let storeKey: 'dailyPlans' | 'weeklyPlans' | 'monthlyPlans';
+        let dirtyKey: 'dirtyDailyPlans' | 'dirtyWeeklyPlans' | 'dirtyMonthlyPlans';
+
+        if (context === 'daily') {
+          plan = getOrCreateDailyPlanFn(state, dateOrId);
+          storeKey = 'dailyPlans';
+          dirtyKey = 'dirtyDailyPlans';
+        } else if (context === 'weekly') {
+          plan = getOrCreateWeeklyPlanFn(state, dateOrId);
+          storeKey = 'weeklyPlans';
+          dirtyKey = 'dirtyWeeklyPlans';
+        } else {
+          plan = getOrCreateMonthlyPlanFn(state, dateOrId);
+          storeKey = 'monthlyPlans';
+          dirtyKey = 'dirtyMonthlyPlans';
+        }
+
+        if (!plan || !plan.bulletNotes) return {};
+
+        const notes = [...plan.bulletNotes];
+        const index = notes.findIndex((n) => n.id === noteId);
+        if (index === -1) return {};
+
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= notes.length) return {};
+
+        // Swap items
+        const [movedNote] = notes.splice(index, 1);
+        notes.splice(targetIndex, 0, movedNote);
+
+        plan.bulletNotes = notes;
+        if (context === 'daily') {
+          (plan as DailyPlan).score = calculateDailyScore(plan as DailyPlan);
+        }
+        plan.updatedAt = new Date().toISOString();
+
+        const updatedState = {
+          [storeKey]: { ...state[storeKey], [key]: plan },
+          [dirtyKey]: new Set(state[dirtyKey] as Set<string>).add(key),
+        };
+
+        return updatedState as any;
+      });
+      get().triggerSync();
+    },
+
     updateDailyReflection: (date, reflection) => {
       set((state) => {
         const plan = getOrCreateDailyPlanFn(state, date);
         plan.reflection = reflection;
-        plan.score = calculateDailyScore(plan);
-        plan.updatedAt = new Date().toISOString();
-        return { dailyPlans: { ...state.dailyPlans, [date]: plan } };
-      });
-      markDirty('dailyPlans', date);
-    },
-
-    togglePrayer: (date, prayer) => {
-      set((state) => {
-        const plan = getOrCreateDailyPlanFn(state, date);
-        plan.prayers = {
-          ...plan.prayers,
-          [prayer]: !plan.prayers[prayer],
-        };
         plan.score = calculateDailyScore(plan);
         plan.updatedAt = new Date().toISOString();
         return { dailyPlans: { ...state.dailyPlans, [date]: plan } };

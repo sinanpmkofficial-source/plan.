@@ -75,29 +75,24 @@ export default function WeeklyView() {
         <div className="flex items-center gap-3">
           <h1 className="text-3xl font-black tracking-tighter leading-none">plan.</h1>
           
-          {/* Cloud Sync badge */}
-          <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold tracking-tight transition-all duration-300 border ${
-            syncStatus === 'syncing'
-              ? 'bg-neutral-800/40 border-neutral-700/50 text-neutral-400'
-              : syncStatus === 'error'
-              ? 'bg-red-500/10 border-red-500/20 text-red-400'
-              : 'bg-neutral-900/60 border-neutral-800/80 text-neutral-400'
-          }`}>
+          {/* Cloud Sync Icon-only */}
+          <div className="flex items-center justify-center">
             {syncStatus === 'syncing' ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
-                <span>Saving...</span>
-              </>
+              <span title="Saving...">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+              </span>
             ) : syncStatus === 'error' ? (
-              <button onClick={retrySync} className="flex items-center gap-1.5 text-red-400 cursor-pointer bg-transparent border-0 outline-none">
-                <RefreshCw className="w-3 h-3 animate-pulse" />
-                <span>Sync Error</span>
+              <button
+                onClick={retrySync}
+                className="p-1 hover:bg-button-hover rounded-full text-rose-500 hover:text-rose-650 transition-colors cursor-pointer bg-transparent border-0 outline-none flex items-center justify-center"
+                title="Sync Error - Click to Retry"
+              >
+                <RefreshCw className="w-4 h-4 animate-pulse" />
               </button>
             ) : (
-              <>
-                <Cloud className="w-3.5 h-3.5 text-neutral-400" />
-                <span>Cloud Sync</span>
-              </>
+              <span title="All changes saved">
+                <Cloud className="w-4 h-4 text-neutral-400" />
+              </span>
             )}
           </div>
         </div>
@@ -126,10 +121,10 @@ export default function WeeklyView() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        <div className="card-premium p-6 space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+        <div className="space-y-5 py-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-extrabold text-base tracking-tight">Weekly Log</h4>
+            <h4 className="font-extrabold text-base tracking-tight text-foreground">Weekly Log</h4>
             <span className="text-xs font-bold text-neutral-500 select-none">
               {progress}% completed
             </span>
@@ -141,7 +136,7 @@ export default function WeeklyView() {
                 key={type}
                 type="button"
                 onClick={() => setBulletType(type)}
-                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-foreground text-background shadow-none' : 'text-neutral-500 hover:text-foreground hover:bg-button-hover' }`}
+                className={`flex-1 py-1.5 px-3 rounded-full text-center transition-all cursor-pointer ${ bulletType === type ? 'bg-foreground text-background shadow-none' : 'text-neutral-550 hover:text-foreground hover:bg-button-hover' }`}
               >
                 {type === 'task' ? 'Task •' : type === 'note' ? 'Note —' : 'Event ○'}
               </button>
@@ -157,8 +152,8 @@ export default function WeeklyView() {
 
           <div className="space-y-1.5">
             {(plan.bulletNotes || []).length === 0 ? (
-              <div className="py-12 text-center text-neutral-400 text-sm border border-dashed border-divider rounded-lg font-bold">
-                Weekly Log is empty. Add a task or note above!
+              <div className="py-12 text-center text-neutral-400 text-sm font-bold">
+                Weekly Log is empty. Log a task, note, or event above!
               </div>
             ) : (
               (plan.bulletNotes || []).map((note) => (
@@ -181,9 +176,9 @@ export default function WeeklyView() {
           </div>
         </div>
 
-        <div className="card-premium p-6 space-y-5">
+        <div className="space-y-5 py-4">
           <div className="space-y-1">
-            <h4 className="font-extrabold text-base tracking-tight flex items-center gap-1.5">
+            <h4 className="font-extrabold text-base tracking-tight flex items-center gap-1.5 text-foreground">
               <FileText className="w-4 h-4 text-neutral-550" />
               <span>Weekly Reflection</span>
             </h4>

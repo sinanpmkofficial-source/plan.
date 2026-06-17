@@ -8,6 +8,7 @@ import {
   Award,
   Check,
   Info,
+  Cloud,
 } from 'lucide-react';
 
 export default function SyncIndicator() {
@@ -34,23 +35,9 @@ export default function SyncIndicator() {
     analytics: 'Performance Analytics',
   };
 
-  const prayersCount = Object.values(dailyPlan.prayers || {}).filter(Boolean).length;
-  const prayerScore = prayersCount * 10;
-
-  let taskScore = 30;
-  if (dailyPlan.tasks && dailyPlan.tasks.length > 0) {
-    const completedTasks = dailyPlan.tasks.filter((t) => t.completed).length;
-    taskScore = Math.round((completedTasks / dailyPlan.tasks.length) * 30);
-  }
-
-  let bulletScore = 10;
   const bulletTasks = (dailyPlan.bulletNotes || []).filter((n) => n.type === 'task');
-  if (bulletTasks.length > 0) {
-    const completedBullets = bulletTasks.filter((t) => t.completed).length;
-    bulletScore = Math.round((completedBullets / bulletTasks.length) * 10);
-  }
-
-  const reflectionScore = dailyPlan.reflection && dailyPlan.reflection.trim().length > 0 ? 10 : 0;
+  const completedCount = bulletTasks.filter((t) => t.completed).length;
+  const totalCount = bulletTasks.length;
 
   return (
     <header className="h-16 border-b border-divider bg-card-bg px-4 md:px-8 flex items-center justify-between shrink-0 sticky top-0 z-30 transition-colors duration-300">
@@ -61,33 +48,24 @@ export default function SyncIndicator() {
       </div>
 
       <div className="flex items-center gap-3 md:gap-6">
-        {/* Sync Status Badge */}
-        <div className="flex items-center gap-2">
-          {syncStatus === 'syncing' && (
-            <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-neutral-400 font-medium select-none">
-              <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 animate-spin" />
-              <span>Saving...</span>
-            </div>
-          )}
-          {syncStatus === 'saved' && (
-            <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-neutral-400 font-medium select-none">
-              <Check className="w-3 h-3 md:w-3.5 md:h-3.5 text-neutral-450" />
-              <span>Saved</span>
-            </div>
-          )}
-          {syncStatus === 'error' && (
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] md:text-xs text-red-500 font-medium select-none flex items-center gap-1" title={syncErrorMsg || 'Network Error'}>
-                Sync Failed
-              </span>
-              <button
-                onClick={retrySync}
-                className="p-1 hover:bg-button-hover rounded text-neutral-500 hover:text-foreground transition-colors cursor-pointer"
-                title="Retry Sync"
-              >
-                <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5" />
-              </button>
-            </div>
+        {/* Sync Status Badge (Icon-only) */}
+        <div className="flex items-center justify-center">
+          {syncStatus === 'syncing' ? (
+            <span title="Saving...">
+              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+            </span>
+          ) : syncStatus === 'error' ? (
+            <button
+              onClick={retrySync}
+              className="p-1 hover:bg-button-hover rounded-full text-rose-500 hover:text-rose-650 transition-colors cursor-pointer bg-transparent border-0 outline-none flex items-center justify-center"
+              title="Sync Error - Click to Retry"
+            >
+              <RefreshCw className="w-4 h-4 animate-pulse" />
+            </button>
+          ) : (
+            <span title="All changes saved">
+              <Cloud className="w-4 h-4 text-neutral-400" />
+            </span>
           )}
         </div>
 
@@ -114,20 +92,8 @@ export default function SyncIndicator() {
               </h4>
               <div className="space-y-2 text-neutral-500">
                 <div className="flex justify-between">
-                  <span>Prayers ({prayersCount}/5)</span>
-                  <span className="font-bold text-foreground">{prayerScore}/50</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Focus Tasks</span>
-                  <span className="font-bold text-foreground">{taskScore}/30</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Journal Action</span>
-                  <span className="font-bold text-foreground">{bulletScore}/10</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Reflection Daily</span>
-                  <span className="font-bold text-foreground">{reflectionScore}/10</span>
+                  <span>Tasks Completed</span>
+                  <span className="font-bold text-foreground">{completedCount} / {totalCount}</span>
                 </div>
                 <div className="border-t border-divider pt-2 flex justify-between font-bold text-foreground">
                   <span>Daily Total</span>

@@ -4,20 +4,15 @@ import { DailyPlan, WeeklyPlan, MonthlyPlan } from '@/types/planner';
  * Calculate Daily Performance Score (0 - 100)
  */
 export function calculateDailyScore(plan: DailyPlan): number {
-  // 1. Prayer Tracker (50%): 10 points per prayer checked
-  const prayers = plan.prayers || { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
-  const prayersCount = Object.values(prayers).filter(Boolean).length;
-  const prayerScore = prayersCount * 10;
-
-  // 2. Bullet Journal Tasks (50%): Completion rate of bullet-journal action items
-  let bulletScore = 50;
+  // Bullet Journal Tasks (100%): Completion rate of bullet-journal action items
+  let bulletScore = 100;
   const bulletTasks = (plan.bulletNotes || []).filter((n) => n.type === 'task');
   if (bulletTasks.length > 0) {
     const completedBullets = bulletTasks.filter((t) => t.completed).length;
-    bulletScore = Math.round((completedBullets / bulletTasks.length) * 50);
+    bulletScore = Math.round((completedBullets / bulletTasks.length) * 100);
   }
 
-  return prayerScore + bulletScore;
+  return bulletScore;
 }
 
 /**
@@ -30,7 +25,6 @@ export const getOrCreateDailyPlanFn = (state: { dailyPlans: Record<string, Daily
     date,
     tasks: [],
     bulletNotes: [],
-    prayers: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false },
     reflection: '',
     score: 0,
     updatedAt: new Date().toISOString(),

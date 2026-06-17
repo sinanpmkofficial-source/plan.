@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { BulletNote } from '@/types/planner';
-import { MapPin, Pencil, Check, X, Trash2 } from 'lucide-react';
+import { MapPin, Pencil, Check, X, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import ConfirmationModal from '../ui/ConfirmationModal';
 
 interface BulletNoteItemProps {
@@ -10,6 +10,8 @@ interface BulletNoteItemProps {
   onToggle?: () => void;
   onUpdate: (text: string) => void;
   onDelete: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   extraActions?: React.ReactNode;
 }
 
@@ -18,6 +20,8 @@ export default function BulletNoteItem({
   onToggle,
   onUpdate,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   extraActions,
 }: BulletNoteItemProps) {
   const [editing, setEditing] = useState(false);
@@ -40,8 +44,27 @@ export default function BulletNoteItem({
     setEditing(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (editing) return;
+    if (e.key === 'ArrowUp') {
+      if (onMoveUp) {
+        e.preventDefault();
+        onMoveUp();
+      }
+    } else if (e.key === 'ArrowDown') {
+      if (onMoveDown) {
+        e.preventDefault();
+        onMoveDown();
+      }
+    }
+  };
+
   return (
-    <div className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-button-hover rounded-xl transition-colors group">
+    <div
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      className="flex items-center justify-between gap-3 px-2 py-1.5 hover:bg-button-hover rounded-xl transition-colors group focus-visible:ring-2 focus-visible:ring-foreground/20 focus-visible:bg-button-hover/50 outline-hidden"
+    >
       <div className="flex items-center gap-2.5 min-w-0 flex-1">
         {/* Type Indicator / Toggle */}
         {note.type === 'task' && (
@@ -101,10 +124,34 @@ export default function BulletNoteItem({
       </div>
 
       {!editing && (
-        <div className="flex items-center gap-3 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+        <div className="flex items-center gap-1.5 md:gap-3 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+          {onMoveUp && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveUp();
+              }}
+              className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-450 hover:text-foreground rounded-full transition-colors cursor-pointer"
+              title="Move Up"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+          )}
+          {onMoveDown && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveDown();
+              }}
+              className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-450 hover:text-foreground rounded-full transition-colors cursor-pointer"
+              title="Move Down"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={handleStartEdit}
-            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-450 hover:text-foreground rounded-full transition-colors cursor-pointer"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
@@ -114,7 +161,7 @@ export default function BulletNoteItem({
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-400 hover:text-foreground rounded-full transition-colors shrink-0 cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center hover:bg-button-hover text-neutral-450 hover:text-foreground rounded-full transition-colors shrink-0 cursor-pointer"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />

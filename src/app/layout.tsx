@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Plan — Personal Operating System",
-  description: "A minimalist personal planning system combining Brain Dump, Goals, Monthly/Weekly/Daily planning, 5-Time Prayer tracking, and Performance Analytics.",
+  description: "A minimalist personal planning system combining Brain Dump, Goals, Monthly/Weekly/Daily planning, and Performance Analytics.",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.png",

@@ -214,7 +214,7 @@ export default function Navigation() {
               </div>
 
               {/* Action Rows Container */}
-              <div className="flex flex-col bg-neutral-100 dark:bg-neutral-900 rounded-2xl overflow-hidden border border-card-border">
+              <div className="flex flex-col bg-neutral-100 rounded-2xl overflow-hidden border border-card-border">
                 {moreItems.map((item, index) => {
                   const Icon = item.icon;
                   const isItemActive = pathname === item.path;
@@ -226,7 +226,7 @@ export default function Navigation() {
                           router.push(item.path);
                           setIsMobileMoreOpen(false);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors text-left cursor-pointer border-0 bg-transparent text-foreground"
+                        className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-neutral-200 transition-colors text-left cursor-pointer border-0 bg-transparent text-foreground"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-xl bg-foreground/5 flex items-center justify-center text-foreground">
@@ -251,7 +251,7 @@ export default function Navigation() {
               {/* iOS style cancel button */}
               <button
                 onClick={() => setIsMobileMoreOpen(false)}
-                className="w-full mt-4 py-3.5 bg-neutral-100 dark:bg-neutral-900 hover:bg-neutral-200 dark:hover:bg-neutral-850 border border-card-border rounded-2xl text-center text-sm font-black transition-colors cursor-pointer text-foreground"
+                className="w-full mt-4 py-3.5 bg-neutral-100 hover:bg-neutral-200 border border-card-border rounded-2xl text-center text-sm font-black transition-colors cursor-pointer text-foreground"
               >
                 Cancel
               </button>

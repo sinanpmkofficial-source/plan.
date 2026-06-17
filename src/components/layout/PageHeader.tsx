@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
-import { Loader2, Check, RefreshCw, X } from 'lucide-react';
+import { Loader2, Check, RefreshCw, X, Cloud } from 'lucide-react';
 
 interface PageHeaderProps {
   title: string;
@@ -105,18 +105,14 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
     const dailyPlan = getOrCreateDailyPlan(selectedDate);
     score = dailyPlan.score || 0;
 
-    const prayersCount = Object.values(dailyPlan.prayers || {}).filter(Boolean).length;
-    const prayerScore = prayersCount * 10;
-
-    let taskScore = 50;
+    let taskScore = 0;
     const bulletTasks = (dailyPlan.bulletNotes || []).filter((n) => n.type === 'task');
     if (bulletTasks.length > 0) {
       const completedTasks = bulletTasks.filter((t) => t.completed).length;
-      taskScore = Math.round((completedTasks / bulletTasks.length) * 50);
+      taskScore = Math.round((completedTasks / bulletTasks.length) * 100);
     }
     breakdown = [
-      { label: 'Prayers', value: prayerScore, max: 50 },
-      { label: 'Daily Tasks', value: taskScore, max: 50 },
+      { label: 'Daily Tasks', value: taskScore, max: 100 },
     ];
     popoverTitle = 'Daily Score';
     scoreLabel = score >= 90 ? 'Excellent' : score >= 70 ? 'Great' : score >= 50 ? 'Good' : score >= 30 ? 'Fair' : 'Getting started';
@@ -149,29 +145,22 @@ export default function PageHeader({ title, subtitle, children }: PageHeaderProp
         <div className="flex items-center justify-end gap-3 shrink-0 select-none">
 
           {/* Sync indicator */}
-          <div className="text-[11px] font-bold text-foreground/40">
-            {syncStatus === 'syncing' && (
-              <span className="flex items-center gap-1.5">
-                <Loader2 className="w-3 h-3 animate-spin" />
-                Saving…
+          <div className="flex items-center justify-center">
+            {syncStatus === 'syncing' ? (
+              <span title="Saving...">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
               </span>
-            )}
-            {syncStatus === 'saved' && (
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3 h-3" />
-                Saved
-              </span>
-            )}
-            {syncStatus === 'error' && (
-              <span className="flex items-center gap-1.5 text-red-500">
-                Sync error
-                <button
-                  onClick={retrySync}
-                  className="p-0.5 hover:bg-button-hover rounded-full transition-colors cursor-pointer"
-                  title={syncErrorMsg || 'Retry sync'}
-                >
-                  <RefreshCw className="w-3 h-3" />
-                </button>
+            ) : syncStatus === 'error' ? (
+              <button
+                onClick={retrySync}
+                className="p-1 hover:bg-button-hover rounded-full text-rose-500 hover:text-rose-650 transition-colors cursor-pointer bg-transparent border-0 outline-none flex items-center justify-center"
+                title="Sync Error - Click to Retry"
+              >
+                <RefreshCw className="w-4 h-4 animate-pulse" />
+              </button>
+            ) : (
+              <span title="All changes saved">
+                <Cloud className="w-4 h-4 text-neutral-400" />
               </span>
             )}
           </div>
