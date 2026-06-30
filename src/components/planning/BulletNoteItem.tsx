@@ -2,8 +2,33 @@
 
 import React, { useState } from 'react';
 import { BulletNote } from '@/types/planner';
-import { MapPin, Pencil, Check, X, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Pencil, Check, X, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import ConfirmationModal from '../ui/ConfirmationModal';
+import { usePlannerStore } from '@/store/planner-store';
+
+const TAG_SPLIT = /(#[\p{L}\p{N}_-]+)/gu;
+const TAG_ONE = /^#[\p{L}\p{N}_-]+$/u;
+
+/** Render text with clickable #tags that open a filtered search. */
+function renderWithTags(text: string, onTag: (tag: string) => void): React.ReactNode {
+  return text.split(TAG_SPLIT).map((part, i) => {
+    if (TAG_ONE.test(part)) {
+      return (
+        <button
+          key={i}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTag(part);
+          }}
+          className="font-black text-foreground/55 hover:text-foreground hover:underline cursor-pointer"
+        >
+          {part}
+        </button>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+}
 
 interface BulletNoteItemProps {
   note: BulletNote;
@@ -27,6 +52,7 @@ export default function BulletNoteItem({
   const [editing, setEditing] = useState(false);
   const [editingText, setEditingText] = useState(note.text);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const openSearch = usePlannerStore((s) => s.openSearch);
 
   const handleStartEdit = () => {
     setEditingText(note.text);
@@ -118,7 +144,7 @@ export default function BulletNoteItem({
             onClick={note.type === 'task' ? onToggle : undefined}
             className={`text-sm break-words leading-relaxed font-bold flex-1 ${ note.type === 'task' ? 'cursor-pointer hover:text-foreground/85 select-none' : '' } ${ note.type === 'task' && note.completed ? 'text-neutral-400 line-through font-medium' : 'text-foreground' }`}
           >
-            {note.text}
+            {renderWithTags(note.text, (tag) => openSearch(tag))}
           </span>
         )}
       </div>

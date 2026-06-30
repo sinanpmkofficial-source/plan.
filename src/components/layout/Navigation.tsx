@@ -14,12 +14,15 @@ import {
   MoreHorizontal,
   ChevronDown,
   ChevronRight,
+  Search,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePlannerStore } from '@/store/planner-store';
 
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
+  const openSearch = usePlannerStore((s) => s.openSearch);
   const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
   const [isDesktopMoreOpen, setIsDesktopMoreOpen] = useState(false);
 
@@ -59,6 +62,20 @@ export default function Navigation() {
               <h1 className="font-semibold text-sm leading-tight text-foreground">plan.</h1>
             </div>
           </div>
+
+          {/* Search trigger */}
+          <button
+            onClick={() => openSearch()}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 mb-2 rounded-full text-sm font-bold text-neutral-500 hover:text-foreground bg-kbd-bg hover:bg-button-hover transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Search className="w-4 h-4 shrink-0" />
+              <span>Search</span>
+            </div>
+            <kbd className="text-[10px] font-extrabold text-neutral-400 border border-card-border rounded px-1.5 py-0.5">
+              ⌘K
+            </kbd>
+          </button>
 
           {/* Nav Items */}
           <nav className="space-y-1.5">
@@ -220,6 +237,22 @@ export default function Navigation() {
 
               {/* Action Rows Container */}
               <div className="flex flex-col bg-neutral-100 rounded-2xl overflow-hidden border border-card-border">
+                <button
+                  onClick={() => {
+                    setIsMobileMoreOpen(false);
+                    openSearch();
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-neutral-200 transition-colors text-left cursor-pointer border-0 bg-transparent text-foreground"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-foreground/5 flex items-center justify-center text-foreground">
+                      <Search className="w-4.5 h-4.5" />
+                    </div>
+                    <span className="text-sm font-extrabold text-foreground/80">Search</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-foreground/30" />
+                </button>
+                <div className="h-px bg-divider w-full" />
                 {moreItems.map((item, index) => {
                   const Icon = item.icon;
                   const isItemActive = pathname === item.path;

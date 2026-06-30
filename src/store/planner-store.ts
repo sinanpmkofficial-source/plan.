@@ -38,6 +38,10 @@ interface PlannerState {
   syncErrorMsg: string | null;
   isLoading: boolean;
 
+  // Search UI
+  isSearchOpen: boolean;
+  searchPrefill: string;
+
   // Sync Queue (Keys of dirty/changed entities)
   dirtyBrainDump: Set<string>;
   dirtyGoals: Set<string>;
@@ -55,6 +59,8 @@ interface PlannerState {
   setDate: (date: string) => void;
   setWeek: (week: string) => void;
   setMonth: (month: string) => void;
+  openSearch: (prefill?: string) => void;
+  closeSearch: () => void;
 
   // Actions - Brain Dump
   addBrainDumpItem: (text: string) => void;
@@ -195,6 +201,8 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     syncErrorMsg: null,
     isLoading: false, // Default false to avoid skeleton blocker screen
     toast: null,
+    isSearchOpen: false,
+    searchPrefill: '',
 
     dirtyBrainDump: new Set(),
     dirtyGoals: new Set(),
@@ -321,6 +329,8 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
     setDate: (date) => set({ selectedDate: date }),
     setWeek: (week) => set({ selectedWeek: week }),
     setMonth: (month) => set({ selectedMonth: month }),
+    openSearch: (prefill = '') => set({ isSearchOpen: true, searchPrefill: prefill }),
+    closeSearch: () => set({ isSearchOpen: false }),
 
     // Toast Actions
     showToast: (message, type = 'success') => {

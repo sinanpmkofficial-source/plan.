@@ -4,16 +4,39 @@ import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { usePlannerStore } from '@/store/planner-store';
 import Navigation from '@/components/layout/Navigation';
-import { Loader2, Trash2, X } from 'lucide-react';
+import SearchModal from '@/components/search/SearchModal';
+import { Trash2, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { loadData, isLoading, toast, hideToast } = usePlannerStore();
+  const { loadData, toast, hideToast } = usePlannerStore();
   const pathname = usePathname();
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Global search shortcut: Cmd/Ctrl+K anywhere, or "/" when not typing in a field.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const typing =
+        !!target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable);
+
+      if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        usePlannerStore.getState().openSearch();
+      } else if (e.key === '/' && !typing) {
+        e.preventDefault();
+        usePlannerStore.getState().openSearch();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-background text-foreground font-sans transition-colors duration-300">
@@ -36,6 +59,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </motion.main>
         </AnimatePresence>
       </div>
+
+      {/* Global Search Palette */}
+      <SearchModal />
 
       {/* Floating Toast Notification */}
       <AnimatePresence>
