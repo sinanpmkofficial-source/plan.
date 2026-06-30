@@ -13,13 +13,9 @@ import {
 } from 'lucide-react';
 import { QuickAddInput } from '../ui/QuickAddInput';
 import DatePickerModal from '../ui/DatePickerModal';
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning 👋';
-  if (hour < 17) return 'Good afternoon 👋';
-  return 'Good evening 👋';
-}
+import MomentumCard from './MomentumCard';
+import CarryOverSection from './CarryOverSection';
+import { NotebookPen } from 'lucide-react';
 
 export default function DailyView() {
   const {
@@ -31,6 +27,7 @@ export default function DailyView() {
     toggleBulletNote,
     deleteBulletNote,
     moveBulletNote,
+    updateDailyReflection,
     dailyPlans,
     syncStatus,
     retrySync,
@@ -177,8 +174,12 @@ export default function DailyView() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto w-full">
-        <div className="space-y-5 py-4">
+      <div className="max-w-2xl mx-auto w-full space-y-5">
+        <MomentumCard />
+
+        <CarryOverSection />
+
+        <div className="space-y-5 py-2">
           <div className="flex items-center justify-between">
             <h4 className="font-extrabold text-base tracking-tight text-foreground">Daily Log</h4>
             <span className="text-xs font-bold text-neutral-500 select-none">
@@ -226,6 +227,21 @@ export default function DailyView() {
               ))
             )}
           </div>
+        </div>
+
+        {/* Daily Reflection */}
+        <div className="space-y-2.5 pb-2">
+          <h4 className="font-extrabold text-base tracking-tight text-foreground flex items-center gap-1.5">
+            <NotebookPen className="w-4 h-4 text-neutral-500" />
+            Reflection
+          </h4>
+          <textarea
+            value={plan.reflection || ''}
+            onChange={(e) => updateDailyReflection(selectedDate, e.target.value)}
+            placeholder="How did today go? Wins, blockers, gratitude..."
+            rows={4}
+            className="w-full textarea-premium text-sm font-semibold resize-none leading-relaxed"
+          />
         </div>
       </div>
     </div>

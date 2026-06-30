@@ -94,6 +94,7 @@ interface PlannerState {
   toggleBulletNote: (date: string, noteId: string) => void;
   deleteBulletNote: (date: string, noteId: string) => void;
   moveBulletNote: (dateOrId: string, noteId: string, direction: 'up' | 'down', context: 'daily' | 'weekly' | 'monthly') => void;
+  moveTaskToDate: (fromDate: string, noteId: string, toDate: string) => void;
   updateDailyReflection: (date: string, reflection: string) => void;
 
   // Actions - Weekly Plan
@@ -813,6 +814,38 @@ export const usePlannerStore = create<PlannerState>((set, get) => {
         };
 
         return updatedState as any;
+      });
+      get().triggerSync();
+    },
+
+    moveTaskToDate: (fromDate, noteId, toDate) => {
+      if (fromDate === toDate) return;
+      set((state) => {
+        const fromPlan = getOrCreateDailyPlanFn(state, fromDate);
+        const note = (fromPlan.bulletNotes || []).find((n) => n.id === noteId);
+        if (!note) return {};
+
+        const now = new Date().toISOString();
+
+        const newFrom: DailyPlan = {
+          ...fromPlan,
+          bulletNotes: fromPlan.bulletNotes.filter((n) => n.id !== noteId),
+          updatedAt: now,
+        };
+        newFrom.score = calculateDailyScore(newFrom);
+
+        const toPlan = getOrCreateDailyPlanFn(state, toDate);
+        const newTo: DailyPlan = {
+          ...toPlan,
+          bulletNotes: [...toPlan.bulletNotes, { ...note }],
+          updatedAt: now,
+        };
+        newTo.score = calculateDailyScore(newTo);
+
+        return {
+          dailyPlans: { ...state.dailyPlans, [fromDate]: newFrom, [toDate]: newTo },
+          dirtyDailyPlans: new Set(state.dirtyDailyPlans).add(fromDate).add(toDate),
+        };
       });
       get().triggerSync();
     },

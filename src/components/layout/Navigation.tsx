@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Calendar,
+  CalendarRange,
   Layers,
+  Inbox,
+  Target,
   BarChart3,
   Settings,
   MoreHorizontal,
@@ -21,9 +24,11 @@ export default function Navigation() {
   const [isDesktopMoreOpen, setIsDesktopMoreOpen] = useState(false);
 
   const mainItems = [
-    { id: 'daily', label: 'Daily', icon: Calendar, path: '/' },
-    { id: 'weekly', label: 'Weekly', icon: Layers, path: '/weekly' },
-    { id: 'monthly', label: 'Monthly', icon: BarChart3, path: '/monthly' },
+    { id: 'daily', label: 'Daily', short: 'Daily', icon: Calendar, path: '/' },
+    { id: 'braindump', label: 'Brain Dump', short: 'Dump', icon: Inbox, path: '/braindump' },
+    { id: 'goals', label: 'Goals', short: 'Goals', icon: Target, path: '/goals' },
+    { id: 'weekly', label: 'Weekly', short: 'Week', icon: Layers, path: '/weekly' },
+    { id: 'monthly', label: 'Monthly', short: 'Month', icon: CalendarRange, path: '/monthly' },
   ];
 
   const moreItems = [
@@ -159,7 +164,7 @@ export default function Navigation() {
                 }`}
               >
                 <Icon className="w-5.5 h-5.5 shrink-0" />
-                <span className="text-[10px] font-bold mt-1 tracking-tight">{item.label}</span>
+                <span className="text-[10px] font-bold mt-1 tracking-tight">{item.short}</span>
               </motion.div>
             </Link>
           );
