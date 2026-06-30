@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { usePlannerStore } from '@/store/planner-store';
 import { Trash2, AlertTriangle, RotateCcw, ShieldAlert, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import NotificationsSettings from './NotificationsSettings';
 
 type ResetStep = 'idle' | 'confirm1' | 'confirm2' | 'resetting' | 'done' | 'error';
 
@@ -46,9 +45,6 @@ export default function SettingsView() {
         <h2 className="text-2xl font-black tracking-tight">Settings</h2>
         <p className="text-sm text-foreground/50 font-semibold">Manage your app data and preferences.</p>
       </div>
-
-      {/* Reminders / Notifications */}
-      <NotificationsSettings />
 
       {/* Data Management section */}
       <section className="space-y-4">
